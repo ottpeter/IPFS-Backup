@@ -1,0 +1,19 @@
+{
+  "name": "ipfs-backup-backend",
+  "version": "1.0.0",
+  "description": "This is the script that is adding the IPFS repository to Filecoin, it will create an MFS folder first. Does not contain UI.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ipfs",
+    "filecoin",
+    "backup"
+  ],
+  "author": "Peter Ott",
+  "license": "GPL-3.0-or-later",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
