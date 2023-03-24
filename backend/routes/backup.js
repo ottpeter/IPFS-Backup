@@ -1,8 +1,6 @@
 const express = require('express');
-//const { create } = require('ipfs-http-client')
 const router = express.Router();
-//const path = require("path");
-//const ipfsAPI = require('ipfs-http-client');
+const fs = require('fs');
 
 // This will start the backup process. Probably we will change it to POST instead of GET, and it would be good if we could give in some parameters, like PeerID
 router.get('/start', async (req, res) => {
@@ -58,8 +56,25 @@ async function createCAR(ipfs, folderName) {
   console.log(dagForRoot);
 
   const exportResult = await ipfs.dag.export(rootCID);
+  let buffer = {value: undefined, done: false};
+  const fileName = folderName + ".car";
+  console.log("Exporting data to a CAR file...");
 
-  console.log("exportResult: ", await exportResult.next())
+  do {
+    buffer = await exportResult.next();
+    console.log(buffer)
+
+    if (!buffer.done) {
+      try {
+        fs.appendFileSync("./outputCARfiles/" + fileName, buffer.value);
+        console.log("Success!");
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  } while (!buffer.done);
+
+  console.log("The CAR file was exported. File name: ", fileName);
 }
 
 async function calculateCommP(ipfs) {
