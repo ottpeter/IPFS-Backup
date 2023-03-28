@@ -32,31 +32,12 @@ async function createCAR(ipfs, CID, folderName) {
   console.log("Statistics about the newly created backup folder: ");
   const stat = await ipfs.files.stat("/" + folderName);
   console.log(stat);
-  const rootCID = await stat.cid;
+  const v0RootCID = await stat.cid;
+  const rootCID = v0RootCID.toV1()
   const totalSize = stat.cumulativeSize;
   let copiedBytes = 0;
-  
-  // This is CID for / in MFS
-  const filesRootStat = await ipfs.files.stat('/');
-  console.log("filesRootStat: ", filesRootStat);
-
-  const dagForRoot = (await ipfs.dag.get(filesRootStat.cid)).value;
-  console.log("dagForRoot: ", dagForRoot);
-  // Find the DAG of the folder that we've just added
-  for (let i = 0; i < dagForRoot.Links.length; i++) {
-    if (dagForRoot.Links[i].Name === folderName) {
-      console.log("Our folder:", dagForRoot.Links[i]);
-      console.log("This is the DAG for the folder: ", dagForRoot.Links[i].Hash.toString());
-      const v0 = CID.asCID(dagForRoot.Links[i].Hash);
-      console.log("V1 CID: ", v0.toV1());
-      console.log("It is possible that this is the PayloadCID");
-      console.log("Possibly this is PayloadSize: ", dagForRoot.Links[i].Tsize);
-    }
-  }
-  
-  // We would need ipfs.dag.stat(CID)
-  //console.log(dagForRoot.value.Links)
-  //console.log( dagForRoot.value.Links.reduce((accumulator, ipfsRef) => accumulator + ipfsRef.Tsize, 0,));
+  console.log("It is possible that this is the PayloadCID: ", rootCID);
+  console.log("Possibly this is PayloadSize: ", stat.cumulativeSize);
 
   const exportResult = await ipfs.dag.export(rootCID);
   let buffer = {value: undefined, done: false};
@@ -68,9 +49,7 @@ async function createCAR(ipfs, CID, folderName) {
   console.log("Exporting data to a CAR file...");
 
   //Readable.from(exportResult).pipe(fs.createWriteStream('example.car'));        // With this, we couldn't show progress that much
-  
-  /* OLD METHOD, it will give the same result more-or-less*/
-  do {
+    do {
     buffer = await exportResult.next();
     console.log()
 
@@ -85,26 +64,28 @@ async function createCAR(ipfs, CID, folderName) {
       }
     }
   } while (!buffer.done);
-  /**/
 
   console.log("The CAR file was exported. File name: ", fileName);
+  
+  return { payloadCID: rootCID, payloadSize: stat.cumulativeSize };
 }
 
 async function addBackCAR(ipfs, CID, folderName, globSource) {
   console.log("Adding back CAR file to IPFS...");
   const fileName = folderName + ".car";
   const path = "./outputCARfiles/" + fileName;
-  console.log("Path: ", path);
   const ipfsAddResult = await ipfs.addAll(globSource(path, "**/*"));
   const carStats = await ipfsAddResult.next();
+  console.log("The CAR file was added to IPFS.");
   
   const v0 = CID.asCID(carStats.value.cid)
   console.log("carCID: ", v0);
   console.log("carSize: ", carStats.value.size);
 
   console.log("Probably this is PieceCID: ", v0.toV1());
-  console.log("Probably this is PieceSize: ", carStats.value.size); // We used the one from the file system (ls -la)
+  console.log("Probably this is PieceSize: ", carStats.value.size);         // We used the one from the file system (ls -la), and it was different
 
+  return { pieceCID: v0.toV1(), pieceSize: carStats.value.size};
 }
 
 
