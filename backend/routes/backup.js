@@ -7,13 +7,13 @@ const Readable = require('stream').Readable;
 router.get('/start', async (req, res) => {
   console.log("IPFS-Backup started...");
   res.json({message: "IPFS-Backup started"});
-  const { create } = await import('kubo-rpc-client');
+  const { create, CID } = await import('kubo-rpc-client');
   const ipfs = create();          // Default, http://localhost:5001
   const folderName = "backup" + Date.now()
 
   const arrayOfCIDs = await fillArrayWithPinnedCIDs(ipfs);
   await copyToMFS(ipfs, arrayOfCIDs, folderName);
-  await createCAR(ipfs, folderName);
+  await createCAR(ipfs, CID, folderName);
   
   
 });
@@ -68,37 +68,58 @@ async function copyToMFS(ipfs, arrayOfCIDs, folderName) {
   console.log("All content copied to MFS.");
 }
 
-async function createCAR(ipfs, folderName) {
+async function createCAR(ipfs, CID, folderName) {
   console.log("Statistics about the newly created backup folder: ");
   const stat = await ipfs.files.stat("/" + folderName);
   console.log(stat);
   const rootCID = await stat.cid;
+  const totalSize = stat.cumulativeSize;
+  let copiedBytes = 0;
+  
+  // This is CID for / in MFS
+  const filesRootStat = await ipfs.files.stat('/');
+  console.log("filesRootStat: ", filesRootStat);
 
-  const dagForRoot = await ipfs.dag.get(rootCID);
-  console.log(dagForRoot);
-
+  const dagForRoot = (await ipfs.dag.get(filesRootStat.cid)).value;
+  console.log("dagForRoot: ", dagForRoot);
+  // Find the DAG of the folder that we've just added
+  for (let i = 0; i < dagForRoot.Links.length; i++) {
+    if (dagForRoot.Links[i].Name === folderName) {
+      console.log("Our folder:", dagForRoot.Links[i]);
+      console.log("This is the DAG for the folder: ", dagForRoot.Links[i].Hash.toString())
+      const v0 = CID.asCID(dagForRoot.Links[i].Hash)
+      console.log("V1 CID: ", v0.toV1())
+    }
+  }
+  
+  // We would need ipfs.dag.stat(CID)
+  //console.log(dagForRoot.value.Links)
+  //console.log( dagForRoot.value.Links.reduce((accumulator, ipfsRef) => accumulator + ipfsRef.Tsize, 0,));
+  return;
   const exportResult = await ipfs.dag.export(rootCID);
   let buffer = {value: undefined, done: false};
   const fileName = folderName + ".car";
   console.log("Exporting data to a CAR file...");
 
-  Readable.from(exportResult).pipe(fs.createWriteStream('example.car'))
+  //Readable.from(exportResult).pipe(fs.createWriteStream('example.car'));        // With this, we couldn't show progress that much
   
-  /* OLD METHOD, it will give the same result more-or-less
+  /* OLD METHOD, it will give the same result more-or-less*/
   do {
     buffer = await exportResult.next();
-    console.log(buffer)
+    console.log()
 
     if (!buffer.done) {
       try {
         fs.appendFileSync("./outputCARfiles/" + fileName, buffer.value);
-        console.log("Success!");
+        copiedBytes = copiedBytes + buffer.value.length;
+        const percent = ((copiedBytes/totalSize)*100).toFixed(2);
+        console.log(`Percent: ${percent} %`);
       } catch (error) {
         console.error(error);
       }
     }
   } while (!buffer.done);
-  */
+  /**/
 
   console.log("The CAR file was exported. File name: ", fileName);
 }
