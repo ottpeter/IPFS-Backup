@@ -89,6 +89,7 @@ async function createCAR(ipfs, CID, folderName) {
       console.log("This is the DAG for the folder: ", dagForRoot.Links[i].Hash.toString())
       const v0 = CID.asCID(dagForRoot.Links[i].Hash)
       console.log("V1 CID: ", v0.toV1())
+      console.log("It is possible that this is the PayloadCID");
     }
   }
   

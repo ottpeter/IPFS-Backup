@@ -1,5 +1,6 @@
 const express = require('express');
 const backupRoutes = require('./routes/backup');
+const fetchRoutes = require('./routes/fetch');
 const app = express();
 const port = 3000;
 
@@ -9,6 +10,7 @@ app.get('/', (req, res) => {
 
 /** Routes */
 app.use('/backup', backupRoutes);
+app.use('/fetch', fetchRoutes);
 
 app.listen(port, () => {
   console.log(`IPFS-Backup API server listening on port ${port}`);
