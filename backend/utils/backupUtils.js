@@ -66,8 +66,8 @@ async function createCAR(ipfs, CID, folderName) {
   const rootCID = v0RootCID.toV1()
   const totalSize = stat.cumulativeSize;
   let copiedBytes = 0;
-  console.log("It is possible that this is the PayloadCID: ", rootCID);
-  console.log("Possibly this is PayloadSize: ", stat.cumulativeSize);
+  inProgressBackups[folderName].payloadCID = rootCID.toString();
+  inProgressBackups[folderName].cumulativeSize = stat.cumulativeSize;
 
   const exportResult = await ipfs.dag.export(rootCID);
   let buffer = {value: undefined, done: false};
@@ -130,42 +130,40 @@ async function calculateCommP(folderName, payloadCID) {
     console.log(`Most likely this will never happen stdout: ${data}`);
   });
   
-  
+
   ps.stderr.on('data', (data) => {
     try {
-      console.log("Data: ", data)
-      const CommPCIDRegEx = /CommPCid: [a-zA-Z0-9]{10,90}/;
-      const PayloadRegEx = /Payload:               [0-9]{0,16} bytes/;
-      const PaddedPieceRegex = /Padded piece:         [0-9]{0,16} bytes/;
+      const CommPCIDRegEx = /CommPCid:[\ ]{0,99}[a-zA-Z0-9]{10,90}/g;
+      const PayloadRegEx = /Payload:[\ ]{0,99}[0-9]{1,16} bytes/g;
+      const PaddedPieceRegex = /Padded piece:[\ ]{0,99}[0-9]{1,16} bytes/g;
   
       const commPLine = data.toString().match(CommPCIDRegEx)[0];
       const payloadLine = data.toString().match(PayloadRegEx)[0];
       const paddedPieceLine = data.toString().match(PaddedPieceRegex)[0];
-      
-      console.log("CommP Line: ", commPLine);
-      console.log("Payload Line: ", payloadLine);
-      console.log("Padded Piece Line: ", paddedPieceLine);
   
       const CommPCIDRegValueEx = /[a-zA-Z0-9]{10,90}/;
       const PayloadRegValueEx = /[0-9]{1,16}/;
       const PaddedPieceValueRegex = /[0-9]{1,16}/;
   
       commPCid = commPLine.match(CommPCIDRegValueEx)[0]
-      console.log("commP: ", commPCid)
       payloadSize = payloadLine.match(PayloadRegValueEx)[0];
-      console.log("Payload size: ", payloadSize);
       paddedPieceSize = paddedPieceLine.match(PaddedPieceValueRegex)[0];
-      console.log("Piece Size: ", paddedPieceSize);
+      
       inProgressBackups[folderName].commPCalculationReady = true;
+      inProgressBackups[folderName].commP = commPCid;
+      inProgressBackups[folderName].payloadSize = payloadSize;
+      inProgressBackups[folderName].pieceSize = paddedPieceSize;
+
+      console.log("CommP: ", commPCid)
+      console.log("Payload size: ", payloadSize);
+      console.log("Piece Size: ", paddedPieceSize);
     } catch (error) {
-      console.error("There was an error while trying to calculate commP!");
+      console.error("There was an error while trying to calculate commP!", error);
       inProgressBackups[folderName].commPCalculationError = error;
     }
   });
   
   ps.on('close', (code) => {
-    console.log(`child process exited with code ${code}`);
-    console.log(ps.stdout)
     if (code !== 0) {
       inProgressBackups[folderName].commPCalculationError = code;
       console.error("stream-commp returned a non-zero exit value!");
