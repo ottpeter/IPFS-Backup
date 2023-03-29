@@ -1,10 +1,12 @@
 const express = require('express');
 const path = require('path');
+require('dotenv').config()
 const router = express.Router();
 
 
 router.get('/', function(req, res) {
   let result = null;
+  console.log(process.env)
   const options = {
     root: path.join(process.env.OUTPUT_ROOT)
   };
