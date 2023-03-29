@@ -3,7 +3,9 @@ const { exec, spawn, spawnSync } = require('child_process');
 const Readable = require('stream').Readable;
 
 const backupObj = {
-  name: "backup123",
+  name: "",
+  fillArrayReady: false,
+  copyToMFSReady: false,
   carExportReady: false,
   commPCalculationReady: false,
   dealRequestMade: false,
@@ -14,19 +16,21 @@ const backupObj = {
 const inProgressBackups = {};             // Object that contains backupObj's
 
 // Start backup (create InProgress object)
-async function startBackup(req, res) {
+async function startBackup(name, res) {
   console.log("IPFS-Backup started...");  
-  const folderName = req.query.name;
+  const folderName = name;
   console.log("Folder: ", folderName);
+  inProgressBackups[folderName] = Object.assign({}, backupObj);
+  inProgressBackups[folderName].name = folderName;
   res.json({message: "IPFS-Backup started", folder: folderName});
   const { create, CID, globSource } = await import('kubo-rpc-client');
   const ipfs = create();          // Default, http://localhost:5001
 
-  return { ipfs, CID, globSource};
+  return { ipfs, CID, globSource, folderName};
 }
 
 // This will give back an array of CIDs, that are individual files or folders (not fragments of files)
-async function fillArrayWithPinnedCIDs(ipfs) {
+async function fillArrayWithPinnedCIDs(ipfs, folderName) {
   console.log("Getting list of pinned content...")
   const pinList = await ipfs.pin.ls({type: "recursive"});
   let nextItem = null;
@@ -37,6 +41,7 @@ async function fillArrayWithPinnedCIDs(ipfs) {
     if (!nextItem.done) resultArray.push(nextItem.value.cid)
   } while (!nextItem.done);
 
+  inProgressBackups[folderName].fillArrayReady = true;
   return resultArray;
 }
 
@@ -49,6 +54,7 @@ async function copyToMFS(ipfs, arrayOfCIDs, folderName) {
     await ipfs.files.cp("/ipfs/" + arrayOfCIDs[i].toString(), "/" + folderName + "/" + arrayOfCIDs[i].toString())
   }
 
+  inProgressBackups[folderName].copyToMFSReady = true;
   console.log("All content copied to MFS.");
 }
 
@@ -74,20 +80,19 @@ async function createCAR(ipfs, CID, folderName) {
   console.log("Exporting data to a CAR file...");
   do {
     buffer = await exportResult.next();
-    console.log()
-
     if (!buffer.done) {
       try {
         fs.appendFileSync("./outputCARfiles/" + fileName, buffer.value);
         copiedBytes = copiedBytes + buffer.value.length;
         const percent = ((copiedBytes/totalSize)*100).toFixed(2);
-        console.log(`Percent: ${percent} %`);
+        inProgressBackups[folderName].carExportPercent = percent;
       } catch (error) {
         console.error(error);
       }
     }
   } while (!buffer.done);
 
+  inProgressBackups[folderName].carExportReady = true;  
   console.log("The CAR file was exported. File name: ", fileName);
     
   return { payloadCID: rootCID, payloadSize: stat.cumulativeSize };
@@ -118,44 +123,56 @@ async function calculateCommP(folderName, payloadCID) {
   let payloadSize = null;
   let paddedPieceSize = null;
 
-  const ps = spawn('./utils/helper.sh', [payloadCID]);
+  console.log("Calculating CommP...");
+  const ps = spawn('./utils/helper.sh', [payloadCID], {encoding: 'utf-8'});
 
   ps.stdout.on('data', (data) => {
-    console.log(`stdout: ${data}`);
+    console.log(`Most likely this will never happen stdout: ${data}`);
   });
   
+  
   ps.stderr.on('data', (data) => {
-    //console.error(`The big text: ${data}`);
-    const CommPCIDRegEx = /CommPCid: [a-zA-Z0-9]{10,90}/;
-    const PayloadRegEx = /Payload:               [0-9]{0,16} bytes/;
-    const PaddedPieceRegex = /Padded piece:         [0-9]{0,16} bytes/;
-
-    const commPLine = data.toString().match(CommPCIDRegEx)[0];
-    const payloadLine = data.toString().match(PayloadRegEx)[0];
-    const paddedPieceLine = data.toString().match(PaddedPieceRegex)[0];
-    
-    console.log("CommP Line: ", commPLine);
-    console.log("Payload Line: ", payloadLine);
-    console.log("Padded Piece Line: ", paddedPieceLine);
-
-    const CommPCIDRegValueEx = /[a-zA-Z0-9]{10,90}/;
-    const PayloadRegValueEx = /[0-9]{1,16}/;
-    const PaddedPieceValueRegex = /[0-9]{1,16}/;
-
-    commPCid = commPLine.match(CommPCIDRegValueEx)[0]
-    console.log("commP: ", commPCid)
-    payloadSize = payloadLine.match(PayloadRegValueEx)[0];
-    console.log("Payload size: ", payloadSize);
-    paddedPieceSize = paddedPieceLine.match(PaddedPieceValueRegex)[0];
-    console.log("Piece Size: ", paddedPieceSize);
-    inProgressBackups[folderName]
+    try {
+      console.log("Data: ", data)
+      const CommPCIDRegEx = /CommPCid: [a-zA-Z0-9]{10,90}/;
+      const PayloadRegEx = /Payload:               [0-9]{0,16} bytes/;
+      const PaddedPieceRegex = /Padded piece:         [0-9]{0,16} bytes/;
+  
+      const commPLine = data.toString().match(CommPCIDRegEx)[0];
+      const payloadLine = data.toString().match(PayloadRegEx)[0];
+      const paddedPieceLine = data.toString().match(PaddedPieceRegex)[0];
+      
+      console.log("CommP Line: ", commPLine);
+      console.log("Payload Line: ", payloadLine);
+      console.log("Padded Piece Line: ", paddedPieceLine);
+  
+      const CommPCIDRegValueEx = /[a-zA-Z0-9]{10,90}/;
+      const PayloadRegValueEx = /[0-9]{1,16}/;
+      const PaddedPieceValueRegex = /[0-9]{1,16}/;
+  
+      commPCid = commPLine.match(CommPCIDRegValueEx)[0]
+      console.log("commP: ", commPCid)
+      payloadSize = payloadLine.match(PayloadRegValueEx)[0];
+      console.log("Payload size: ", payloadSize);
+      paddedPieceSize = paddedPieceLine.match(PaddedPieceValueRegex)[0];
+      console.log("Piece Size: ", paddedPieceSize);
+      inProgressBackups[folderName].commPCalculationReady = true;
+    } catch (error) {
+      console.error("There was an error while trying to calculate commP!");
+      inProgressBackups[folderName].commPCalculationError = error;
+    }
   });
   
   ps.on('close', (code) => {
     console.log(`child process exited with code ${code}`);
-    if (code !== 0) console.error("Panic!");
+    console.log(ps.stdout)
+    if (code !== 0) {
+      inProgressBackups[folderName].commPCalculationError = code;
+      console.error("stream-commp returned a non-zero exit value!");
+    }
     return;
   });
+
 
   return {commPCid, paddedPieceSize}
 }
@@ -168,8 +185,16 @@ async function addToFilecoin(ipfs) {
   // 5) Start rewriting the contract that way, that it is keeping track of IPFS PeerID with redundancy, and date of backup
 }
 
-function listActiveBackups() {
-  return inProgressBackups;
+function listActiveBackups(name) {
+  if (name) {
+    if (inProgressBackups.hasOwnProperty(name)) {
+      return inProgressBackups[name]; 
+    } else {
+      return { error: "There is no InProgress backup with that name."};
+    }
+  } else {
+    return inProgressBackups;
+  }
 }
 
 module.exports = { startBackup, fillArrayWithPinnedCIDs, copyToMFS, createCAR, addBackCAR, calculateCommP, addToFilecoin, listActiveBackups }

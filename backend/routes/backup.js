@@ -4,13 +4,9 @@ const { fillArrayWithPinnedCIDs, copyToMFS, createCAR, addBackCAR, calculateComm
 
 // This will start the backup process. Probably we will change it to POST instead of GET, and it would be good if we could give in some parameters, like PeerID
 router.get('/start', async (req, res) => {
-  console.log("IPFS-Backup started...");
-  res.json({message: "IPFS-Backup started"});
-  const { create, CID, globSource } = await import('kubo-rpc-client');
-  const ipfs = create();          // Default, http://localhost:5001
-  const folderName = "backup" + Date.now()
-
-  const arrayOfCIDs = await fillArrayWithPinnedCIDs(ipfs);
+  const folderName = "backup" + Date.now();
+  const { ipfs, CID, globSource, _ } = await startBackup(folderName, res);
+  const arrayOfCIDs = await fillArrayWithPinnedCIDs(ipfs, folderName);
   await copyToMFS(ipfs, arrayOfCIDs, folderName);
   const { payloadCID, payloadSize } = await createCAR(ipfs, CID, folderName, globSource);
   await calculateCommP(folderName, payloadCID);
@@ -20,7 +16,7 @@ router.get('/start', async (req, res) => {
 
 // This will backup a single folder, that it is pointed to
 router.get('/folder', async (req, res) => {
-  const { ipfs, CID, globSource} = await startBackup(req, res);
+  const { ipfs, CID, globSource, folderName } = await startBackup(req.query.name, res);
   const { payloadCID, payloadSize }  = await createCAR(ipfs, CID, folderName);
   const {commPCid, paddedPieceSize} = await calculateCommP(folderName, payloadCID);
   console.log("The resulting commPCID: ", commPCid);
@@ -56,7 +52,7 @@ router.get('/run-commp', async (req, res) => {
 })
 
 router.get('/show-inprogress', async (req, res) => {
-  res.json(listActiveBackups());
+  res.json(listActiveBackups(req.query.name));
 });
 
 module.exports = router;
