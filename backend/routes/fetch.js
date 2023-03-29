@@ -6,7 +6,7 @@ const router = express.Router();
 router.get('/', function(req, res) {
   let result = null;
   const options = {
-    root: path.join('/home/user/FEVM/IPFS-Backup/backend/outputCARfiles/')
+    root: path.join(process.env.OUTPUT_ROOT)
   };
 
   const file = req.query.fileName;                                                // Name of the file
