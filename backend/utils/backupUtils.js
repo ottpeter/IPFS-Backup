@@ -2,6 +2,7 @@ const fs = require('fs');
 const { spawn } = require('child_process');
 const { ethers } = require('hardhat');
 const { network } = require("../network");
+const BN = require('bn.js');
 const contractTest = require("../../artifacts/contracts/basic-deal-client/DealClient.sol/DealClient.json");
 const CID = require('cids');
 const Readable = require('stream').Readable;
@@ -224,12 +225,48 @@ async function addToFilecoin(not_used, folderName) {
   transaction = await dealClient.makeDealProposal(DealRequestStruct)                                // Transaction
   transactionReceipt = await transaction.wait()
 
-  const event = transactionReceipt.events[0].topics[0];                                             // Listen for DealProposalCreate event
+  const event = transactionReceipt.events[0].topics[1];                                             // Listen for DealProposalCreate event
   //console.log("transactionReceipt: ", transactionReceipt);
   //console.log("Events: ", transactionReceipt.events);
   //console.log("Topics: ", transactionReceipt.events[0].topics);
   inProgressBackups[folderName].dealRequestMade = true;
   console.log("Complete! Event Emitted. ProposalId is:", event);
+
+  checkDealStatus(folderName);
+}
+
+async function checkDealStatus(folderName) {
+  try {
+    const networkId = network.defaultNetwork;
+    console.log("Waiting for DealID on network", networkId);
+    const wallet = new ethers.Wallet(network.networks[networkId].accounts[0], ethers.provider);       // Create a new wallet instance
+    const DealClient = await ethers.getContractFactory("DealClient", wallet);                         // Contract Factory
+    const dealClient = await DealClient.attach(contractAddr);                                         // Contract instance
+    const max_try = 50;
+    let try_count = 0;
+    let dealID = 0;
+  
+    do {
+      console.log("Attempt ", try_count);
+      const result = await dealClient.getDealId(inProgressBackups[folderName].commP);                 // Send transaction
+      //const transactionReceipt = await transaction.wait();
+      //const event = transactionReceipt.events[0].topics[1];                                         // Listen for DealProposalCreate event
+      //console.log("transactionReceipt: ", transactionReceipt);
+      //console.log("Events: ", transactionReceipt.events);
+      //console.log("Topics: ", transactionReceipt.events[0].topics);
+      console.log("Result: ", result);
+      const resultBigNumber = new BN(result);
+      console.log("ResultBigNumber: ", resultBigNumber);
+  
+      await delay(1000*60*2);
+    } while (try_count < max_try && dealID === 0);
+  
+    if (try_count === max_try && dealID === 0) {
+      console.error("This is an error.");
+    }
+  } catch (error) {
+    console.error("There was an error while trying to get DealID");
+  }
 }
 
 function listActiveBackups(name) {
@@ -243,5 +280,9 @@ function listActiveBackups(name) {
     return inProgressBackups;
   }
 }
+
+function delay(time) {
+  return new Promise(resolve => setTimeout(resolve, time));
+} 
 
 module.exports = { startBackup, fillArrayWithPinnedCIDs, copyToMFS, createCAR, addBackCAR, calculateCommP, addToFilecoin, listActiveBackups }
