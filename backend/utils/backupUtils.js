@@ -2,8 +2,7 @@ const fs = require('fs');
 const { spawn } = require('child_process');
 const { ethers } = require('hardhat');
 const { network } = require("../network");
-const BN = require('bn.js');
-const contractTest = require("../../artifacts/contracts/basic-deal-client/DealClient.sol/DealClient.json");
+//const contractTest = require("../../artifacts/contracts/basic-deal-client/DealClient.sol/DealClient.json");
 const CID = require('cids');
 const Readable = require('stream').Readable;
 
