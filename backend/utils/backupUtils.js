@@ -4,6 +4,7 @@ const { ethers } = require('hardhat');
 const { network } = require("../network");
 //const contractTest = require("../../artifacts/contracts/basic-deal-client/DealClient.sol/DealClient.json");
 const CID = require('cids');
+const { BigNumber } = require('ethers');
 const Readable = require('stream').Readable;
 
 const backupObj = {
@@ -256,8 +257,9 @@ async function checkDealStatus(folderName) {
       //console.log("Events: ", transactionReceipt.events);
       //console.log("Topics: ", transactionReceipt.events[0].topics);
       console.log("Result: ", result);
-      const resultBigNumber = ethers.BigNumber.from(result._hex);
-      console.log("ResultBigNumber: ", resultBigNumber);
+      //const resultBigNumber = ethers.BigNumber.from(result._hex);
+      console.log("ResultBigNumber: ", result.toNumber());
+      
   
       await delay(1000*60*2);
     } while (try_count < max_try && dealID === 0);
