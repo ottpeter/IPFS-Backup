@@ -1,4 +1,5 @@
 const express = require('express');
+require('dotenv').config();
 const backupRoutes = require('./routes/backup');
 const fetchRoutes = require('./routes/fetch');
 const app = express();

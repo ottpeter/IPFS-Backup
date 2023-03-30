@@ -18,7 +18,7 @@ router.get('/start', async (req, res) => {
 router.get('/folder', async (req, res) => {
   const { ipfs, CID, globSource, folderName } = await startBackup(req.query.name, res);
   const { payloadCID, payloadSize }  = await createCAR(ipfs, CID, folderName);
-  const {commPCid, paddedPieceSize} = await calculateCommP(folderName, payloadCID);
+  const {commPCid, paddedPieceSize} = await calculateCommP(folderName, payloadCID, CID);
   console.log("The resulting commPCID: ", commPCid);
   console.log("The resulting Piece Size: ", paddedPieceSize);
   //await addBackCAR(ipfs, CID, folderName, globSource);

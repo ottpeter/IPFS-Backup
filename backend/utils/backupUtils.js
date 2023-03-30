@@ -1,5 +1,9 @@
 const fs = require('fs');
-const { exec, spawn, spawnSync } = require('child_process');
+const { spawn } = require('child_process');
+const { ethers } = require('hardhat');
+const { network } = require("../network");
+const contractTest = require("../../artifacts/contracts/basic-deal-client/DealClient.sol/DealClient.json");
+const CID = require('cids');
 const Readable = require('stream').Readable;
 
 const backupObj = {
@@ -118,7 +122,7 @@ async function addBackCAR(ipfs, CID, folderName, globSource) {
 }
 
 
-async function calculateCommP(folderName, payloadCID) {
+async function calculateCommP(folderName, payloadCID, CID) {
   let commPCid = null;
   let payloadSize = null;
   let paddedPieceSize = null;
@@ -157,6 +161,7 @@ async function calculateCommP(folderName, payloadCID) {
       console.log("CommP: ", commPCid)
       console.log("Payload size: ", payloadSize);
       console.log("Piece Size: ", paddedPieceSize);
+      addToFilecoin(CID, folderName);
     } catch (error) {
       console.error("There was an error while trying to calculate commP!", error);
       inProgressBackups[folderName].commPCalculationError = error;
@@ -175,12 +180,54 @@ async function calculateCommP(folderName, payloadCID) {
   return {commPCid, paddedPieceSize}
 }
 
-async function addToFilecoin(ipfs) {
-  // 1) The original deal-maker contract (fevm-starter-kit) should be accessible from within this repository
-  // 2) We should have an access key for it in a .env file
-  // 3) We should call makeDealProposal
-  // 4) Record the result somewhere (would need a database for that)
-  // 5) Start rewriting the contract that way, that it is keeping track of IPFS PeerID with redundancy, and date of backup
+async function addToFilecoin(not_used, folderName) {
+  // Convert piece CID string to hex bytes
+  const cid = inProgressBackups[folderName].commP;
+  const cidHexRaw = new CID(cid).toString('base16').substring(1);
+  const cidHex = "0x" + cidHexRaw;
+  const contractAddr = process.env.DEAL_CONTRACT;
+
+  const verified = false;
+  const skipIpniAnnounce = false;
+  const removeUnsealedCopy = false;
+
+  const extraParamsV1 = [
+    "45.91.171.156:3000/fetch?fileName=" + folderName + ".car",
+    inProgressBackups[folderName].payloadSize,
+    skipIpniAnnounce,
+    removeUnsealedCopy,
+  ]
+
+  const DealRequestStruct = [
+    cidHex,
+    inProgressBackups[folderName].pieceSize,
+    verified,
+    inProgressBackups[folderName].payloadCID,
+    210000,      // arbitrary number, will need to fetch this later
+    500000,      // end
+    0,           // storage price per epoch
+    0,           // provider collateral
+    0,           // client collateral
+    1,           // extra params version
+    extraParamsV1,
+  ];
+  
+  const networkId = network.defaultNetwork;
+  console.log("Making deal proposal on network", networkId)
+
+  const wallet = new ethers.Wallet(network.networks[networkId].accounts[0], ethers.provider);       // Create a new wallet instance
+  const DealClient = await ethers.getContractFactory("DealClient", wallet);                         // Contract Factory
+  const dealClient = await DealClient.attach(contractAddr);                                         // Contract instance
+  
+  transaction = await dealClient.makeDealProposal(DealRequestStruct)                                // Transaction
+  transactionReceipt = await transaction.wait()
+
+  const event = transactionReceipt.events[0].topics[0];                                             // Listen for DealProposalCreate event
+  //console.log("transactionReceipt: ", transactionReceipt);
+  //console.log("Events: ", transactionReceipt.events);
+  //console.log("Topics: ", transactionReceipt.events[0].topics);
+  inProgressBackups[folderName].dealRequestMade = true;
+  console.log("Complete! Event Emitted. ProposalId is:", event);
 }
 
 function listActiveBackups(name) {

@@ -156,6 +156,10 @@ contract DealClient {
         return serializeDealProposal(ret);
     }
 
+    function getDealId(bytes calldata commP) public view returns (uint64) {
+        return pieceDeals[commP];
+    }
+
     // TODO fix in filecoin-solidity. They're using the wrong hex value.
     function getDelegatedAddress(address addr) internal pure returns (CommonTypes.FilAddress memory) {
         return CommonTypes.FilAddress(abi.encodePacked(hex"040a", addr));
