@@ -2,9 +2,7 @@ const fs = require('fs');
 const { spawn } = require('child_process');
 const { ethers } = require('hardhat');
 const { network } = require("../network");
-//const contractTest = require("../../artifacts/contracts/basic-deal-client/DealClient.sol/DealClient.json");
 const CID = require('cids');
-const { BigNumber } = require('ethers');
 const Readable = require('stream').Readable;
 
 const backupObj = {
@@ -252,8 +250,9 @@ async function checkDealStatus(folderName) {
       console.log("Attempt ", try_count);
       const result = await dealClient.getDealId(commPasBytes);                                        // Send transaction
       const dealID = result.toNumber();
-      console.log("ResultBigNumber: ", dealID);
+      console.log("Deal ID: ", dealID);
   
+      try_count++;
       await delay(1000*60*2);
     } while (try_count < max_try && dealID === 0);
   
