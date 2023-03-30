@@ -164,15 +164,18 @@ contract DealClient {
         return pieceDeals[commP];
     }
 
-    function getDealVerificationStatus(uint64 dealId) public returns (bool) {
-        tempIsDealActivated = MarketAPI.getDealVerified(dealId);
+    function getDealVerificationStatus(uint64 dealId) public view returns (bool) {
         return tempIsDealActivated;
     }
 
-    /*function getDealActivationStatus(uint64 calldata dealId) public view returns (MarketTypes.GetDealActivationReturn) {
-        MarketTypes.GetDealActivationReturn result = MarketAPI.getDealActivation(dealId);
-        return result;
-    }*/
+    function getDealActivationStatus(uint64 dealId) public view returns (MarketTypes.GetDealActivationReturn memory) {
+        return tempActivationStatus;
+    }
+
+    function refreshValues(uint64 dealId) public {
+        tempIsDealActivated = MarketAPI.getDealVerified(dealId);
+        tempActivationStatus = MarketAPI.getDealActivation(dealId);
+    }
 
     // TODO fix in filecoin-solidity. They're using the wrong hex value.
     function getDelegatedAddress(address addr) internal pure returns (CommonTypes.FilAddress memory) {

@@ -262,8 +262,13 @@ async function checkDealStatus(folderName) {
       return;
     }
 
+    const refreshTransaction = dealClient.refreshValues(dealID);
+    console.log("Refresh transaction made. Hash: ", refreshTransaction.hash);
+
     const isDealActivated = await dealClient.getDealVerificationStatus(dealID);
     console.log("Is Deal Activated? ", isDealActivated);
+    const dealActive = await dealClient.getDealActivationStatus(dealID);
+    console.log("Deal Active: ", dealActive);
   } catch (error) {
     inProgressBackups[folderName].dealIdError = error;
     console.error("There was an error while trying to get DealID", error);
