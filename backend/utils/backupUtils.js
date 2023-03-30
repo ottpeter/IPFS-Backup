@@ -246,7 +246,7 @@ async function checkDealStatus(folderName) {
     let try_count = 0;
     let dealID = 0;
   
-    do {
+    do { 
       console.log("Attempt ", try_count);
       const result = await dealClient.getDealId(inProgressBackups[folderName].commP);                 // Send transaction
       //const transactionReceipt = await transaction.wait();
@@ -265,7 +265,7 @@ async function checkDealStatus(folderName) {
       console.error("This is an error.");
     }
   } catch (error) {
-    console.error("There was an error while trying to get DealID");
+    console.error("There was an error while trying to get DealID", error);
   }
 }
 
