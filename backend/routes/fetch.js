@@ -5,7 +5,6 @@ const router = express.Router();
 
 router.get('/', function(req, res) {
   let result = null;
-  console.log(process.env)
   const options = {
     root: path.join(process.env.OUTPUT_ROOT)
   };
@@ -15,7 +14,7 @@ router.get('/', function(req, res) {
     if (err) {
       console.error("There was an error while trying to send the file: ", err);
     } else {
-      console.log('Sent file: ', path);
+      console.log('Sent file: ', file);
     }
   });
   
