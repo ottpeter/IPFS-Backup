@@ -249,7 +249,7 @@ async function checkDealStatus(folderName) {
     do { 
       console.log("Attempt ", try_count);
       const result = await dealClient.getDealId(commPasBytes);                                        // Send transaction
-      const dealID = result.toNumber();
+      dealID = result.toNumber();
       console.log("Deal ID: ", dealID);
   
       try_count++;
