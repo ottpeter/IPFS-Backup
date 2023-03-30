@@ -239,6 +239,7 @@ async function checkDealStatus(folderName) {
   try {
     const networkId = network.defaultNetwork;
     const contractAddr = process.env.DEAL_CONTRACT;
+    const commPasBytes = new CID(inProgressBackups[folderName].commP).bytes;
     console.log("Waiting for DealID on network", networkId);
     const wallet = new ethers.Wallet(network.networks[networkId].accounts[0], ethers.provider);       // Create a new wallet instance
     const DealClient = await ethers.getContractFactory("DealClient", wallet);                         // Contract Factory
@@ -249,7 +250,7 @@ async function checkDealStatus(folderName) {
   
     do { 
       console.log("Attempt ", try_count);
-      const result = await dealClient.getDealId(inProgressBackups[folderName].commP);                 // Send transaction
+      const result = await dealClient.getDealId(commPasBytes);                                        // Send transaction
       //const transactionReceipt = await transaction.wait();
       //const event = transactionReceipt.events[0].topics[1];                                         // Listen for DealProposalCreate event
       //console.log("transactionReceipt: ", transactionReceipt);
