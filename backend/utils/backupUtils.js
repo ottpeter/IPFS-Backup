@@ -251,23 +251,18 @@ async function checkDealStatus(folderName) {
     do { 
       console.log("Attempt ", try_count);
       const result = await dealClient.getDealId(commPasBytes);                                        // Send transaction
-      //const transactionReceipt = await transaction.wait();
-      //const event = transactionReceipt.events[0].topics[1];                                         // Listen for DealProposalCreate event
-      //console.log("transactionReceipt: ", transactionReceipt);
-      //console.log("Events: ", transactionReceipt.events);
-      //console.log("Topics: ", transactionReceipt.events[0].topics);
-      console.log("Result: ", result);
-      //const resultBigNumber = ethers.BigNumber.from(result._hex);
-      console.log("ResultBigNumber: ", result.toNumber());
-      
+      const dealID = result.toNumber();
+      console.log("ResultBigNumber: ", dealID);
   
       await delay(1000*60*2);
     } while (try_count < max_try && dealID === 0);
   
     if (try_count === max_try && dealID === 0) {
-      console.error("This is an error.");
+      inProgressBackups[folderName].dealIdError = `Tried to get the DealID ${try_count} times without success. Most likely there was an error with making the deal.`;
+      console.error(`Tried to get the DealID ${try_count} times without success. Most likely there was an error with making the deal.`);
     }
   } catch (error) {
+    inProgressBackups[folderName].dealIdError = error;
     console.error("There was an error while trying to get DealID", error);
   }
 }
