@@ -203,7 +203,7 @@ async function addToFilecoin(not_used, folderName) {
     inProgressBackups[folderName].pieceSize,
     verified,
     inProgressBackups[folderName].payloadCID,
-    210000,      // arbitrary number, will need to fetch this later
+    213000,      // arbitrary number, will need to fetch this later
     500000,      // end
     0,           // storage price per epoch
     0,           // provider collateral
