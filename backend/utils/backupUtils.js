@@ -192,7 +192,7 @@ async function addToFilecoin(not_used, folderName) {
   const removeUnsealedCopy = false;
 
   const extraParamsV1 = [
-    "45.91.171.156:3000/fetch?fileName=" + folderName + ".car",
+    "http://45.91.171.156:3000/fetch?fileName=" + folderName + ".car",
     inProgressBackups[folderName].payloadSize,
     skipIpniAnnounce,
     removeUnsealedCopy,
