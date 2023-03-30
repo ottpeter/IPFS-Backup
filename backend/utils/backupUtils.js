@@ -198,17 +198,19 @@ async function addToFilecoin(not_used, folderName) {
     removeUnsealedCopy,
   ]
 
+  const startEpoch = 215000;
+
   const DealRequestStruct = [
     cidHex,
     inProgressBackups[folderName].pieceSize,
     verified,
     inProgressBackups[folderName].payloadCID,
-    215000,      // arbitrary number, will need to fetch this later
-    700000,      // end
-    0,           // storage price per epoch
-    0,           // provider collateral
-    0,           // client collateral
-    1,           // extra params version
+    startEpoch,               // arbitrary number, will need to fetch this later
+    (startEpoch+518400),      // end
+    0,                        // storage price per epoch
+    0,                        // provider collateral
+    0,                        // client collateral
+    1,                        // extra params version
     extraParamsV1,
   ];
   
