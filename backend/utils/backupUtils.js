@@ -257,7 +257,7 @@ async function checkDealStatus(folderName) {
       //console.log("Events: ", transactionReceipt.events);
       //console.log("Topics: ", transactionReceipt.events[0].topics);
       console.log("Result: ", result);
-      const resultBigNumber = new BN(result);
+      const resultBigNumber = ethers.BigNumber.from(result._hex);
       console.log("ResultBigNumber: ", resultBigNumber);
   
       await delay(1000*60*2);
