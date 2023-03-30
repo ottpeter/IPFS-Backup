@@ -259,7 +259,11 @@ async function checkDealStatus(folderName) {
     if (try_count === max_try && dealID === 0) {
       inProgressBackups[folderName].dealIdError = `Tried to get the DealID ${try_count} times without success. Most likely there was an error with making the deal.`;
       console.error(`Tried to get the DealID ${try_count} times without success. Most likely there was an error with making the deal.`);
+      return;
     }
+
+    const isDealActivated = await dealClient.getDealVerificationStatus(dealID);
+    console.log("Is Deal Activated? ", isDealActivated);
   } catch (error) {
     inProgressBackups[folderName].dealIdError = error;
     console.error("There was an error while trying to get DealID", error);
