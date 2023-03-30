@@ -238,6 +238,7 @@ async function addToFilecoin(not_used, folderName) {
 async function checkDealStatus(folderName) {
   try {
     const networkId = network.defaultNetwork;
+    const contractAddr = process.env.DEAL_CONTRACT;
     console.log("Waiting for DealID on network", networkId);
     const wallet = new ethers.Wallet(network.networks[networkId].accounts[0], ethers.provider);       // Create a new wallet instance
     const DealClient = await ethers.getContractFactory("DealClient", wallet);                         // Contract Factory
