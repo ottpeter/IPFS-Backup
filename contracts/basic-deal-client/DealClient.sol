@@ -185,19 +185,18 @@ contract DealClient {
     function startBackup(BackupRequest calldata backupMeta) public returns (bool) {
         require (msg.sender == owner);
 
-        // At this point, this commP has 0 deals
-        backupItems[backupMeta.pieceCID] = BackupItem({
-            totalDealCount: 0,
-            atLeast1MonthDealCount: 0,
-            targetRedundancy: defaultTargetRedundancy,
-            pieceSize: backupMeta.pieceSize,
-            label: backupMeta.label,
-            dealDuration: backupMeta.dealDuration,
-            maxPricePerEpoch: backupMeta.maxPricePerEpoch,
-            originalLocation: backupMeta.originalLocation,
-            carSize: backupMeta.carSize,
-            deals: []
-        });
+        // Initialize new backup entry
+        BackupItem memory newItem;
+        newItem.totalDealCount = 0;
+        newItem.atLeast1MonthDealCount = 0;
+        newItem.targetRedundancy = defaultTargetRedundancy;
+        newItem.pieceSize = backupMeta.pieceSize;
+        newItem.label = backupMeta.label;
+        newItem.dealDuration = backupMeta.dealDuration;
+        newItem.maxPricePerEpoch = backupMeta.maxPricePerEpoch;
+        newItem.originalLocation = backupMeta.originalLocation;
+        newItem.carSize = backupMeta.carSize;
+        backupItems[backupMeta.pieceCID] = newItem;
 
         // We make as many deals, as target redundancy
         for (uint16 i = 0; i < backupItems[backupMeta.pieceCID].targetRedundancy; i++) {
@@ -233,11 +232,11 @@ contract DealClient {
     // Returns a CBOR-encoded DealProposal.
     function getDealProposal(bytes32 proposalId) view public returns (bytes memory) {
         //DealRequest memory deal = getDealRequest(proposalId);
-        bytes memory commP = proposals[proposalId];                                            // Get PieceCID based on uniqId
+        bytes memory commP = proposals[proposalId];                                     // Get PieceCID based on uniqId
 
-        uint64 epochFromNow = 2000;                                                     // Deal will be activated this many epoch from now
-        uint64 startEpoch = block.number + epochFromNow;
-        uint64 endEpoch = startEpoch + backupItems[commP].dealDuration;
+        int64 epochFromNow = 2000;                                                      // Deal will be activated this many epoch from now
+        int64 startEpoch = int64(int256(block.number)) + epochFromNow;
+        int64 endEpoch = startEpoch + backupItems[commP].dealDuration;
 
         MarketTypes.DealProposal memory ret;                                            // Create DealProposal object
         ret.piece_cid = CommonTypes.Cid(commP);                                         // Piece CID
