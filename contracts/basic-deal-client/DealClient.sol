@@ -189,6 +189,12 @@ contract DealClient {
             totalDealCount: 0,
             atLeast1MonthDealCount: 0,
             targetRedundancy: defaultTargetRedundancy,
+            pieceSize: backupMeta.pieceSize,
+            label: backupMeta.label,
+            dealDuration: backupMeta.dealDuration,
+            maxPricePerEpoch: backupMeta.maxPricePerEpoch,
+            originalLocation: backupMeta.originalLocation,
+            carSize: backupMeta.carSize,
             deals: []
         });
 
