@@ -222,18 +222,18 @@ contract DealClient {
         // return success;
     }
 
-    function refreshMetadataForBackupItem() {}
+    function refreshMetadataForBackupItem() public {}
 
-    function refreshMetadataForAll() {
+    function refreshMetadataForAll() public {
         // will need an array for this, can not iterate 'backupItems' mapping
     }
 
-    function keepTargetRedundancy() {}
+    function keepTargetRedundancy() public {}
 
     // Returns a CBOR-encoded DealProposal.
     function getDealProposal(bytes32 proposalId) view public returns (bytes memory) {
         //DealRequest memory deal = getDealRequest(proposalId);
-        bytes commP = proposals[proposalId];                                            // Get PieceCID based on uniqId
+        bytes memory commP = proposals[proposalId];                                            // Get PieceCID based on uniqId
 
         uint64 epochFromNow = 2000;                                                     // Deal will be activated this many epoch from now
         uint64 startEpoch = block.number + epochFromNow;
@@ -247,7 +247,7 @@ contract DealClient {
         ret.provider = FilAddresses.fromActorID(0);                                     // Set a dummy provider. The provider that picks up this deal will need to set its own address.
         ret.label = backupItems[commP].label;                                           // Payload CID
         ret.start_epoch = startEpoch;                                                   // Start epoch
-        ret.end_epoch = deal.end_epoch;                                                 // End epoch
+        ret.end_epoch = endEpoch;                                                       // End epoch
         ret.storage_price_per_epoch = uintToBigInt(0);                                  // We need to solve this, we have max value instead of a concrete value
         ret.provider_collateral = uintToBigInt(0);                                      // Most likely this will be always 0
         ret.client_collateral = uintToBigInt(0);                                        // Most likely this will be always 0
