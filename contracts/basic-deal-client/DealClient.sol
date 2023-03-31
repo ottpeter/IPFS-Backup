@@ -110,16 +110,6 @@ struct BackupItemDeal {
     bool isActivated;
 }
 
-function serializeExtraParamsV1(ExtraParamsV1 memory params) pure returns (bytes memory) {
-    CBOR.CBORBuffer memory buf = CBOR.create(64);
-    buf.startFixedArray(4);
-    buf.writeString(params.location_ref);
-    buf.writeUInt64(params.car_size);
-    buf.writeBool(params.skip_ipni_announce);
-    buf.writeBool(params.remove_unsealed_copy);
-    return buf.data();
-}
-
 contract DealClient {
     using AccountCBOR for *;
     using MarketCBOR for *;
@@ -289,7 +279,6 @@ contract DealClient {
     function getDelegatedAddress(address addr) internal pure returns (CommonTypes.FilAddress memory) {
         return CommonTypes.FilAddress(abi.encodePacked(hex"040a", addr));
     }
-
 
 
         // helper function to get deal request based from id
