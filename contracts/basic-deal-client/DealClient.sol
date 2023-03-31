@@ -135,7 +135,7 @@ contract DealClient {
         DealRequest calldata deal
     ) public returns (bytes32) {
         // TODO: length check on byte fields
-        require(msg.sender == owner);
+        require(msg.sender == owner); 
 
         uint256 index = deals.length;
         deals.push(deal);
