@@ -290,12 +290,7 @@ contract DealClient {
         return CommonTypes.FilAddress(abi.encodePacked(hex"040a", addr));
     }
 
-    function getExtraParams(
-        bytes32 proposalId
-    ) public view returns (bytes memory extra_params) {
-        DealRequest memory deal = getDealRequest(proposalId);
-        return serializeExtraParamsV1(deal.extra_params);
-    }
+
 
         // helper function to get deal request based from id
     function getDealRequest(
