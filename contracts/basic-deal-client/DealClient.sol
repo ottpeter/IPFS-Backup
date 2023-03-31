@@ -118,6 +118,8 @@ contract DealClient {
 
     DealRequest[] deals;
 
+    uint16 defaultTargetRedundancy = 2;                                     // Default target redundancy, that will be copied to every BackupItem, if other value not specified
+
     // Temporary variables - this will become obsolate
     MarketTypes.GetDealActivationReturn public tempActivationStatus;
     bool public tempIsDealActivated;
@@ -172,6 +174,14 @@ contract DealClient {
         // return success;
     }
 
+    function refreshMetadataForBackupItem() {}
+
+    function refreshMetadataForAll() {
+        // will need an array for this, can not iterate 'backupItems' mapping
+    }
+
+    function keepTargetRedundancy() {}
+
     // Returns a CBOR-encoded DealProposal.
     function getDealProposal(bytes32 proposalId) view public returns (bytes memory) {
         // TODO make these array accesses safe.
@@ -209,6 +219,14 @@ contract DealClient {
     function refreshValues(uint64 dealId) public {
         tempIsDealActivated = MarketAPI.getDealVerified(dealId);
         tempActivationStatus = MarketAPI.getDealActivation(dealId);
+    }
+
+    function getDefaultTargetRedundancy() public view returns (uint16) {
+        return defaultTargetRedundancy;
+    }
+
+    function changeDefaultTargetRedundancy(uint16 newValue) public {
+        defaultTargetRedundancy = newValue;
     }
 
     // TODO fix in filecoin-solidity. They're using the wrong hex value.
