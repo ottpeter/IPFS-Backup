@@ -91,6 +91,12 @@ struct BackupItem {
     uint16 totalDealCount;
     uint16 atLeast1MonthDealCount;
     uint16 targetRedundancy;
+    uint64 pieceSize;
+    string label;
+    int64 dealDuration;
+    uint256 maxPricePerEpoch;
+    string originalLocation;
+    uint64 carSize;
     BackupItemDeal[] deals;
 }
 
@@ -186,13 +192,12 @@ contract DealClient {
             deals: []
         });
 
+        // save the parts of the BackupRequest that we need
+
         // create a unique id for the deal proposal
         // create multiple deals, each one has an id
         block.number;
         block.timestamp;        
-
-        // we don't want to send all the DealRequest parameters from the backup script (Express.js)
-        // we don't want to save the DealRequest, only parts of it, to the correct place
         emit
 
         // first we only need to emit DealProposalCreate, most of the necesarry data, that the callback function will need, will be in BackupItem
