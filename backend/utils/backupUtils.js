@@ -251,7 +251,10 @@ async function checkDealStatus(folderName) {
       const result = await dealClient.getDealId(commPasBytes);                                        // Send transaction
       dealID = result.toNumber();
       console.log("Deal ID: ", dealID);
-      if (dealID !== 0) break;
+      if (dealID !== 0) {
+        inProgressBackups[folderName].dealAccepted = true;
+        break;
+      }
       try_count++;
       await delay(1000*60*2);
     } while (try_count < max_try && dealID === 0);
