@@ -159,6 +159,13 @@ contract DealClient {
         return id;
     }
 
+    // Start the backup proccess, an entry should be created in 'backupItems' after this
+    // Another function will bring up the BackupItem to target redundancy
+    function startBackup(DealRequest calldata metaObject) public returns (bool) {
+
+        // return success;
+    }
+
     // Returns a CBOR-encoded DealProposal.
     function getDealProposal(bytes32 proposalId) view public returns (bytes memory) {
         // TODO make these array accesses safe.
