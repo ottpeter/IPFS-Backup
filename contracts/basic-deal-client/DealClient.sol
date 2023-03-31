@@ -180,7 +180,7 @@ contract DealClient {
     }
 
     // Start the backup proccess, an entry should be created in 'backupItems' after this
-    // Another function will bring up the BackupItem to target redundancy
+    // Another function will bring up the BackupItem to target redundancy if this does not succeed at first
     function startBackup(BackupRequest calldata backupMeta) public returns (bool) {
         require (msg.sender == owner);
 
@@ -198,7 +198,21 @@ contract DealClient {
             deals: []
         });
 
-        // save the parts of the BackupRequest that we need
+        // We make as many deals, as target redundancy
+        for (uint16 i = 0; i < backupItems[backupMeta.pieceCID].targetRedundancy; i++) {
+            bytes32 uniqId = keccak256(abi.encodePacked(block.timestamp, msg.sender, backupMeta.pieceCID, i));
+            
+            //dealProposals[id] = ProposalIdx(index, true);                   // I think we don't want to do this
+            //pieceToProposal[deal.piece_cid] = ProposalIdSet(id, true);      // 1 pieceCID has multiple proposals
+
+            // Writes the proposal metadata tothe event log
+            emit DealProposalCreate(
+                uniqId,
+                backupItems[backupMeta.pieceCID].pieceSize,
+                false,                                                        // Not verified
+                0                                                             // Initially price is 0
+            );
+        }
 
         // create a unique id for the deal proposal
         // create multiple deals, each one has an id
