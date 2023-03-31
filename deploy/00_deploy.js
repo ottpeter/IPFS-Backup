@@ -14,11 +14,11 @@ module.exports = async ({ deployments }) => {
 
 
     //deploy FilecoinMarketConsumer
-    const FilecoinMarketConsumer = await ethers.getContractFactory('FilecoinMarketConsumer', wallet);
+    /*const FilecoinMarketConsumer = await ethers.getContractFactory('FilecoinMarketConsumer', wallet);
     console.log('Deploying FilecoinMarketConsumer...');
     const filecoinMarketConsumer = await FilecoinMarketConsumer.deploy();
     await filecoinMarketConsumer.deployed()
-    console.log('FilecoinMarketConsumer deployed to:', filecoinMarketConsumer.address);
+    console.log('FilecoinMarketConsumer deployed to:', filecoinMarketConsumer.address);*/
     
     //deploy DealClient
     const DealClient = await ethers.getContractFactory('DealClient', wallet);

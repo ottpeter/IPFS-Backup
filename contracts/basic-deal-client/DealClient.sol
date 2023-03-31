@@ -97,7 +97,7 @@ struct BackupItem {
     uint256 maxPricePerEpoch;
     string originalLocation;
     uint64 carSize;
-    BackupItemDeal[] deals;
+    uint64 dealArrayId;
 }
 
 // A single deal about a BackupItem
@@ -130,10 +130,13 @@ contract DealClient {
 
     mapping(bytes32 => ProposalIdx) public dealProposals;                   // contract deal id -> deal index (we will delete this later)
     mapping(bytes32 => bytes) public proposals;                             // We will have this instead of dealProposals. uniqId -> commP
-    mapping(bytes => ProposalIdSet) public pieceToProposal;                 // commP -> dealProposalID
-    mapping(bytes => ProviderSet) public pieceProviders;                    // commP -> provider
-    mapping(bytes => uint64) public pieceDeals;                             // commP -> deal ID
+    mapping(bytes => ProposalIdSet) public pieceToProposal;                 // commP -> dealProposalID (most likely we will delete this)
+    mapping(bytes => ProviderSet) public pieceProviders;                    // commP -> provider (most likely we will delete this)
+    mapping(bytes => uint64) public pieceDeals;                             // commP -> deal ID (most likely we will delete this)
     mapping(bytes => BackupItem) public backupItems;                        // commP -> BackupItem - this is the one that we will keep on the long run
+
+    uint64 dealArrayNonce = 0;
+    mapping(uint64 => BackupItemDeal[]) public dealArrays;                   // dealArrayId -> BackupItemDeal[]
 
     DealRequest[] deals;
 
@@ -185,18 +188,21 @@ contract DealClient {
     function startBackup(BackupRequest calldata backupMeta) public returns (bool) {
         require (msg.sender == owner);
 
-        // Initialize new backup entry
-        BackupItem memory newItem;
-        newItem.totalDealCount = 0;
-        newItem.atLeast1MonthDealCount = 0;
-        newItem.targetRedundancy = defaultTargetRedundancy;
-        newItem.pieceSize = backupMeta.pieceSize;
-        newItem.label = backupMeta.label;
-        newItem.dealDuration = backupMeta.dealDuration;
-        newItem.maxPricePerEpoch = backupMeta.maxPricePerEpoch;
-        newItem.originalLocation = backupMeta.originalLocation;
-        newItem.carSize = backupMeta.carSize;
-        backupItems[backupMeta.pieceCID] = newItem;
+        // Initialize new backup entry        
+        backupItems[backupMeta.pieceCID] = BackupItem({
+            totalDealCount: 0,
+            atLeast1MonthDealCount: 0,
+            targetRedundancy: defaultTargetRedundancy,
+            pieceSize: backupMeta.pieceSize,
+            label: backupMeta.label,
+            dealDuration: backupMeta.dealDuration,
+            maxPricePerEpoch: backupMeta.maxPricePerEpoch,
+            originalLocation: backupMeta.originalLocation,
+            carSize: backupMeta.carSize,
+            dealArrayId: dealArrayNonce
+        });
+        // is the dealArray ready to be used ?
+        dealArrayNonce = dealArrayNonce + 1;
 
         // We make as many deals, as target redundancy
         for (uint16 i = 0; i < backupItems[backupMeta.pieceCID].targetRedundancy; i++) {
