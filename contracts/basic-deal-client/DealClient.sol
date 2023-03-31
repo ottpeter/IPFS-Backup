@@ -73,6 +73,12 @@ struct ExtraParamsV1 {
 	bool remove_unsealed_copy;
 }
 
+// CommP Struct
+// For every PieceCID, we will store this collection of data:
+struct CommPStuct {
+    
+}
+
 function serializeExtraParamsV1(ExtraParamsV1 memory params) pure returns (bytes memory) {
     CBOR.CBORBuffer memory buf = CBOR.create(64);
     buf.startFixedArray(4);
