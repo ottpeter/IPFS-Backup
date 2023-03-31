@@ -46,6 +46,7 @@ struct ProviderSet {
 // User request for this contract to make a deal. This structure is modelled after Filecoin's Deal
 // Proposal, but leaves out the provider, since any provider can pick up a deal broadcast by this
 // contract.
+// We will leave this in favor of BackupRequest, or this will be constructed inside the contract, from other pieces.
 struct DealRequest {
     // To be cast to a CommonTypes.Cid
     bytes piece_cid;
@@ -62,6 +63,17 @@ struct DealRequest {
     uint256 client_collateral;
     uint64 extra_params_version;
     ExtraParamsV1 extra_params;
+}
+
+// This is the object that is coming from the backup script, it will contain information that we need to create a DealRequest
+struct BackupRequest {
+    bytes pieceCID;                                         // Can be casted to CommonTypes.Cid | CommonTypes.Cid(pieceCID)
+    uint64 pieceSize;                                       // Power of 2
+    string label;                                           // PayloadCID
+    int64 dealDuration;                                     // Deal Duration in epoch
+    uint256 maxPricePerEpoch;                               // Max storage price per epoch
+    string originalLocation;                                // Original location, from where the data will be downloaded (location ref)
+    uint64 carSize;                                         // alias Payload Size
 }
 
 // Extra parameters associated with the deal request. These are off-protocol flags that
