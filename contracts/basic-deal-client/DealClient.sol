@@ -175,9 +175,20 @@ contract DealClient {
 
     // Start the backup proccess, an entry should be created in 'backupItems' after this
     // Another function will bring up the BackupItem to target redundancy
-    function startBackup(DealRequest calldata metaObject) public returns (bool) {
+    function startBackup(BackupRequest calldata backupMeta) public returns (bool) {
+        require (msg.sender == owner);
 
-        // we don't want to send all the DealRequest parameters from front end
+        // At this point, this commP has 0 deals
+        backupItems[backupMeta.pieceCID] = BackupItem({
+            totalDealCount: 0,
+            atLeast1MonthDealCount: 0,
+            targetRedundancy: defaultTargetRedundancy,
+            deals: []
+        });
+
+        // we will push to backupItems at some point
+
+        // we don't want to send all the DealRequest parameters from the backup script (Express.js)
         // we don't want to save the DealRequest, only parts of it, to the correct place
         // we need to create DealRequest, on-the-fly
         // first we only need to emit DealProposalCreate, most of the necesarry data, that the callback function will need, will be in BackupItem
