@@ -43,29 +43,9 @@ struct ProviderSet {
     bool valid;
 }
 
-// User request for this contract to make a deal. This structure is modelled after Filecoin's Deal
-// Proposal, but leaves out the provider, since any provider can pick up a deal broadcast by this
-// contract.
-// We will leave this in favor of BackupRequest, or this will be constructed inside the contract, from other pieces.
-struct DealRequest {
-    // To be cast to a CommonTypes.Cid
-    bytes piece_cid;
-    uint64 piece_size;
-    bool verified_deal;
-    // To be cast to a CommonTypes.FilAddress
-    // bytes client_addr;
-    // CommonTypes.FilAddress provider;
-    string label;
-    int64 start_epoch;
-    int64 end_epoch;
-    uint256 storage_price_per_epoch;
-    uint256 provider_collateral;
-    uint256 client_collateral;
-    uint64 extra_params_version;
-    ExtraParamsV1 extra_params;
-}
 
-// This is the object that is coming from the backup script, it will contain information that we need to create a DealRequest
+
+// This is the object that is coming from the backup script, it will contain information that we need to create a Deal Request
 struct BackupRequest {
     bytes pieceCID;                                         // Can be casted to CommonTypes.Cid | CommonTypes.Cid(pieceCID)
     uint64 pieceSize;                                       // Power of 2
@@ -76,14 +56,7 @@ struct BackupRequest {
     uint64 carSize;                                         // alias Payload Size
 }
 
-// Extra parameters associated with the deal request. These are off-protocol flags that
-// the storage provider will need.
-struct ExtraParamsV1 {
-	string location_ref;
-	uint64 car_size;
-	bool skip_ipni_announce;
-	bool remove_unsealed_copy;
-}
+
 
 // For every PieceCID, we will store this collection of data
 // It will be a value pair of a commP key
@@ -128,7 +101,6 @@ contract DealClient {
     uint64 dealArrayNonce = 0;
     mapping(uint64 => BackupItemDeal[]) public dealArrays;                   // dealArrayId -> BackupItemDeal[]
 
-    DealRequest[] deals;
 
     uint16 defaultTargetRedundancy = 2;                                     // Default target redundancy, that will be copied to every BackupItem, if other value not specified
 
@@ -145,33 +117,7 @@ contract DealClient {
         owner = msg.sender;
     }
 
-    function makeDealProposal(
-        DealRequest calldata deal
-    ) public returns (bytes32) {
-        // TODO: length check on byte fields
-        require(msg.sender == owner); 
-
-        uint256 index = deals.length;
-        deals.push(deal);
-
-        // creates a unique ID for the deal proposal -- there are many ways to do this
-        bytes32 id = keccak256(
-            abi.encodePacked(block.timestamp, msg.sender, index)
-        );
-        dealProposals[id] = ProposalIdx(index, true);
-
-        pieceToProposal[deal.piece_cid] = ProposalIdSet(id, true);
-
-        // writes the proposal metadata to the event log
-        emit DealProposalCreate(
-            id,
-            deal.piece_size,
-            deal.verified_deal,
-            deal.storage_price_per_epoch
-        );
-
-        return id;
-    }
+ 
 
     // Start the backup proccess, an entry should be created in 'backupItems' after this
     // Another function will bring up the BackupItem to target redundancy if this does not succeed at first
@@ -227,7 +173,6 @@ contract DealClient {
 
     // Returns a CBOR-encoded DealProposal.
     function getDealProposal(bytes32 proposalId) view public returns (bytes memory) {
-        //DealRequest memory deal = getDealRequest(proposalId);
         bytes memory commP = proposals[proposalId];                                     // Get PieceCID based on uniqId
 
         int64 epochFromNow = 2000;                                                      // Deal will be activated this many epoch from now
@@ -281,15 +226,7 @@ contract DealClient {
     }
 
 
-        // helper function to get deal request based from id
-    function getDealRequest(
-        bytes32 proposalId
-    ) internal view returns (DealRequest memory) {
-        ProposalIdx memory pi = dealProposals[proposalId];
-        require(pi.valid, "proposalId not available");
 
-        return deals[pi.idx];
-    }
 
     function authenticateMessage(bytes memory params) view internal {
         AccountTypes.AuthenticateMessageParams memory amp = params.deserializeAuthenticateMessageParams();
