@@ -235,22 +235,22 @@ contract DealClient {
         //DealRequest memory deal = getDealRequest(proposalId);
         bytes commP = proposals[proposalId];                                            // Get PieceCID based on uniqId
 
-        block.number;
-        block.timestamp;        
+        uint64 epochFromNow = 2000;                                                     // Deal will be activated this many epoch from now
+        uint64 startEpoch = block.number + epochFromNow;
+        uint64 endEpoch = startEpoch + backupItems[commP].dealDuration;
 
         MarketTypes.DealProposal memory ret;                                            // Create DealProposal object
-        ret.piece_cid = CommonTypes.Cid(deal.piece_cid);
-        ret.piece_size = deal.piece_size;
-        ret.verified_deal = deal.verified_deal;
-        ret.client = getDelegatedAddress(address(this));
-        // Set a dummy provider. The provider that picks up this deal will need to set its own address.
-        ret.provider = FilAddresses.fromActorID(0);
-        ret.label = deal.label;
-        ret.start_epoch = deal.start_epoch;
-        ret.end_epoch = deal.end_epoch;
-        ret.storage_price_per_epoch = uintToBigInt(deal.storage_price_per_epoch);
-        ret.provider_collateral = uintToBigInt(deal.provider_collateral);
-        ret.client_collateral = uintToBigInt(deal.client_collateral);
+        ret.piece_cid = CommonTypes.Cid(commP);                                         // Piece CID
+        ret.piece_size = backupItems[commP].pieceSize;                                  // Piece Size
+        ret.verified_deal = false;                                                      // Deal is not verified
+        ret.client = getDelegatedAddress(address(this));                                // This will be the address of the contract        
+        ret.provider = FilAddresses.fromActorID(0);                                     // Set a dummy provider. The provider that picks up this deal will need to set its own address.
+        ret.label = backupItems[commP].label;                                           // Payload CID
+        ret.start_epoch = startEpoch;                                                   // Start epoch
+        ret.end_epoch = deal.end_epoch;                                                 // End epoch
+        ret.storage_price_per_epoch = uintToBigInt(0);                                  // We need to solve this, we have max value instead of a concrete value
+        ret.provider_collateral = uintToBigInt(0);                                      // Most likely this will be always 0
+        ret.client_collateral = uintToBigInt(0);                                        // Most likely this will be always 0
 
         return serializeDealProposal(ret);
     }
