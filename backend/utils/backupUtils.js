@@ -12,6 +12,7 @@ const backupObj = {
   carExportReady: false,
   commPCalculationReady: false,
   dealRequestMade: false,
+  dealPublished: false,
   dealAccepted: false,
   dealActive: false
 };
@@ -252,7 +253,7 @@ async function checkDealStatus(folderName) {
       dealID = result.toNumber();
       console.log("Deal ID: ", dealID);
       if (dealID !== 0) {
-        inProgressBackups[folderName].dealAccepted = true;
+        inProgressBackups[folderName].dealPublished = true;
         break;
       }
       try_count++;

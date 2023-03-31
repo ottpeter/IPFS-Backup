@@ -73,6 +73,25 @@ struct ExtraParamsV1 {
 	bool remove_unsealed_copy;
 }
 
+// For every PieceCID, we will store this collection of data
+// It will be a value pair of a commP key
+struct BackupItem {
+    uint16 totalDealCount;
+    uint16 atLeast1MonthDealCount;
+    uint16 targetRedundancy;
+    BackupItemDeal[] deals;
+}
+
+// A single deal about a BackupItem
+struct BackupItemDeal {
+    uint64 dealId;
+    bytes providerAddress;
+    int64 startEpoch;
+    int64 endEpoch;
+    MarketTypes.GetDealActivationReturn status;
+    bool isActivated;
+}
+
 function serializeExtraParamsV1(ExtraParamsV1 memory params) pure returns (bytes memory) {
     CBOR.CBORBuffer memory buf = CBOR.create(64);
     buf.startFixedArray(4);
@@ -91,13 +110,15 @@ contract DealClient {
     uint64 constant public DATACAP_RECEIVER_HOOK_METHOD_NUM = 3726118371;
     uint64 constant public MARKET_NOTIFY_DEAL_METHOD_NUM = 4186741094;
 
-    mapping(bytes32 => ProposalIdx) public dealProposals; // contract deal id -> deal index
-    mapping(bytes => ProposalIdSet) public pieceToProposal; // commP -> dealProposalID
-    mapping(bytes => ProviderSet) public pieceProviders; // commP -> provider
-    mapping(bytes => uint64) public pieceDeals; // commP -> deal ID
+    mapping(bytes32 => ProposalIdx) public dealProposals;                   // contract deal id -> deal index
+    mapping(bytes => ProposalIdSet) public pieceToProposal;                 // commP -> dealProposalID
+    mapping(bytes => ProviderSet) public pieceProviders;                    // commP -> provider
+    mapping(bytes => uint64) public pieceDeals;                             // commP -> deal ID
+    mapping(bytes => BackupItem) public backupItems;                        // commP -> BackupItem - this is the one that we will keep on the long run
+
     DealRequest[] deals;
 
-    // Temporary variables
+    // Temporary variables - this will become obsolate
     MarketTypes.GetDealActivationReturn public tempActivationStatus;
     bool public tempIsDealActivated;
 
