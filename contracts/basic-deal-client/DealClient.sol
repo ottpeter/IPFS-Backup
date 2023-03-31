@@ -132,7 +132,7 @@ contract DealClient {
 
     uint16 defaultTargetRedundancy = 2;                                     // Default target redundancy, that will be copied to every BackupItem, if other value not specified
 
-    // Temporary variables - this will become obsolate
+    // Temporary variables - this ownerwill become obsolate
     MarketTypes.GetDealActivationReturn public tempActivationStatus;
     bool public tempIsDealActivated;
 
@@ -186,11 +186,15 @@ contract DealClient {
             deals: []
         });
 
-        // we will push to backupItems at some point
+        // create a unique id for the deal proposal
+        // create multiple deals, each one has an id
+        block.number;
+        block.timestamp;        
 
         // we don't want to send all the DealRequest parameters from the backup script (Express.js)
         // we don't want to save the DealRequest, only parts of it, to the correct place
-        // we need to create DealRequest, on-the-fly
+        emit
+
         // first we only need to emit DealProposalCreate, most of the necesarry data, that the callback function will need, will be in BackupItem
         // we will need to rewrite the callback function, accordingly 
 
@@ -209,6 +213,8 @@ contract DealClient {
     function getDealProposal(bytes32 proposalId) view public returns (bytes memory) {
         // TODO make these array accesses safe.
         DealRequest memory deal = getDealRequest(proposalId);
+
+        // We will need to rewrite this, because we don't have 'deal' (we have it in the form of different pieces of data)
 
         MarketTypes.DealProposal memory ret;
         ret.piece_cid = CommonTypes.Cid(deal.piece_cid);
