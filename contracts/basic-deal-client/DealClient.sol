@@ -97,6 +97,10 @@ contract DealClient {
     mapping(bytes => uint64) public pieceDeals; // commP -> deal ID
     DealRequest[] deals;
 
+    // Temporary variables
+    MarketTypes.GetDealActivationReturn public tempActivationStatus;
+    bool public tempIsDealActivated;
+
     event ReceivedDataCap(string received);
     event DealProposalCreate(bytes32 indexed id, uint64 size, bool indexed verified, uint256 price);
 
@@ -158,6 +162,19 @@ contract DealClient {
 
     function getDealId(bytes calldata commP) public view returns (uint64) {
         return pieceDeals[commP];
+    }
+
+    function getDealVerificationStatus(uint64 dealId) public view returns (bool) {
+        return tempIsDealActivated;
+    }
+
+    function getDealActivationStatus(uint64 dealId) public view returns (MarketTypes.GetDealActivationReturn memory) {
+        return tempActivationStatus;
+    }
+
+    function refreshValues(uint64 dealId) public {
+        tempIsDealActivated = MarketAPI.getDealVerified(dealId);
+        tempActivationStatus = MarketAPI.getDealActivation(dealId);
     }
 
     // TODO fix in filecoin-solidity. They're using the wrong hex value.

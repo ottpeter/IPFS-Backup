@@ -2,8 +2,6 @@ const fs = require('fs');
 const { spawn } = require('child_process');
 const { ethers } = require('hardhat');
 const { network } = require("../network");
-const BN = require('bn.js');
-const contractTest = require("../../artifacts/contracts/basic-deal-client/DealClient.sol/DealClient.json");
 const CID = require('cids');
 const Readable = require('stream').Readable;
 
@@ -238,6 +236,8 @@ async function addToFilecoin(not_used, folderName) {
 async function checkDealStatus(folderName) {
   try {
     const networkId = network.defaultNetwork;
+    const contractAddr = process.env.DEAL_CONTRACT;
+    const commPasBytes = new CID(inProgressBackups[folderName].commP).bytes;
     console.log("Waiting for DealID on network", networkId);
     const wallet = new ethers.Wallet(network.networks[networkId].accounts[0], ethers.provider);       // Create a new wallet instance
     const DealClient = await ethers.getContractFactory("DealClient", wallet);                         // Contract Factory
@@ -246,26 +246,36 @@ async function checkDealStatus(folderName) {
     let try_count = 0;
     let dealID = 0;
   
-    do {
+    do { 
       console.log("Attempt ", try_count);
-      const result = await dealClient.getDealId(inProgressBackups[folderName].commP);                 // Send transaction
-      //const transactionReceipt = await transaction.wait();
-      //const event = transactionReceipt.events[0].topics[1];                                         // Listen for DealProposalCreate event
-      //console.log("transactionReceipt: ", transactionReceipt);
-      //console.log("Events: ", transactionReceipt.events);
-      //console.log("Topics: ", transactionReceipt.events[0].topics);
-      console.log("Result: ", result);
-      const resultBigNumber = new BN(result);
-      console.log("ResultBigNumber: ", resultBigNumber);
-  
+      const result = await dealClient.getDealId(commPasBytes);                                        // Send transaction
+      dealID = result.toNumber();
+      console.log("Deal ID: ", dealID);
+      if (dealID !== 0) {
+        inProgressBackups[folderName].dealAccepted = true;
+        break;
+      }
+      try_count++;
       await delay(1000*60*2);
     } while (try_count < max_try && dealID === 0);
   
     if (try_count === max_try && dealID === 0) {
-      console.error("This is an error.");
+      inProgressBackups[folderName].dealIdError = `Tried to get the DealID ${try_count} times without success. Most likely there was an error with making the deal.`;
+      console.error(`Tried to get the DealID ${try_count} times without success. Most likely there was an error with making the deal.`);
+      return;
     }
+
+    console.log(`Backup finished successfully.`);
+    /*const refreshTransaction = dealClient.refreshValues(dealID);
+    console.log("Refresh transaction made. Hash: ", refreshTransaction.hash);
+
+    const isDealActivated = await dealClient.getDealVerificationStatus(dealID);
+    console.log("Is Deal Activated? ", isDealActivated);
+    const dealActive = await dealClient.getDealActivationStatus(dealID);
+    console.log("Deal Active: ", dealActive);*/
   } catch (error) {
-    console.error("There was an error while trying to get DealID");
+    inProgressBackups[folderName].dealIdError = error;
+    console.error("There was an error while trying to get DealID", error);
   }
 }
 
