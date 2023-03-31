@@ -128,7 +128,8 @@ contract DealClient {
     uint64 constant public DATACAP_RECEIVER_HOOK_METHOD_NUM = 3726118371;
     uint64 constant public MARKET_NOTIFY_DEAL_METHOD_NUM = 4186741094;
 
-    mapping(bytes32 => ProposalIdx) public dealProposals;                   // contract deal id -> deal index
+    mapping(bytes32 => ProposalIdx) public dealProposals;                   // contract deal id -> deal index (we will delete this later)
+    mapping(bytes32 => bytes) public proposals;                             // We will have this instead of dealProposals. uniqId -> commP
     mapping(bytes => ProposalIdSet) public pieceToProposal;                 // commP -> dealProposalID
     mapping(bytes => ProviderSet) public pieceProviders;                    // commP -> provider
     mapping(bytes => uint64) public pieceDeals;                             // commP -> deal ID
@@ -202,8 +203,9 @@ contract DealClient {
         for (uint16 i = 0; i < backupItems[backupMeta.pieceCID].targetRedundancy; i++) {
             bytes32 uniqId = keccak256(abi.encodePacked(block.timestamp, msg.sender, backupMeta.pieceCID, i));
             
-            //dealProposals[id] = ProposalIdx(index, true);                   // I think we don't want to do this
-            //pieceToProposal[deal.piece_cid] = ProposalIdSet(id, true);      // 1 pieceCID has multiple proposals
+            proposals[uniqId] = backupMeta.pieceCID;                          // uniqID -> commP
+            //dealProposals[uniqId] = ProposalIdx(index, true);               // I think we don't want to do this
+            //pieceToProposal[deal.piece_cid] = ProposalIdSet(uniqId, true);  // 1 pieceCID has multiple proposals
 
             // Writes the proposal metadata tothe event log
             emit DealProposalCreate(
@@ -213,12 +215,6 @@ contract DealClient {
                 0                                                             // Initially price is 0
             );
         }
-
-        // create a unique id for the deal proposal
-        // create multiple deals, each one has an id
-        block.number;
-        block.timestamp;        
-        emit
 
         // first we only need to emit DealProposalCreate, most of the necesarry data, that the callback function will need, will be in BackupItem
         // we will need to rewrite the callback function, accordingly 
@@ -236,12 +232,13 @@ contract DealClient {
 
     // Returns a CBOR-encoded DealProposal.
     function getDealProposal(bytes32 proposalId) view public returns (bytes memory) {
-        // TODO make these array accesses safe.
-        DealRequest memory deal = getDealRequest(proposalId);
+        //DealRequest memory deal = getDealRequest(proposalId);
+        bytes commP = proposals[proposalId];                                            // Get PieceCID based on uniqId
 
-        // We will need to rewrite this, because we don't have 'deal' (we have it in the form of different pieces of data)
+        block.number;
+        block.timestamp;        
 
-        MarketTypes.DealProposal memory ret;
+        MarketTypes.DealProposal memory ret;                                            // Create DealProposal object
         ret.piece_cid = CommonTypes.Cid(deal.piece_cid);
         ret.piece_size = deal.piece_size;
         ret.verified_deal = deal.verified_deal;
