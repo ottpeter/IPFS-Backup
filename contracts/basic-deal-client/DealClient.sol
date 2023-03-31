@@ -163,6 +163,12 @@ contract DealClient {
     // Another function will bring up the BackupItem to target redundancy
     function startBackup(DealRequest calldata metaObject) public returns (bool) {
 
+        // we don't want to send all the DealRequest parameters from front end
+        // we don't want to save the DealRequest, only parts of it, to the correct place
+        // we need to create DealRequest, on-the-fly
+        // first we only need to emit DealProposalCreate, most of the necesarry data, that the callback function will need, will be in BackupItem
+        // we will need to rewrite the callback function, accordingly 
+
         // return success;
     }
 
