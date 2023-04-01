@@ -57,7 +57,7 @@ struct BackupRequest {
 }
 
 
-
+ 
 // For every PieceCID, we will store this collection of data
 // It will be a value pair of a commP key
 struct BackupItem {
@@ -103,10 +103,6 @@ contract DealClient {
 
 
     uint16 defaultTargetRedundancy = 2;                                     // Default target redundancy, that will be copied to every BackupItem, if other value not specified
-
-    // Temporary variables - this ownerwill become obsolate
-    MarketTypes.GetDealActivationReturn public tempActivationStatus;
-    bool public tempIsDealActivated;
 
     event ReceivedDataCap(string received);
     event DealProposalCreate(bytes32 indexed id, uint64 size, bool indexed verified, uint256 price);
@@ -197,19 +193,6 @@ contract DealClient {
 
     function getDealId(bytes calldata commP) public view returns (uint64) {
         return pieceDeals[commP];
-    }
-
-    function getDealVerificationStatus(uint64 dealId) public view returns (bool) {
-        return tempIsDealActivated;
-    }
-
-    function getDealActivationStatus(uint64 dealId) public view returns (MarketTypes.GetDealActivationReturn memory) {
-        return tempActivationStatus;
-    }
-
-    function refreshValues(uint64 dealId) public {
-        tempIsDealActivated = MarketAPI.getDealVerified(dealId);
-        tempActivationStatus = MarketAPI.getDealActivation(dealId);
     }
 
     function getDefaultTargetRedundancy() public view returns (uint16) {
