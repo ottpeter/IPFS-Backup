@@ -28,20 +28,6 @@ contract MockMarket {
     }
 }
 
-struct ProposalIdSet {
-    bytes32 proposalId;
-    bool valid;
-}
-
-struct ProposalIdx {
-    uint256 idx;
-    bool valid;
-}
-
-struct ProviderSet {
-    bytes provider;
-    bool valid;
-}
 
 
 
@@ -91,17 +77,12 @@ contract DealClient {
     uint64 constant public DATACAP_RECEIVER_HOOK_METHOD_NUM = 3726118371;
     uint64 constant public MARKET_NOTIFY_DEAL_METHOD_NUM = 4186741094;
 
-    mapping(bytes32 => ProposalIdx) public dealProposals;                   // contract deal id -> deal index (we will delete this later)
-    mapping(bytes32 => bytes) public proposals;                             // We will have this instead of dealProposals. uniqId -> commP
-
-
+    mapping(bytes32 => bytes) public dealProposals;                         // We will have this instead of dealProposals. uniqId -> commP
     mapping(bytes => BackupItem) public backupItems;                        // commP -> BackupItem - this is the one that we will keep on the long run
-
     uint64 dealArrayNonce = 0;
     mapping(uint64 => BackupItemDeal[]) public dealArrays;                  // dealArrayId -> BackupItemDeal[]
-
-
     uint16 defaultTargetRedundancy = 2;                                     // Default target redundancy, that will be copied to every BackupItem, if other value not specified
+
 
     event ReceivedDataCap(string received);
     event DealProposalCreate(bytes32 indexed id, uint64 size, bool indexed verified, uint256 price);
@@ -140,10 +121,10 @@ contract DealClient {
         for (uint16 i = 0; i < backupItems[backupMeta.pieceCID].targetRedundancy; i++) {
             bytes32 uniqId = keccak256(abi.encodePacked(block.timestamp, msg.sender, backupMeta.pieceCID, i));
             
-            proposals[uniqId] = backupMeta.pieceCID;                          // uniqID -> commP
+            dealProposals[uniqId] = backupMeta.pieceCID;                          // uniqID -> commP
 
             //dealProposals[uniqId] = ProposalIdx(index, true);               // I think we don't want to do this | 'index' is just a nonce
-            // By doing proposals[uniqId] -> cid, we said, that that uniqId exists. Now we can do "does key exist" test in NOTIFY
+            // By doing dealProposals[uniqId] -> cid, we said, that that uniqId exists. Now we can do "does key exist" test in NOTIFY
             // But we don't have uniqId there! We are working from CID
             // uniqId -> commP needs to exist
             // No, also commP -> uniqId needs to exist
@@ -169,6 +150,10 @@ contract DealClient {
         // return success;
     }
 
+    function getBackupItem(bytes memory commP) public view returns (BackupItem memory) {
+        return backupItems[commP];
+    }
+
     function refreshMetadataForBackupItem() public {}
 
     function refreshMetadataForAll() public {
@@ -179,7 +164,7 @@ contract DealClient {
 
     // Returns a CBOR-encoded DealProposal.
     function getDealProposal(bytes32 proposalId) view public returns (bytes memory) {
-        bytes memory commP = proposals[proposalId];                                     // Get PieceCID based on uniqId
+        bytes memory commP = dealProposals[proposalId];                                     // Get PieceCID based on uniqId
 
         int64 epochFromNow = 2000;                                                      // Deal will be activated this many epoch from now
         int64 startEpoch = int64(int256(block.number)) + epochFromNow;
