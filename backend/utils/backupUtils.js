@@ -221,7 +221,7 @@ async function addToFilecoin(not_used, folderName) {
   const DealClient = await ethers.getContractFactory("DealClient", wallet);                         // Contract Factory
   const dealClient = await DealClient.attach(contractAddr);                                         // Contract instance
   
-  transaction = await dealClient.makeDealProposal(DealRequestStruct)                                // Transaction
+  transaction = await dealClient.startBackup(DealRequestStruct)                                // Transaction
   transactionReceipt = await transaction.wait()
 
   const event = transactionReceipt.events[0].topics[1];                                             // Listen for DealProposalCreate event
