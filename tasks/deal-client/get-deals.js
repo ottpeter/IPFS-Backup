@@ -1,12 +1,12 @@
 task(
-    "get-deal-proposal",
+    "get-deals",
     "Gets a deal proposal from the proposal id"
   )
     .addParam("contract", "The address of the deal client solidity")
-    .addParam("proposalId", "The proposal ID")
+    .addParam("commP", "The PieceCID, alias commP")
     .setAction(async (taskArgs) => {
         const contractAddr = taskArgs.contract
-        const proposalID = taskArgs.proposalId
+        const commP = taskArgs.commP
         const networkId = network.name
         console.log("Getting deal proposal on network", networkId)
 
@@ -21,6 +21,6 @@ task(
           
         //send a transaction to call makeDealProposal() method
         //transaction = await dealClient.getDealProposal(proposalID)
-        let result = await dealClient.getDealProposal(proposalID)
+        let result = await dealClient.getDeals(commP)
         console.log("The deal proposal is:", result)
     })
