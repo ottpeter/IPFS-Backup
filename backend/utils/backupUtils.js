@@ -214,6 +214,16 @@ async function addToFilecoin(not_used, folderName) {
     extraParamsV1,
   ];
   
+  const BackupRequestStruct = {
+    pieceCID: cidHex,
+    pieceSize: inProgressBackups[folderName].pieceSize,
+    label: inProgressBackups[folderName].payloadCID,
+    dealDuration: 600000,
+    maxPricePerEpoch: 0,                                                      // Max price per epoch
+    originalLocation: "http://45.91.171.156:3000/fetch?fileName=" + folderName + ".car",
+    carSize: inProgressBackups[folderName].payloadSize,
+  }
+
   const networkId = network.defaultNetwork;
   console.log("Making deal proposal on network", networkId)
 
@@ -221,7 +231,7 @@ async function addToFilecoin(not_used, folderName) {
   const DealClient = await ethers.getContractFactory("DealClient", wallet);                         // Contract Factory
   const dealClient = await DealClient.attach(contractAddr);                                         // Contract instance
   
-  transaction = await dealClient.startBackup(DealRequestStruct)                                // Transaction
+  transaction = await dealClient.startBackup(BackupRequestStruct)                                // Transaction
   transactionReceipt = await transaction.wait()
 
   const event = transactionReceipt.events[0].topics[1];                                             // Listen for DealProposalCreate event

@@ -222,7 +222,7 @@ contract DealClient {
     function dealNotify(bytes memory params) internal {
         MarketDealNotifyParams memory mdnp = deserializeMarketDealNotifyParams(params);
         MarketTypes.DealProposal memory proposal = deserializeDealProposal(mdnp.dealProposal);
-
+    // TODO
         require(pieceToProposal[proposal.piece_cid.data].valid, "piece cid must be added before authorizing");
         require(!pieceProviders[proposal.piece_cid.data].valid, "deal failed policy check: provider already claimed this cid");
 
