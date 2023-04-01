@@ -250,8 +250,13 @@ contract DealClient {
         dealArrays[backupItems[proposal.piece_cid.data].dealArrayId].push(BackupItemDeal({
             dealId: mdnp.dealId,
             providerAddress: proposal.provider.data,
-            startEpoch: proposal.start_epoch.data,
-            endEpoch: proposal.end_epoch.data
+            startEpoch: proposal.start_epoch,
+            endEpoch: proposal.end_epoch,
+            status: MarketTypes.GetDealActivationReturn({
+                activated: -1,                  // Epoch at which the deal was activated, or -1.
+                terminated: -1                  // Epoch at which the deal was terminated abnormally, or -1.
+            }),
+            isActivated: false
         }));
     }
 
