@@ -79,8 +79,8 @@ contract DealClient {
 
     mapping(bytes32 => bytes) public dealProposals;                         // We will have this instead of dealProposals. uniqId -> commP
     mapping(bytes => BackupItem) public backupItems;                        // commP -> BackupItem - this is the one that we will keep on the long run
-    uint64 dealArrayNonce = 0;
     mapping(uint64 => BackupItemDeal[]) public dealArrays;                  // dealArrayId -> BackupItemDeal[]
+    uint64 dealArrayNonce = 0;                                              // Will be used as identifier for dealArrays
     uint16 defaultTargetRedundancy = 2;                                     // Default target redundancy, that will be copied to every BackupItem, if other value not specified
 
 
@@ -136,6 +136,11 @@ contract DealClient {
 
     function getBackupItem(bytes memory commP) public view returns (BackupItem memory) {
         return backupItems[commP];
+    }
+
+    function getDeals(bytes memory commP) public view returns (BackupItemDeal[] memory) {
+        uint64 index = backupItems[commP].dealArrayId;
+        return dealArrays[index];
     }
 
     function refreshMetadataForBackupItem() public {}
