@@ -118,10 +118,10 @@ contract DealClient {
         uint64 index = backupItems[backupMeta.pieceCID].dealArrayId;
         // We make as many deals, as target redundancy
         for (uint16 i = 0; i < backupItems[backupMeta.pieceCID].targetRedundancy; i++) {
+            logString("hello");
             bytes32 uniqId = keccak256(abi.encodePacked(block.timestamp, msg.sender, backupMeta.pieceCID, i));
             
             dealProposals[uniqId] = backupMeta.pieceCID;                      // uniqID -> commP
-
             // Writes the proposal metadata tothe event log
             emit DealProposalCreate(
                 uniqId,
