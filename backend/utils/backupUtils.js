@@ -186,33 +186,6 @@ async function addToFilecoin(not_used, folderName) {
   const cidHexRaw = new CID(cid).toString('base16').substring(1);
   const cidHex = "0x" + cidHexRaw;
   const contractAddr = process.env.DEAL_CONTRACT;
-
-  const verified = false;
-  const skipIpniAnnounce = false;
-  const removeUnsealedCopy = false;
-
-  const extraParamsV1 = [
-    "http://45.91.171.156:3000/fetch?fileName=" + folderName + ".car",
-    inProgressBackups[folderName].payloadSize,
-    skipIpniAnnounce,
-    removeUnsealedCopy,
-  ]
-
-  const startEpoch = 215000;
-
-  const DealRequestStruct = [
-    cidHex,
-    inProgressBackups[folderName].pieceSize,
-    verified,
-    inProgressBackups[folderName].payloadCID,
-    startEpoch,               // arbitrary number, will need to fetch this later
-    (startEpoch+600000),      // end
-    0,                        // storage price per epoch
-    0,                        // provider collateral
-    0,                        // client collateral
-    1,                        // extra params version
-    extraParamsV1,
-  ];
   
   const BackupRequestStruct = {
     pieceCID: cidHex,
@@ -235,9 +208,7 @@ async function addToFilecoin(not_used, folderName) {
   transactionReceipt = await transaction.wait()
 
   const event = transactionReceipt.events[0].topics[1];                                             // Listen for DealProposalCreate event
-  //console.log("transactionReceipt: ", transactionReceipt);
-  //console.log("Events: ", transactionReceipt.events);
-  //console.log("Topics: ", transactionReceipt.events[0].topics);
+
   inProgressBackups[folderName].dealRequestMade = true;
   console.log("Complete! Event Emitted. ProposalId is:", event);
 
