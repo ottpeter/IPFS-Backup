@@ -226,22 +226,22 @@ async function checkDealStatus(folderName) {
     const dealClient = await DealClient.attach(contractAddr);                                         // Contract instance
     const max_try = 50;
     let try_count = 0;
-    let dealID = 0;
+    let deals = [];
   
     do { 
       console.log("Attempt ", try_count);
-      const result = await dealClient.getDealId(commPasBytes);                                        // Send transaction
-      dealID = result.toNumber();
-      console.log("Deal ID: ", dealID);
-      if (dealID !== 0) {
+      deals = await dealClient.getDeals(commPasBytes);                                        // Send transaction
+      //dealID = result.toNumber();
+      console.log("Deals array: ", deals);
+      if (deals.length > 0) {
         inProgressBackups[folderName].dealPublished = true;
         break;
       }
       try_count++;
       await delay(1000*60*2);
-    } while (try_count < max_try && dealID === 0);
+    } while (try_count < max_try && deals.length === 0);
   
-    if (try_count === max_try && dealID === 0) {
+    if (try_count === max_try && deals.length === 0) {
       inProgressBackups[folderName].dealIdError = `Tried to get the DealID ${try_count} times without success. Most likely there was an error with making the deal.`;
       console.error(`Tried to get the DealID ${try_count} times without success. Most likely there was an error with making the deal.`);
       return;
