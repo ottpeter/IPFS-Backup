@@ -93,7 +93,6 @@ contract DealClient {
         owner = msg.sender;
     }
 
- 
 
     // Start the backup proccess, an entry should be created in 'backupItems' after this
     // Another function will bring up the BackupItem to target redundancy if this does not succeed at first
@@ -113,7 +112,7 @@ contract DealClient {
             carSize: backupMeta.carSize,
             dealArrayId: dealArrayNonce
         });
-        // is the dealArray ready to be used ?
+        // is the dealArray ready to be used ? seems like it is.
         dealArrayNonce = dealArrayNonce + 1;
 
         uint64 index = backupItems[backupMeta.pieceCID].dealArrayId;
@@ -121,19 +120,7 @@ contract DealClient {
         for (uint16 i = 0; i < backupItems[backupMeta.pieceCID].targetRedundancy; i++) {
             bytes32 uniqId = keccak256(abi.encodePacked(block.timestamp, msg.sender, backupMeta.pieceCID, i));
             
-            dealProposals[uniqId] = backupMeta.pieceCID;                          // uniqID -> commP
-
-            //dealProposals[uniqId] = ProposalIdx(index, true);               // I think we don't want to do this | 'index' is just a nonce
-            // By doing dealProposals[uniqId] -> cid, we said, that that uniqId exists. Now we can do "does key exist" test in NOTIFY
-            // But we don't have uniqId there! We are working from CID
-            // uniqId -> commP needs to exist
-            // No, also commP -> uniqId needs to exist
-            // That's problem, because that's one -> many
-            // commP -> dealArrayId -> {loop-through-it} -> hasUniqId -> yes/no
-            //pieceToProposal[deal.piece_cid] = ProposalIdSet(uniqId, true);  // 1 pieceCID has multiple proposals
-
-            dealArrays[index];  // This selects an array. This not an element of an array, this is an array.
-            // BackupItemDeal
+            dealProposals[uniqId] = backupMeta.pieceCID;                      // uniqID -> commP
 
             // Writes the proposal metadata tothe event log
             emit DealProposalCreate(
@@ -144,10 +131,7 @@ contract DealClient {
             );
         }
 
-        // first we only need to emit DealProposalCreate, most of the necesarry data, that the callback function will need, will be in BackupItem
-        // we will need to rewrite the callback function, accordingly 
-
-        // return success;
+        return true;
     }
 
     function getBackupItem(bytes memory commP) public view returns (BackupItem memory) {
@@ -198,8 +182,6 @@ contract DealClient {
     function getDelegatedAddress(address addr) internal pure returns (CommonTypes.FilAddress memory) {
         return CommonTypes.FilAddress(abi.encodePacked(hex"040a", addr));
     }
-
-
 
 
     function authenticateMessage(bytes memory params) view internal {
