@@ -87,6 +87,8 @@ contract DealClient {
     event ReceivedDataCap(string received);
     event DealProposalCreate(bytes32 indexed id, uint64 size, bool indexed verified, uint256 price);
 
+    event Log(string text);
+
     address public owner;
 
     constructor() {
@@ -97,6 +99,7 @@ contract DealClient {
     // Start the backup proccess, an entry should be created in 'backupItems' after this
     // Another function will bring up the BackupItem to target redundancy if this does not succeed at first
     function startBackup(BackupRequest calldata backupMeta) public returns (bool) {
+        emit Log("Backup started");
         require (msg.sender == owner);
 
         // Initialize new backup entry        
@@ -118,7 +121,7 @@ contract DealClient {
         uint64 index = backupItems[backupMeta.pieceCID].dealArrayId;
         // We make as many deals, as target redundancy
         for (uint16 i = 0; i < backupItems[backupMeta.pieceCID].targetRedundancy; i++) {
-            console.logString("hello");
+            emit Log("Loop.");
             bytes32 uniqId = keccak256(abi.encodePacked(block.timestamp, msg.sender, backupMeta.pieceCID, i));
             
             dealProposals[uniqId] = backupMeta.pieceCID;                      // uniqID -> commP
