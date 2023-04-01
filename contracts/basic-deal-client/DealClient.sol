@@ -94,9 +94,6 @@ contract DealClient {
     mapping(bytes32 => ProposalIdx) public dealProposals;                   // contract deal id -> deal index (we will delete this later)
     mapping(bytes32 => bytes) public proposals;                             // We will have this instead of dealProposals. uniqId -> commP
 
-    mapping(bytes => ProposalIdSet) public pieceToProposal;                 // commP -> dealProposalID (most likely we will delete this)
-    mapping(bytes => ProviderSet) public pieceProviders;                    // commP -> provider (most likely we will delete this)
-    mapping(bytes => uint64) public pieceDeals;                             // commP -> deal ID (most likely we will delete this)
 
     mapping(bytes => BackupItem) public backupItems;                        // commP -> BackupItem - this is the one that we will keep on the long run
 
@@ -204,10 +201,6 @@ contract DealClient {
         return serializeDealProposal(ret);
     }
 
-    function getDealId(bytes calldata commP) public view returns (uint64) {
-        return pieceDeals[commP];
-    }
-
     function getDefaultTargetRedundancy() public view returns (uint16) {
         return defaultTargetRedundancy;
     }
@@ -228,14 +221,14 @@ contract DealClient {
         AccountTypes.AuthenticateMessageParams memory amp = params.deserializeAuthenticateMessageParams();
         MarketTypes.DealProposal memory proposal = deserializeDealProposal(amp.message);
 
-        require(pieceToProposal[proposal.piece_cid.data].valid, "piece cid must be added before authorizing");
-        require(!pieceProviders[proposal.piece_cid.data].valid, "deal failed policy check: provider already claimed this cid");
+        require(backupItems[proposal.piece_cid.data].targetRedundancy > 0, "CommP must exist in backupItems!");                         // We could turn off the backup by setting redundancy to 0
+        //require(!pieceProviders[proposal.piece_cid.data].valid, "deal failed policy check: provider already claimed this cid");
     }
 
     function dealNotify(bytes memory params) internal {
         MarketDealNotifyParams memory mdnp = deserializeMarketDealNotifyParams(params);
         MarketTypes.DealProposal memory proposal = deserializeDealProposal(mdnp.dealProposal);
-    
+
         require(backupItems[proposal.piece_cid.data].targetRedundancy > 0, "CommP must exist in backupItems!");                         // We could turn off the backup by setting redundancy to 0
         bool providerAlreadyStoringThisData = false;
         BackupItemDeal[] memory arr = dealArrays[backupItems[proposal.piece_cid.data].dealArrayId];
@@ -246,6 +239,7 @@ contract DealClient {
             }
         }
         require(!providerAlreadyStoringThisData, "Provider is already storing this data");                                              // We don't want duplicates, has to be stored on different miner
+    
         
         dealArrays[backupItems[proposal.piece_cid.data].dealArrayId].push(BackupItemDeal({
             dealId: mdnp.dealId,
