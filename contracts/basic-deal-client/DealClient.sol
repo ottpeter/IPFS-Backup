@@ -75,7 +75,6 @@ struct BackupItem {
 
 // A single deal about a BackupItem
 struct BackupItemDeal {
-    bytes32 uniqId;
     uint64 dealId;
     bytes providerAddress;
     int64 startEpoch;
@@ -98,7 +97,6 @@ contract DealClient {
     mapping(bytes => ProposalIdSet) public pieceToProposal;                 // commP -> dealProposalID (most likely we will delete this)
     mapping(bytes => ProviderSet) public pieceProviders;                    // commP -> provider (most likely we will delete this)
     mapping(bytes => uint64) public pieceDeals;                             // commP -> deal ID (most likely we will delete this)
-    DealRequest[] deals;                                                    // obsolated, we used this for length -> index as well
 
     mapping(bytes => BackupItem) public backupItems;                        // commP -> BackupItem - this is the one that we will keep on the long run
 
@@ -140,7 +138,7 @@ contract DealClient {
         // is the dealArray ready to be used ?
         dealArrayNonce = dealArrayNonce + 1;
 
-        uint64 memory index = backupItems[backupMeta.pieceCID].dealArrayId;
+        uint64 index = backupItems[backupMeta.pieceCID].dealArrayId;
         // We make as many deals, as target redundancy
         for (uint16 i = 0; i < backupItems[backupMeta.pieceCID].targetRedundancy; i++) {
             bytes32 uniqId = keccak256(abi.encodePacked(block.timestamp, msg.sender, backupMeta.pieceCID, i));
@@ -237,16 +235,24 @@ contract DealClient {
     function dealNotify(bytes memory params) internal {
         MarketDealNotifyParams memory mdnp = deserializeMarketDealNotifyParams(params);
         MarketTypes.DealProposal memory proposal = deserializeDealProposal(mdnp.dealProposal);
-    // TODO
-        require(pieceToProposal[proposal.piece_cid.data].valid, "piece cid must be added before authorizing");          // IT IS REGISTERED not doing DEAL NOTIFY for not registered commP's
-        // Replace this to "commP exists in backupItems
-        require(backupItems[proposal.piece_cid.data].targetRedundancy, "CommP must exist in backupItems!");
-
-        require(!pieceProviders[proposal.piece_cid.data].valid, "deal failed policy check: provider already claimed this cid");         // DOES NOT EXIST YET
-        // No same provider for this commP (loop through BackupItem.something, didFind? true/false)
-
-        pieceProviders[proposal.piece_cid.data] = ProviderSet(proposal.provider.data, true);            // IT EXISTS NOW
-        pieceDeals[proposal.piece_cid.data] = mdnp.dealId;          // SET THE DEAL ID
+    
+        require(backupItems[proposal.piece_cid.data].targetRedundancy > 0, "CommP must exist in backupItems!");                         // We could turn off the backup by setting redundancy to 0
+        bool providerAlreadyStoringThisData = false;
+        BackupItemDeal[] memory arr = dealArrays[backupItems[proposal.piece_cid.data].dealArrayId];
+        for (uint i = 0; i < arr.length; i++) {
+            if (arr[i].dealId == mdnp.dealId) { // couldn't compare providerAddress
+                providerAlreadyStoringThisData = true;
+                break;
+            }
+        }
+        require(!providerAlreadyStoringThisData, "Provider is already storing this data");                                              // We don't want duplicates, has to be stored on different miner
+        
+        dealArrays[backupItems[proposal.piece_cid.data].dealArrayId].push(BackupItemDeal({
+            dealId: mdnp.dealId,
+            providerAddress: proposal.provider.data,
+            startEpoch: proposal.start_epoch.data,
+            endEpoch: proposal.end_epoch.data
+        }));
     }
 
     // client - filecoin address byte format
