@@ -1,5 +1,5 @@
 exports.getAddress = require("./get-address")
 exports.storeAll = require("./filecoin-market-consumer/store-all")
-exports.makeDealProposal = require("./deal-client/make-deal-proposal")
+exports.makeDealProposal = require("./deal-client/start-backup")
 exports.getDealProposal = require("./deal-client/get-deal-proposal")
 exports.getDealId = require("./deal-client/get-backup-item")
