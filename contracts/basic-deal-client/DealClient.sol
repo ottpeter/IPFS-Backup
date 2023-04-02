@@ -121,7 +121,6 @@ contract DealClient {
         uint64 index = backupItems[backupMeta.pieceCID].dealArrayId;
         // We make as many deals, as target redundancy
         for (uint16 i = 0; i < backupItems[backupMeta.pieceCID].targetRedundancy; i++) {
-            emit Log("Loop.");
             bytes32 uniqId = keccak256(abi.encodePacked(block.timestamp, msg.sender, backupMeta.pieceCID, i));
             
             dealProposals[uniqId] = backupMeta.pieceCID;                      // uniqID -> commP
@@ -156,7 +155,7 @@ contract DealClient {
 
     // Returns a CBOR-encoded DealProposal.
     function getDealProposal(bytes32 proposalId) view public returns (bytes memory) {
-        bytes memory commP = dealProposals[proposalId];                                     // Get PieceCID based on uniqId
+        bytes memory commP = dealProposals[proposalId];                                 // Get PieceCID based on uniqId
 
         int64 epochFromNow = 2000;                                                      // Deal will be activated this many epoch from now
         int64 startEpoch = int64(int256(block.number)) + epochFromNow;
