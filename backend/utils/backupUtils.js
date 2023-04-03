@@ -161,7 +161,7 @@ async function calculateCommP(folderName, payloadCID, CID) {
       console.log("CommP: ", commPCid)
       console.log("Payload size: ", payloadSize);
       console.log("Piece Size: ", paddedPieceSize);
-      addToFilecoin(CID, folderName);
+      addToFilecoin(folderName);
     } catch (error) {
       console.error("There was an error while trying to calculate commP!", error);
       inProgressBackups[folderName].commPCalculationError = error;
@@ -180,40 +180,23 @@ async function calculateCommP(folderName, payloadCID, CID) {
   return {commPCid, paddedPieceSize}
 }
 
-async function addToFilecoin(not_used, folderName) {
+async function addToFilecoin(folderName) {
   // Convert piece CID string to hex bytes
   const cid = inProgressBackups[folderName].commP;
   const cidHexRaw = new CID(cid).toString('base16').substring(1);
   const cidHex = "0x" + cidHexRaw;
   const contractAddr = process.env.DEAL_CONTRACT;
-
-  const verified = false;
-  const skipIpniAnnounce = false;
-  const removeUnsealedCopy = false;
-
-  const extraParamsV1 = [
-    "http://45.91.171.156:3000/fetch?fileName=" + folderName + ".car",
-    inProgressBackups[folderName].payloadSize,
-    skipIpniAnnounce,
-    removeUnsealedCopy,
-  ]
-
-  const startEpoch = 215000;
-
-  const DealRequestStruct = [
-    cidHex,
-    inProgressBackups[folderName].pieceSize,
-    verified,
-    inProgressBackups[folderName].payloadCID,
-    startEpoch,               // arbitrary number, will need to fetch this later
-    (startEpoch+600000),      // end
-    0,                        // storage price per epoch
-    0,                        // provider collateral
-    0,                        // client collateral
-    1,                        // extra params version
-    extraParamsV1,
-  ];
   
+  const BackupRequestStruct = {
+    pieceCID: cidHex,
+    pieceSize: inProgressBackups[folderName].pieceSize,
+    label: inProgressBackups[folderName].payloadCID,
+    dealDuration: 600000,
+    maxPricePerEpoch: 0,                                                      // Max price per epoch
+    originalLocation: "http://45.91.171.156:3000/fetch?fileName=" + folderName + ".car",
+    carSize: inProgressBackups[folderName].payloadSize,
+  }
+
   const networkId = network.defaultNetwork;
   console.log("Making deal proposal on network", networkId)
 
@@ -221,13 +204,11 @@ async function addToFilecoin(not_used, folderName) {
   const DealClient = await ethers.getContractFactory("DealClient", wallet);                         // Contract Factory
   const dealClient = await DealClient.attach(contractAddr);                                         // Contract instance
   
-  transaction = await dealClient.makeDealProposal(DealRequestStruct)                                // Transaction
+  transaction = await dealClient.startBackup(BackupRequestStruct)                                // Transaction
   transactionReceipt = await transaction.wait()
 
   const event = transactionReceipt.events[0].topics[1];                                             // Listen for DealProposalCreate event
-  //console.log("transactionReceipt: ", transactionReceipt);
-  //console.log("Events: ", transactionReceipt.events);
-  //console.log("Topics: ", transactionReceipt.events[0].topics);
+
   inProgressBackups[folderName].dealRequestMade = true;
   console.log("Complete! Event Emitted. ProposalId is:", event);
 
@@ -245,35 +226,31 @@ async function checkDealStatus(folderName) {
     const dealClient = await DealClient.attach(contractAddr);                                         // Contract instance
     const max_try = 50;
     let try_count = 0;
-    let dealID = 0;
+    let deals = [];
   
     do { 
       console.log("Attempt ", try_count);
-      const result = await dealClient.getDealId(commPasBytes);                                        // Send transaction
-      dealID = result.toNumber();
-      console.log("Deal ID: ", dealID);
-      if (dealID !== 0) {
+      deals = await dealClient.getDeals(commPasBytes);                                        // Send transaction
+      //dealID = result.toNumber();
+      console.log("Deals array: ", deals);
+      if (deals.length > 0) {
         inProgressBackups[folderName].dealPublished = true;
         break;
       }
       try_count++;
       await delay(1000*60*2);
-    } while (try_count < max_try && dealID === 0);
+    } while (try_count < max_try && deals.length === 0);
   
-    if (try_count === max_try && dealID === 0) {
+    if (try_count === max_try && deals.length === 0) {
       inProgressBackups[folderName].dealIdError = `Tried to get the DealID ${try_count} times without success. Most likely there was an error with making the deal.`;
       console.error(`Tried to get the DealID ${try_count} times without success. Most likely there was an error with making the deal.`);
       return;
     }
 
     console.log(`Backup finished successfully.`);
-    /*const refreshTransaction = dealClient.refreshValues(dealID);
-    console.log("Refresh transaction made. Hash: ", refreshTransaction.hash);
+    console.log("Deals: ", deals);
+    delete inProgressBackups[folderName];
 
-    const isDealActivated = await dealClient.getDealVerificationStatus(dealID);
-    console.log("Is Deal Activated? ", isDealActivated);
-    const dealActive = await dealClient.getDealActivationStatus(dealID);
-    console.log("Deal Active: ", dealActive);*/
   } catch (error) {
     inProgressBackups[folderName].dealIdError = error;
     console.error("There was an error while trying to get DealID", error);
@@ -292,8 +269,15 @@ function listActiveBackups(name) {
   }
 }
 
+function clearInProgressBackups() {
+  //inProgressBackups = Object.assign({}, {});
+  for (let key in inProgressBackups) {
+    delete inProgressBackups[key];
+  }
+}
+
 function delay(time) {
   return new Promise(resolve => setTimeout(resolve, time));
 } 
 
-module.exports = { startBackup, fillArrayWithPinnedCIDs, copyToMFS, createCAR, addBackCAR, calculateCommP, addToFilecoin, listActiveBackups }
+module.exports = { startBackup, fillArrayWithPinnedCIDs, copyToMFS, createCAR, addBackCAR, calculateCommP, addToFilecoin, listActiveBackups, clearInProgressBackups }
