@@ -93,6 +93,7 @@ contract DealClient {
     uint64 constant public AUTHENTICATE_MESSAGE_METHOD_NUM = 2643134072;
     uint64 constant public DATACAP_RECEIVER_HOOK_METHOD_NUM = 3726118371;
     uint64 constant public MARKET_NOTIFY_DEAL_METHOD_NUM = 4186741094;
+    int64 constant public ONE_MONTH = 86400;                               // Approximately 1 month in epochs
 
     mapping(bytes32 => bytes) public dealProposals;                         // We will have this instead of dealProposals. uniqId -> commP
     mapping(bytes => BackupItem) public backupItems;                        // commP -> BackupItem - this is the one that we will keep on the long run
@@ -163,7 +164,28 @@ contract DealClient {
         return dealArrays[index];
     }
 
-    function refreshMetadataForBackupItem() public {}
+    function refreshMetadataForBackupItem(bytes memory commP) public {
+        uint64 dealArrayIndex = backupItems[commP].dealArrayId;
+        uint16 newDealCount = 0;
+        uint16 new1MonthPlusCount = 0;
+
+        for (uint16 i = 0; i < dealArrays[dealArrayIndex].length; i++) {
+            uint64 dealId = dealArrays[dealArrayIndex][i].dealId;
+            dealArrays[dealArrayIndex][i].status = MarketAPI.getDealActivation(dealId);
+            //dealArrays[dealArrayIndex][i].status.activated = activated;
+            //dealArrays[dealArrayIndex][i].status.terminated = terminated;
+            if (dealArrays[dealArrayIndex][i].status.activated > 0 && dealArrays[dealArrayIndex][i].status.terminated == -1) {
+                newDealCount++;
+                dealArrays[dealArrayIndex][i].isActivated = true;
+                if (dealArrays[dealArrayIndex][i].endEpoch + ONE_MONTH > int64(uint64(block.number))) new1MonthPlusCount++;
+            }
+            if (dealArrays[dealArrayIndex][i].status.terminated > 0) {
+                // remove this deal
+            }
+        }
+        backupItems[commP].totalDealCount = newDealCount;
+        backupItems[commP].atLeast1MonthDealCount = new1MonthPlusCount;
+    }
 
     function refreshMetadataForAll() public {
         // will need an array for this, can not iterate 'backupItems' mapping
