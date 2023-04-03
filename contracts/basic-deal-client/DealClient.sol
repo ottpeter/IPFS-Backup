@@ -69,6 +69,25 @@ struct BackupItemDeal {
     bool isActivated;
 }
 
+struct ExtraParamsV1 {
+    string location_ref;
+    uint64 car_size;
+    bool skip_ipni_announce;
+    bool remove_unsealed_copy;
+}
+
+function serializeExtraParamsV1(
+    ExtraParamsV1 memory params
+) pure returns (bytes memory) {
+    CBOR.CBORBuffer memory buf = CBOR.create(64);
+    buf.startFixedArray(4);
+    buf.writeString(params.location_ref);
+    buf.writeUInt64(params.car_size);
+    buf.writeBool(params.skip_ipni_announce);
+    buf.writeBool(params.remove_unsealed_copy);
+    return buf.data();
+}
+
 contract DealClient {
     using AccountCBOR for *;
     using MarketCBOR for *;
@@ -172,11 +191,22 @@ contract DealClient {
         ret.label = backupItems[commP].label;                                           // Payload CID
         ret.start_epoch = startEpoch;                                                   // Start epoch
         ret.end_epoch = endEpoch;                                                       // End epoch
-        ret.storage_price_per_epoch = 0;                                  // We need to solve this, we have max value instead of a concrete value
-        ret.provider_collateral = 0;                                      // Most likely this will be always 0
-        ret.client_collateral = 0;                                        // Most likely this will be always 0
+        ret.storage_price_per_epoch = uintToBigInt(0);                                  // We need to solve this, we have max value instead of a concrete value
+        ret.provider_collateral = uintToBigInt(0);                                      // Most likely this will be always 0
+        ret.client_collateral = uintToBigInt(0);                                        // Most likely this will be always 0
 
         return serializeDealProposal(ret);
+    }
+
+    function getExtraParams(bytes32 proposalId) public view returns (bytes memory extra_params) {        
+        bytes memory commP = dealProposals[proposalId];                                 // Get PieceCID based on uniqId
+        ExtraParamsV1 memory extraParams= ExtraParamsV1({
+            location_ref: backupItems[commP].originalLocation,
+            car_size: backupItems[commP].carSize,
+            skip_ipni_announce: false,
+            remove_unsealed_copy: false
+        });
+        return serializeExtraParamsV1(extraParams);
     }
 
     // Test for debug
