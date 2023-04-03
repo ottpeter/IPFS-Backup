@@ -88,6 +88,7 @@ contract DealClient {
     event DealProposalCreate(bytes32 indexed id, uint64 size, bool indexed verified, uint256 price);
 
     event Log(string text);
+    event UniqId(bytes32 id);
 
     address public owner;
 
@@ -122,6 +123,7 @@ contract DealClient {
         // We make as many deals, as target redundancy
         for (uint16 i = 0; i < backupItems[backupMeta.pieceCID].targetRedundancy; i++) {
             bytes32 uniqId = keccak256(abi.encodePacked(block.timestamp, msg.sender, backupMeta.pieceCID, i));
+            emit UniqId(uniqId);
             
             dealProposals[uniqId] = backupMeta.pieceCID;                      // uniqID -> commP
             // Writes the proposal metadata tothe event log
