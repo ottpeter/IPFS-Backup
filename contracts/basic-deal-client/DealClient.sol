@@ -172,9 +172,9 @@ contract DealClient {
         ret.label = backupItems[commP].label;                                           // Payload CID
         ret.start_epoch = startEpoch;                                                   // Start epoch
         ret.end_epoch = endEpoch;                                                       // End epoch
-        ret.storage_price_per_epoch = uintToBigInt(0);                                  // We need to solve this, we have max value instead of a concrete value
-        ret.provider_collateral = uintToBigInt(0);                                      // Most likely this will be always 0
-        ret.client_collateral = uintToBigInt(0);                                        // Most likely this will be always 0
+        ret.storage_price_per_epoch = 0;                                  // We need to solve this, we have max value instead of a concrete value
+        ret.provider_collateral = 0;                                      // Most likely this will be always 0
+        ret.client_collateral = 0;                                        // Most likely this will be always 0
 
         return serializeDealProposal(ret);
     }
