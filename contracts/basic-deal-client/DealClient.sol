@@ -200,7 +200,7 @@ contract DealClient {
     function getDealProposal(bytes32 proposalId) view public returns (bytes memory) {
         bytes memory commP = dealProposals[proposalId];                                 // Get PieceCID based on uniqId
 
-        int64 epochFromNow = 200;     // we will need to find a good number here                                                 // Deal will be activated this many epoch from now
+        int64 epochFromNow = 600;     // we will need to find a good number here                                                 // Deal will be activated this many epoch from now
         int64 startEpoch = int64(int256(block.number)) + epochFromNow;
         int64 endEpoch = startEpoch + backupItems[commP].dealDuration;
 
