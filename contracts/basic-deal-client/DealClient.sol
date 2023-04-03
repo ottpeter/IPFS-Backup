@@ -179,6 +179,12 @@ contract DealClient {
         return serializeDealProposal(ret);
     }
 
+    // Test for debug
+    function getCommpFromId(bytes32 proposalId) view public returns (bytes memory) {
+        bytes memory commP = dealProposals[proposalId];                                 // Get PieceCID based on uniqId
+        return commP;
+    }
+
     function getDefaultTargetRedundancy() public view returns (uint16) {
         return defaultTargetRedundancy;
     }
