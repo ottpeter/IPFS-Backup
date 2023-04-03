@@ -127,7 +127,7 @@ contract DealClient {
             // Writes the proposal metadata tothe event log
             emit DealProposalCreate(
                 uniqId,
-                backupItems[backupMeta.pieceCID].pieceSize,
+                backupMeta.pieceSize,
                 false,                                                        // Not verified
                 0                                                             // Initially price is 0
             );
