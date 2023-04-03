@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { fillArrayWithPinnedCIDs, copyToMFS, createCAR, addBackCAR, calculateCommP, listActiveBackups, startBackup } = require('../utils/backupUtils');
+const { fillArrayWithPinnedCIDs, copyToMFS, createCAR, addBackCAR, calculateCommP, listActiveBackups, startBackup, clearInProgressBackups } = require('../utils/backupUtils');
 
 // This will start the backup process. Probably we will change it to POST instead of GET, and it would be good if we could give in some parameters, like PeerID
 router.get('/start', async (req, res) => {
@@ -10,8 +10,8 @@ router.get('/start', async (req, res) => {
   await copyToMFS(ipfs, arrayOfCIDs, folderName);
   const { payloadCID, payloadSize } = await createCAR(ipfs, CID, folderName, globSource);
   await calculateCommP(folderName, payloadCID);
-  //await addBackCAR(ipfs, CID, folderName, globSource)
-  
+  //await addToFilecoin();        // we chained this to calculateCommP, because couldn't solve it other way
+  //await checkDealStatus();      // we chained this to addToFilecoin
 });
 
 // This will backup a single folder, that it is pointed to
@@ -19,7 +19,6 @@ router.get('/folder', async (req, res) => {
   const { ipfs, CID, globSource, folderName } = await startBackup(req.query.name, res);
   const { payloadCID, payloadSize }  = await createCAR(ipfs, CID, folderName);
   await calculateCommP(folderName, payloadCID, CID);
-  //await addBackCAR(ipfs, CID, folderName, globSource);
 }); 
 
 // Delete backup folders
@@ -52,5 +51,17 @@ router.get('/run-commp', async (req, res) => {
 router.get('/show-inprogress', async (req, res) => {
   res.json(listActiveBackups(req.query.name));
 });
+
+router.get('/clear-inprogress', (req, res) => {
+  try {
+    clearInProgressBackups();
+    res.json({message: "InProgressBackups were cleared."});
+  } catch (error) {
+    res.json({
+      message: "There was an error while trying to clear the InProgressBackups object.",
+      error: error
+    });
+  }
+})
 
 module.exports = router;

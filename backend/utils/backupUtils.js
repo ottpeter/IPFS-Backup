@@ -161,7 +161,7 @@ async function calculateCommP(folderName, payloadCID, CID) {
       console.log("CommP: ", commPCid)
       console.log("Payload size: ", payloadSize);
       console.log("Piece Size: ", paddedPieceSize);
-      addToFilecoin(CID, folderName);
+      addToFilecoin(folderName);
     } catch (error) {
       console.error("There was an error while trying to calculate commP!", error);
       inProgressBackups[folderName].commPCalculationError = error;
@@ -180,7 +180,7 @@ async function calculateCommP(folderName, payloadCID, CID) {
   return {commPCid, paddedPieceSize}
 }
 
-async function addToFilecoin(not_used, folderName) {
+async function addToFilecoin(folderName) {
   // Convert piece CID string to hex bytes
   const cid = inProgressBackups[folderName].commP;
   const cidHexRaw = new CID(cid).toString('base16').substring(1);
@@ -248,13 +248,9 @@ async function checkDealStatus(folderName) {
     }
 
     console.log(`Backup finished successfully.`);
-    /*const refreshTransaction = dealClient.refreshValues(dealID);
-    console.log("Refresh transaction made. Hash: ", refreshTransaction.hash);
+    console.log("Deals: ", deals);
+    delete inProgressBackups[folderName];
 
-    const isDealActivated = await dealClient.getDealVerificationStatus(dealID);
-    console.log("Is Deal Activated? ", isDealActivated);
-    const dealActive = await dealClient.getDealActivationStatus(dealID);
-    console.log("Deal Active: ", dealActive);*/
   } catch (error) {
     inProgressBackups[folderName].dealIdError = error;
     console.error("There was an error while trying to get DealID", error);
@@ -273,8 +269,15 @@ function listActiveBackups(name) {
   }
 }
 
+function clearInProgressBackups() {
+  //inProgressBackups = Object.assign({}, {});
+  for (let key in inProgressBackups) {
+    delete inProgressBackups[key];
+  }
+}
+
 function delay(time) {
   return new Promise(resolve => setTimeout(resolve, time));
 } 
 
-module.exports = { startBackup, fillArrayWithPinnedCIDs, copyToMFS, createCAR, addBackCAR, calculateCommP, addToFilecoin, listActiveBackups }
+module.exports = { startBackup, fillArrayWithPinnedCIDs, copyToMFS, createCAR, addBackCAR, calculateCommP, addToFilecoin, listActiveBackups, clearInProgressBackups }
