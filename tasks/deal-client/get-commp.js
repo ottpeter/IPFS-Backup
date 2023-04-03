@@ -8,7 +8,8 @@ task(
     .addParam("uniqId", "The PieceCID, alias commP")
     .setAction(async (taskArgs) => {
         const contractAddr = taskArgs.contract;
-        console.log("Getting deal proposal on network", networkId);
+        const networkId = network.name;
+        console.log("Getting CommP from UniqID on network", networkId);
 
         const wallet = new ethers.Wallet(network.config.accounts[0], ethers.provider);
         const DealClient = await ethers.getContractFactory("DealClient", wallet);
