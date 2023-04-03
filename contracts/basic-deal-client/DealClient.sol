@@ -133,7 +133,6 @@ contract DealClient {
             carSize: backupMeta.carSize,
             dealArrayId: dealArrayNonce
         });
-        // is the dealArray ready to be used ? seems like it is.
         dealArrayNonce = dealArrayNonce + 1;
 
         uint64 index = backupItems[backupMeta.pieceCID].dealArrayId;
@@ -143,8 +142,8 @@ contract DealClient {
             emit UniqId(uniqId);
             
             dealProposals[uniqId] = backupMeta.pieceCID;                      // uniqID -> commP
-            // Writes the proposal metadata tothe event log
-            emit DealProposalCreate(
+
+            emit DealProposalCreate(                                          // Writes the proposal metadata to the event log
                 uniqId,
                 backupMeta.pieceSize,
                 false,                                                        // Not verified

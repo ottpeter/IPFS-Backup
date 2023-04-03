@@ -248,7 +248,17 @@ async function checkDealStatus(folderName) {
     }
 
     console.log(`Backup finished successfully.`);
-    console.log("Deals: ", deals);
+    console.log("Deals: ", deals.map((deal) => ({
+      dealId: deal.dealId.toNumber(),
+      providerAddress: deal.providerAddress,
+      startEpoch: deal.startEpoch.toNumber(),
+      endEpoch: deal.endEpoch.toNumber(),
+      status: {
+        activated: deal.status.activated.toNumber(),
+        terminated: deal.status.terminated.toNumber()
+      },
+      isActivated: deal.isActivated
+    })));
     delete inProgressBackups[folderName];
 
   } catch (error) {
