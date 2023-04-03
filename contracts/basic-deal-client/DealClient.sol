@@ -64,7 +64,7 @@ struct BackupItemDeal {
     int64 startEpoch;
     int64 endEpoch;
     MarketTypes.GetDealActivationReturn status;
-    bool isActivated;
+    bool isActivated;  // probably change name to 'active' or 'isActive'
 }
 
 struct ExtraParamsV1 {
@@ -172,9 +172,11 @@ contract DealClient {
         for (uint16 i = 0; i < dealArrays[dealArrayIndex].length; i++) {
             uint64 dealId = dealArrays[dealArrayIndex][i].dealId;
             dealArrays[dealArrayIndex][i].status = MarketAPI.getDealActivation(dealId);
+            
             //dealArrays[dealArrayIndex][i].status.activated = activated;
             //dealArrays[dealArrayIndex][i].status.terminated = terminated;
-            if (dealArrays[dealArrayIndex][i].status.activated > 0 && dealArrays[dealArrayIndex][i].status.terminated == -1) {
+
+            if (dealArrays[dealArrayIndex][i].status.activated > 0 && dealArrays[dealArrayIndex][i].status.terminated < 1) {
                 newDealCount++;
                 dealArrays[dealArrayIndex][i].isActivated = true;
                 if (dealArrays[dealArrayIndex][i].endEpoch + ONE_MONTH > int64(uint64(block.number))) new1MonthPlusCount++;
@@ -189,6 +191,7 @@ contract DealClient {
 
     function refreshMetadataForAll() public {
         // will need an array for this, can not iterate 'backupItems' mapping
+        // We won't be able to do this inside one block
     }
 
     function keepTargetRedundancy() public {}
@@ -197,7 +200,7 @@ contract DealClient {
     function getDealProposal(bytes32 proposalId) view public returns (bytes memory) {
         bytes memory commP = dealProposals[proposalId];                                 // Get PieceCID based on uniqId
 
-        int64 epochFromNow = 2000;                                                      // Deal will be activated this many epoch from now
+        int64 epochFromNow = 200;     // we will need to find a good number here                                                 // Deal will be activated this many epoch from now
         int64 startEpoch = int64(int256(block.number)) + epochFromNow;
         int64 endEpoch = startEpoch + backupItems[commP].dealDuration;
 
