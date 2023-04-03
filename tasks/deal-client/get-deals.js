@@ -1,5 +1,6 @@
 const CID = require('cids');
 
+
 task(
     "get-deals",
     "Gets a deal proposal from the proposal id"
@@ -20,5 +21,15 @@ task(
         //send a transaction to call makeDealProposal() method
         //transaction = await dealClient.getDealProposal(proposalID)
         let result = await dealClient.getDeals(commPasBytes);
-        console.log("List of deals:", result);
+        console.log("List of deals:", result.map((deal) => ({
+          dealId: deal.dealId.toNumber(),
+          providerAddress: deal.providerAddress,
+          startEpoch: deal.startEpoch.toNumber(),
+          endEpoch: deal.endEpoch.toNumber(),
+          status: {
+            activated: deal.status.activated.toNumber(),
+            terminated: deal.status.terminated.toNumber()
+          },
+          isActivated: deal.isActivated
+        })));
     })
