@@ -37,6 +37,7 @@ router.get('/get-only-backup-item', async (req, res) => {
 router.get('/get-only-deal', async (req, res) => {
   const commP = req.query.commp;
   const [deals, error] = await getDeals(commP);
+  console.log("deals: ", deals)
   if (error === 0) {
     res.json({
       deals: deals
