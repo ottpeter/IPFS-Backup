@@ -41,7 +41,21 @@ async function getBackupItem(commP) {
     const backupItem = await dealClient.getBackupItem(commPasBytes);                                        // Smart contract call (view)
     // we could probably do some error handling here as well
 
-    return { backupItem: backupItem, error: 0 }
+    return { 
+      backupItem: {
+        totalDealCount: backupItem.totalDealCount.toNumber(),
+        atLeast1MonthDealCount: backupItem.atLeast1MonthDealCount.toNumber(),
+        targetRedundancy: backupItem.targetRedundancy.toNumber(),
+        pieceSize: backupItem.pieceSize.toNumber(),
+        label: backupItem.label,
+        dealDuration: backupItem.dealDuration.toNumber(),
+        maxPricePerEpoch: backupItem.maxPricePerEpoch.toNumber(),
+        originalLocation: backupItem.originalLocation,
+        carSize: backupItem.carSize.toNumber(),
+        dealArrayId: backupItem.dealArrayId.toNumber()
+      }, 
+      error: 0 
+    }
   } catch (error) {
     console.error(`There was an error while getting BackupItem with commP ${commP} `,error);
     return { backupItem: null, error: error };
