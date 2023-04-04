@@ -3,7 +3,6 @@ const { spawn } = require('child_process');
 const { ethers } = require('hardhat');
 const { network } = require("../network");
 const CID = require('cids');
-const Readable = require('stream').Readable;
 
 const backupObj = {
   name: "",
@@ -290,4 +289,15 @@ function delay(time) {
   return new Promise(resolve => setTimeout(resolve, time));
 } 
 
-module.exports = { startBackup, fillArrayWithPinnedCIDs, copyToMFS, createCAR, addBackCAR, calculateCommP, addToFilecoin, listActiveBackups, clearInProgressBackups }
+
+module.exports = { 
+  startBackup, 
+  fillArrayWithPinnedCIDs, 
+  copyToMFS, 
+  createCAR, 
+  addBackCAR, 
+  calculateCommP, 
+  addToFilecoin, 
+  listActiveBackups, 
+  clearInProgressBackups
+}
