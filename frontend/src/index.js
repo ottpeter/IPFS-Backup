@@ -7,6 +7,7 @@ import Backup from './Backup';
 import Menu from './Menu';
 import Footer from './Footer';
 import './styles.css';
+import BackupDetails from './BackupDetails';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -30,9 +31,16 @@ root.render(
         <Route
           exact
           path='/backup'
-          element={<Backup />}
-        >
+          element={<Backup />}>
         </Route>
+
+        <Route
+          exact
+          path='/backupDetails/:commP'
+          element={<BackupDetails />}
+        >  
+        </Route>
+
       </Routes>
       <Footer />
     </HashRouter>
