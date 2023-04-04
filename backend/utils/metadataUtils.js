@@ -77,7 +77,20 @@ async function getDeals(commP) {
     const deals = await dealClient.getDeals(commPasBytes);                                                  // Smart contract call (view)
     // we could probably do some error handling here as well
 
-    return { deals: deals, error: 0 }
+    return { 
+      deals: deals.map((deal) => ({
+        dealId: deal.dealId.toNumber(),
+        providerAddress: deal.providerAddress,
+        startEpoch: deal.startEpoch.toNumber(),
+        endEpoch: deal.endEpoch.toNumber(),
+        status: {
+          activated: deal.status.activated.toNumber(),
+          terminated: deal.status.terminated.toNumber()
+        },
+        isActivated: deal.isActivated
+      })), 
+      error: 0 
+    }
   } catch (error) {
     console.error(`There was an error while trying to get the deals for BackupItem with commP ${commP}`, error);
     return { deals: null, error: error }
