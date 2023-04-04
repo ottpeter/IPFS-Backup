@@ -27,7 +27,7 @@ router.get('/get-only-backup-item', async (req, res) => {
       backupItem: backupItem
     });
   } else {
-    return res.json({
+    res.json({
       error: error
     });
   }
