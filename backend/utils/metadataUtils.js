@@ -38,7 +38,7 @@ async function getBackupItem(commP) {
     const DealClient = await ethers.getContractFactory("DealClient", wallet);                         // Contract Factory
     const dealClient = DealClient.attach(contractAddr);                                               // Contract instance
   
-    const backupItem = dealClient.getBackupItem(commPasBytes);                                        // Smart contract call (view)
+    const backupItem = await dealClient.getBackupItem(commPasBytes);                                        // Smart contract call (view)
     // we could probably do some error handling here as well
 
     return { backupItem: backupItem, error: 0 }
@@ -60,7 +60,7 @@ async function getDeals(commP) {
     const DealClient = await ethers.getContractFactory("DealClient", wallet);                         // Contract Factory
     const dealClient = DealClient.attach(contractAddr);                                               // Contract instance
 
-    const deals = dealClient.getDeals(commPasBytes);                                                  // Smart contract call (view)
+    const deals = await dealClient.getDeals(commPasBytes);                                                  // Smart contract call (view)
     // we could probably do some error handling here as well
 
     return { deals: deals, error: 0 }
