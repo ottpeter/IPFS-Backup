@@ -18,8 +18,6 @@ async function refreshSingle(commP) {
     const transaction = await dealClient.refreshMetadataForBackupItem(commPasBytes);                  // Smart contract transaction
   
     console.log("Transaction: ", transaction);
-    console.log("Events: ", transactionReceipt.events);
-    console.log("Topics: ", transactionReceipt.events[0].topics);
 
     return 0;
   } catch (error) {
