@@ -3,7 +3,7 @@ const CID = require('cids');
 
 task(
     "get-deals",
-    "Gets a deal proposal from the proposal id"
+    "Gets the list of deals from commP"
   )
     .addParam("contract", "The address of the deal client solidity")
     .addParam("commP", "The PieceCID, alias commP")
@@ -12,7 +12,7 @@ task(
         const commP = taskArgs.commP;
         const commPasBytes = new CID(commP).bytes;
         const networkId = network.name;
-        console.log("Getting deal proposal on network", networkId);
+        console.log("Getting the list of deals on network", networkId);
 
         const wallet = new ethers.Wallet(network.config.accounts[0], ethers.provider);
         const DealClient = await ethers.getContractFactory("DealClient", wallet);
