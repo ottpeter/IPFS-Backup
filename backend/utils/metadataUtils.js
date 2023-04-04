@@ -43,9 +43,9 @@ async function getBackupItem(commP) {
 
     return { 
       backupItem: {
-        totalDealCount: backupItem.totalDealCount.toNumber(),
-        atLeast1MonthDealCount: backupItem.atLeast1MonthDealCount.toNumber(),
-        targetRedundancy: backupItem.targetRedundancy.toNumber(),
+        totalDealCount: backupItem.totalDealCount,
+        atLeast1MonthDealCount: backupItem.atLeast1MonthDealCount,
+        targetRedundancy: backupItem.targetRedundancy,
         pieceSize: backupItem.pieceSize.toNumber(),
         label: backupItem.label,
         dealDuration: backupItem.dealDuration.toNumber(),
