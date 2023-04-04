@@ -34,7 +34,7 @@ router.get('/get-only-backup-item', async (req, res) => {
 });
 
 // Get Deals for BackupItem, based on commP (only Deals)
-router.get('/get-only-dealy', async (req, res) => {
+router.get('/get-only-deal', async (req, res) => {
   const commP = req.query.commp;
   const {deals, error} = await getDeals(commP);
   if (error === 0) {
@@ -53,7 +53,7 @@ router.get('/get-backup-item', async (req, res) => {
   const commP = req.query.commp;
   const {backupItem, backupItemError} = await getBackupItem(commP);
   const {deals, dealsError} = await getDeals(commP);
-  if (backupItemError === 0 && dealsError) {
+  if (backupItemError === 0 && dealsError === 0) {
     res.json({
       backupItem: backupItem,
       deals: deals
