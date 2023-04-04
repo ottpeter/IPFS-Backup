@@ -66,7 +66,7 @@ async function getDeals(commP) {
     return { result: deals, error: 0 }
   } catch (error) {
     console.error(`There was an error while trying to get the deals for BackupItem with commP ${commP}`, error);
-    return { result: null, error: 0 }
+    return { result: null, error: error }
   }
 }
 
