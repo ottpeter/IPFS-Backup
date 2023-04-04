@@ -3,7 +3,6 @@ const { spawn } = require('child_process');
 const { ethers } = require('hardhat');
 const { network } = require("../network");
 const CID = require('cids');
-const Readable = require('stream').Readable;
 
 const backupObj = {
   name: "",
@@ -248,7 +247,17 @@ async function checkDealStatus(folderName) {
     }
 
     console.log(`Backup finished successfully.`);
-    console.log("Deals: ", deals);
+    console.log("Deals: ", deals.map((deal) => ({
+      dealId: deal.dealId.toNumber(),
+      providerAddress: deal.providerAddress,
+      startEpoch: deal.startEpoch.toNumber(),
+      endEpoch: deal.endEpoch.toNumber(),
+      status: {
+        activated: deal.status.activated.toNumber(),
+        terminated: deal.status.terminated.toNumber()
+      },
+      isActivated: deal.isActivated
+    })));
     delete inProgressBackups[folderName];
 
   } catch (error) {
@@ -280,4 +289,15 @@ function delay(time) {
   return new Promise(resolve => setTimeout(resolve, time));
 } 
 
-module.exports = { startBackup, fillArrayWithPinnedCIDs, copyToMFS, createCAR, addBackCAR, calculateCommP, addToFilecoin, listActiveBackups, clearInProgressBackups }
+
+module.exports = { 
+  startBackup, 
+  fillArrayWithPinnedCIDs, 
+  copyToMFS, 
+  createCAR, 
+  addBackCAR, 
+  calculateCommP, 
+  addToFilecoin, 
+  listActiveBackups, 
+  clearInProgressBackups
+}
