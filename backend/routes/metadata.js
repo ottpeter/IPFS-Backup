@@ -21,30 +21,29 @@ router.get('/refresh-single', async (req, res) => {
 // Get BackupItem metadata, based on commP (only BackupItem)
 router.get('/get-only-backup-item', async (req, res) => {
   const commP = req.query.commp;
-  const [backupItem, error] = await getBackupItem(commP);
-  if (error === 0) {
+  const result = await getBackupItem(commP);
+  if (result.error === 0) {
     res.json({
-      backupItem: backupItem
+      backupItem: result.backupItem
     });
   } else {
     res.json({
-      error: error
+      error: result.error
     });
   }
 });
 
 // Get Deals for BackupItem, based on commP (only Deals)
-router.get('/get-only-deal', async (req, res) => {
+router.get('/get-only-deals', async (req, res) => {
   const commP = req.query.commp;
-  const [deals, error] = await getDeals(commP);
-  console.log("deals: ", deals)
+  const result = await getDeals(commP);
   if (error === 0) {
     res.json({
-      deals: deals
+      deals: result.deals
     })
   } else {
     res.json({
-      error: error
+      error: result.error
     });
   }
 });
@@ -52,20 +51,20 @@ router.get('/get-only-deal', async (req, res) => {
 // Get the whole BackupItem based on commP (BackupItem + associated Deals array)
 router.get('/get-backup-item', async (req, res) => {
   const commP = req.query.commp;
-  const [backupItem, backupItemError] = await getBackupItem(commP);
-  const [deals, dealsError] = await getDeals(commP);
-  if (backupItemError === 0 && dealsError === 0) {
+  const backupItemResult = await getBackupItem(commP);
+  const dealsResult = await getDeals(commP);
+  if (backupItemResult.error === 0 && dealsResult.error === 0) {
     res.json({
-      backupItem: backupItem,
-      deals: deals
+      backupItem: backupItemResult.backupItem,
+      deals: dealsResult.deals
     });
   } else {
     res.json({
-      backupItem: backupItem,
-      deals: deals,
-      error: backupItemError + dealsError,
-      backupItemError: backupItemError,
-      dealsError: dealsError
+      backupItem: backupItemResult.backupItem,
+      deals: dealsResult.deals,
+      error: backupItemResult.error + dealsResult.error,
+      backupItemError: backupItemResult.error,
+      dealsError: dealsResult.error
     });
   }
 });

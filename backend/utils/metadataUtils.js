@@ -41,10 +41,10 @@ async function getBackupItem(commP) {
     const backupItem = dealClient.getBackupItem(commPasBytes);                                        // Smart contract call (view)
     // we could probably do some error handling here as well
 
-    return [ backupItem, 0 ]
+    return { backupItem: backupItem, error: 0 }
   } catch (error) {
     console.error(`There was an error while getting BackupItem with commP ${commP} `,error);
-    return [ null, error ];
+    return { backupItem: null, error: error };
   }
 }
 
@@ -63,10 +63,10 @@ async function getDeals(commP) {
     const deals = dealClient.getDeals(commPasBytes);                                                  // Smart contract call (view)
     // we could probably do some error handling here as well
 
-    return [ deals, 0 ]
+    return { deals: deals, error: 0 }
   } catch (error) {
     console.error(`There was an error while trying to get the deals for BackupItem with commP ${commP}`, error);
-    return [ null, error ]
+    return { deals: null, error: error }
   }
 }
 
