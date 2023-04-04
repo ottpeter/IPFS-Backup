@@ -3,6 +3,6 @@ import React from 'react';
 
 export default function Footer() {
   return (
-    <footer>This is the footer.</footer>
+    <footer>&copy; 2023 Zelma Corp</footer>
   )
 }
