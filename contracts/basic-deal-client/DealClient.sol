@@ -118,7 +118,6 @@ contract DealClient {
     // Start the backup proccess, an entry should be created in 'backupItems' after this
     // Another function will bring up the BackupItem to target redundancy if this does not succeed at first
     function startBackup(BackupRequest calldata backupMeta) public returns (bool) {
-        emit Log("Backup started");
         require (msg.sender == owner);
 
         // Initialize new backup entry        
@@ -200,7 +199,26 @@ contract DealClient {
 
     }
 
-    function keepTargetRedundancy() public {}
+    function keepTargetRedundancy(bytes memory commP) public {
+        // This will be more-or-less this:
+        uint64 index = backupItems[commP].dealArrayId;
+        // We make as many deals, as target redundancy
+        for (uint16 i = backupItems[commP].atLeast1MonthDealCount; i < backupItems[commP].targetRedundancy; i++) {
+            bytes32 uniqId = keccak256(abi.encodePacked(block.timestamp, msg.sender, commP, i));
+            emit UniqId(uniqId);
+            
+            dealProposals[uniqId] = commP;
+
+            emit DealProposalCreate(                                          // Writes the proposal metadata to the event log
+                uniqId,
+                backupItems[commP].pieceSize,
+                false,                                                        // Not verified
+                0                                                             // Initially price is 0
+            );
+        }
+        // not sure about the return value
+        // problem is with location, original location might not exist anymore
+    }
 
     // Returns a CBOR-encoded DealProposal.
     function getDealProposal(bytes32 proposalId) view public returns (bytes memory) {
