@@ -74,6 +74,12 @@ struct ExtraParamsV1 {
     bool remove_unsealed_copy;
 }
 
+// A pair of backup name and associated commP
+struct NameEntry {
+    string name;
+    bytes commP;
+}
+
 function serializeExtraParamsV1(
     ExtraParamsV1 memory params
 ) pure returns (bytes memory) {
@@ -93,14 +99,15 @@ contract DealClient {
     uint64 constant public AUTHENTICATE_MESSAGE_METHOD_NUM = 2643134072;
     uint64 constant public DATACAP_RECEIVER_HOOK_METHOD_NUM = 3726118371;
     uint64 constant public MARKET_NOTIFY_DEAL_METHOD_NUM = 4186741094;
-    int64 constant public ONE_MONTH = 86400;                               // Approximately 1 month in epochs
+    int64 constant public ONE_MONTH = 86400;                                // Approximately 1 month in epochs
 
     mapping(bytes32 => bytes) public dealProposals;                         // We will have this instead of dealProposals. uniqId -> commP
     mapping(bytes => BackupItem) public backupItems;                        // commP -> BackupItem - this is the one that we will keep on the long run
     mapping(uint64 => BackupItemDeal[]) public dealArrays;                  // dealArrayId -> BackupItemDeal[]
+    NameEntry[] nameLookupArray;                                            // Will help to get commP based on backup name
     uint64 dealArrayNonce = 0;                                              // Will be used as identifier for dealArrays
+    uint64 nameLookupArrayNone = 0;                                         // Index of next nameLookupArray[index]
     uint16 defaultTargetRedundancy = 2;                                     // Default target redundancy, that will be copied to every BackupItem, if other value not specified
-
 
     event ReceivedDataCap(string received);
     event DealProposalCreate(bytes32 indexed id, uint64 size, bool indexed verified, uint256 price);

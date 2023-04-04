@@ -7,6 +7,8 @@
   --menu-hover-color: #660066;
   --developer-red: #FF0000;
   --main-white: #FFFFDD;
+  --backup-list-header: #339fab;
+  --backup-list-details: #545761;
 
   --menu-height: 8vh;
   --footer-height: 4vh;
@@ -20,6 +22,11 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--default-background-color);
+}
+
+p {
+  padding: 0;
+  margin: 0;
 }
 
 code {
@@ -60,7 +67,7 @@ nav ul a li:hover {
 nav ul a {
   color: inherit;
   text-decoration: none;
-  font-size: 1-5em;
+  font-size: 1.2em;
 }
 
 footer {
@@ -91,8 +98,54 @@ main {
   text-align: center;
 }
 
+.backupList {
+  margin: 16px;
+}
+.backupList[open] summary ~ * {
+  animation: details-show 450ms ease-in;
+}
+@keyframes details-show {
+  from {
+    opacity:0;
+    transform: var(--details-translate, translateY(-0.5em));
+  }
+}
+
+.backupList > summary{
+  border-radius: 12px;
+  background-color: var(--backup-list-details);
+  font-size: 2em;
+  color: var(--favorite-color);
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 50px;
+}
+
+
+.backupList > ul { 
+  background-color: var(--backup-list-details);
+  border-radius: 12px;
+  margin-top: 2px;
+  padding: 16px;
+  list-style-type: none;
+}
+
+.backupEntry {
+  margin: 16px;
+  color: var(--less-yellow);
+}
+.backupEntry:hover {
+  cursor: pointer;
+  color: var(--favorite-color);
+}
+
 #dashboard {
-  border: 0px solid var(--developer-red);
+  border-top: 1px solid red;
+  border-bottom: 1px solid red;
+}
+
+.backupSection {
+  margin-bottom: 24px;
 }
 
 #backup {
