@@ -133,6 +133,7 @@ main {
 .backupEntry {
   margin: 16px;
   color: var(--less-yellow);
+  font-size: 1.2em;
 }
 .backupEntry:hover {
   cursor: pointer;

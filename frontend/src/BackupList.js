@@ -24,20 +24,27 @@ export default function BackupList({whichOneSwitch, backupList}) {
   return (
       <details className="backupList">
         <summary>{title}</summary>
-        <ul>
-          {backupList.map((backup) => {
-            const dateString = RegEx.exec(backup.name)[0];
-            const timestamp = Number.parseInt(dateString);
-            const time = new Date(timestamp);
+        {backupList.length > 0 ? (
+          <ul>
+            {backupList.map((backup) => {
+              const dateString = RegEx.exec(backup.name)[0];
+              const timestamp = Number.parseInt(dateString);
+              const time = new Date(timestamp);
 
-            return (
-              <li className="backupEntry">
-                <p>{"Time of backup: "}{time.toDateString()}</p>
-                <p>{"CommP:"}{backup.commP}</p>
-              </li>
-            )
-          })}
-        </ul>
+              return (
+                <li className="backupEntry">
+                  <p>{"Time of backup: "}{time.toDateString()}</p>
+                  <p>{"CommP:"}{backup.commP}</p>
+                </li>
+              )
+            })}
+          </ul>
+        )
+        : 
+          <ul>
+            <p>{"This list is empty."}</p>
+          </ul>
+        }
       </details>
   )
 }
