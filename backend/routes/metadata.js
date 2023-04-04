@@ -21,7 +21,7 @@ router.get('/refresh-single', async (req, res) => {
 // Get BackupItem metadata, based on commP (only BackupItem)
 router.get('/get-only-backup-item', async (req, res) => {
   const commP = req.query.commp;
-  const {backupItem, error} = await getBackupItem(commP);
+  const [backupItem, error] = await getBackupItem(commP);
   if (error === 0) {
     res.json({
       backupItem: backupItem
@@ -36,7 +36,7 @@ router.get('/get-only-backup-item', async (req, res) => {
 // Get Deals for BackupItem, based on commP (only Deals)
 router.get('/get-only-deal', async (req, res) => {
   const commP = req.query.commp;
-  const {deals, error} = await getDeals(commP);
+  const [deals, error] = await getDeals(commP);
   if (error === 0) {
     res.json({
       deals: deals
@@ -51,8 +51,8 @@ router.get('/get-only-deal', async (req, res) => {
 // Get the whole BackupItem based on commP (BackupItem + associated Deals array)
 router.get('/get-backup-item', async (req, res) => {
   const commP = req.query.commp;
-  const {backupItem, backupItemError} = await getBackupItem(commP);
-  const {deals, dealsError} = await getDeals(commP);
+  const [backupItem, backupItemError] = await getBackupItem(commP);
+  const [deals, dealsError] = await getDeals(commP);
   if (backupItemError === 0 && dealsError === 0) {
     res.json({
       backupItem: backupItem,
