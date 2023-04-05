@@ -64,7 +64,7 @@ struct BackupItemDeal {
     int64 startEpoch;
     int64 endEpoch;
     MarketTypes.GetDealActivationReturn status;
-    bool isActivated;  // probably change name to 'active' or 'isActive'
+    bool isActive;
 }
 
 struct ExtraParamsV1 {
@@ -185,13 +185,10 @@ contract DealClient {
                 dealArrays[dealArrayIndex].length--;
                 continue;
             }
-            
-            //dealArrays[dealArrayIndex][i].status.activated = activated;
-            //dealArrays[dealArrayIndex][i].status.terminated = terminated;
 
             if (dealArrays[dealArrayIndex][i].status.activated > 0 && dealArrays[dealArrayIndex][i].status.terminated < 1) {
                 newDealCount++;
-                dealArrays[dealArrayIndex][i].isActivated = true;
+                dealArrays[dealArrayIndex][i].isActive = true;
                 if (dealArrays[dealArrayIndex][i].endEpoch + ONE_MONTH > int64(uint64(block.number))) new1MonthPlusCount++;
             }
             if (dealArrays[dealArrayIndex][i].status.terminated > 0) {
@@ -322,7 +319,7 @@ contract DealClient {
                 activated: -1,                  // Epoch at which the deal was activated, or -1.
                 terminated: -1                  // Epoch at which the deal was terminated abnormally, or -1.
             }),
-            isActivated: false
+            isActive: false
         }));
     }
 
