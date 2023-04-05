@@ -1,22 +1,20 @@
 const CID = require('cids');
 // TODO
 task(
-  "refresh-single",
-  "Refresh metadata for a single backup item"
+  "change-default-redundancy",
+  "Change the default target redundancy"
 )
   .addParam("contract", "The address of the deal client solidity")
-  .addParam("commP", "The PieceCID")
+  .addParam("targetRedundancy", "The new target redundancy")
   .setAction(async (taskArgs) => {
       const contractAddr = taskArgs.contract;
-      const commP = taskArgs.commP;
-      const commPasBytes = new CID(commP).bytes;
       const networkId = network.name;
-      console.log("Refreshing backup item on network ", networkId)
+      console.log("Changing default target redundancy on network ", networkId)
 
       const wallet = new ethers.Wallet(network.config.accounts[0], ethers.provider);        // Create a new wallet instance
       const DealClient = await ethers.getContractFactory("DealClient", wallet);             // Create a DealClient contract factory
       const dealClient = await DealClient.attach(contractAddr);                             // Create a contract instance
         
-      let result = await dealClient.refreshMetadataForBackupItem(commPasBytes);                            // Send transaction
-      console.log(`The backup item with CoomP ${commP} was refreshed.`);
+      let result = await dealClient.changeDefaultTargetRedundancy(taskArgs.targetRedundancy);
+      if (result) console.log(`The default target redundancy was changed. New value: ${taskArgs.targetRedundancy}`);
   })
