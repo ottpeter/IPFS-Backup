@@ -1,5 +1,5 @@
 const CID = require('cids');
-// TODO
+
 task(
   "change-default-redundancy",
   "Change the default target redundancy"
