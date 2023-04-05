@@ -177,7 +177,14 @@ contract DealClient {
 
         for (uint16 i = 0; i < dealArrays[dealArrayIndex].length; i++) {
             uint64 dealId = dealArrays[dealArrayIndex][i].dealId;
-            dealArrays[dealArrayIndex][i].status = MarketAPI.getDealActivation(dealId);
+            try MarketAPI.getDealActivation(dealId) returns (MarketTypes.GetDealActivationReturn result) {
+                dealArrays[dealArrayIndex][i].status = result;
+            } catch {
+                // deal expired. If other error and deal is actually active, that would be a problem.
+                delete dealArrays[dealArrayIndex][i];
+                dealArrays[dealArrayIndex].length--;
+                continue;
+            }
             
             //dealArrays[dealArrayIndex][i].status.activated = activated;
             //dealArrays[dealArrayIndex][i].status.terminated = terminated;
@@ -188,8 +195,8 @@ contract DealClient {
                 if (dealArrays[dealArrayIndex][i].endEpoch + ONE_MONTH > int64(uint64(block.number))) new1MonthPlusCount++;
             }
             if (dealArrays[dealArrayIndex][i].status.terminated > 0) {
-                // TODO
-                // remove this deal
+                delete dealArrays[dealArrayIndex][i];
+                dealArrays[dealArrayIndex].length--;
             }
         }
         backupItems[commP].totalDealCount = newDealCount;

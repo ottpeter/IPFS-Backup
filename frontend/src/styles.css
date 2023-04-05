@@ -7,8 +7,8 @@
   --menu-hover-color: #660066;
   --developer-red: #FF0000;
   --main-white: #FFFFDD;
-  --backup-list-header: #339fab;
-  --backup-list-details: #545761;
+  --backup-list-header: #545761;
+  --backup-list-details: #111214;
 
   --menu-height: 8vh;
   --footer-height: 4vh;
@@ -88,13 +88,14 @@ main {
   height: calc(84vh);
   width: 100%;
   color: var(--main-white);
+  overflow-y: scroll;
 }
 
-#dashboard h1 {
+h1 {
   text-align: center;
 }
 
-#dashboard h2 {
+h2 {
   text-align: center;
 }
 
@@ -113,7 +114,7 @@ main {
 
 .backupList > summary{
   border-radius: 12px;
-  background-color: var(--backup-list-details);
+  background-color: var(--backup-list-header);
   font-size: 2em;
   color: var(--favorite-color);
   padding-top: 10px;
@@ -132,12 +133,49 @@ main {
 
 .backupEntry {
   margin: 16px;
-  color: var(--less-yellow);
   font-size: 1.2em;
+}
+.backupEntry a {
+  color: var(--less-yellow);
+  text-decoration: none;
+}
+.backupEntry a:hover {
+  color: var(--favorite-color);
 }
 .backupEntry:hover {
   cursor: pointer;
-  color: var(--favorite-color);
+}
+
+#detailsCard {
+  margin-top: 4vh;
+  margin-left: 8vw;
+  margin-right: 8vw;
+  padding: 16px;
+  color: var(--less-yellow);
+  font-size: 1.6em;
+  display: flex;
+  flex-direction: column;
+}
+
+.infoElement {
+  display: flex;
+  flex-direction: row;
+  padding-top: 16px;
+  justify-content: space-between;
+}
+
+.dealList {
+  margin-left: 4vw;
+  margin-right: 4vw;
+  margin-top: 0;
+  padding: 0;
+  width: 100%;
+  list-style-type: none;
+}
+.dealList li {
+  border: 1px solid var(--less-yellow);
+  padding: 1vw;
+  margin: 8px;
 }
 
 #dashboard {
@@ -151,4 +189,12 @@ main {
 
 #backup {
   border: 2px solid var(--developer-red);
+}
+
+.loading {
+  color: var(--favorite-color);
+  font-size: 1.5em;
+  position: fixed;
+  top: 2vh;
+  right: 2vw;
 }

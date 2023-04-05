@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 
 // @whichOneSwitch full | folder | incremental (inceremental does not exist yet)
@@ -33,8 +34,10 @@ export default function BackupList({whichOneSwitch, backupList}) {
 
               return (
                 <li className="backupEntry">
-                  <p>{"Time of backup: "}{time.toDateString()}</p>
-                  <p>{"CommP:"}{backup.commP}</p>
+                  <Link to={`/backupDetails/${backup.commP}`}>
+                    <p>{"Time of backup: "}{time.toDateString()}</p>
+                    <p>{"CommP:"}{backup.commP}</p>
+                  </Link>
                 </li>
               )
             })}
