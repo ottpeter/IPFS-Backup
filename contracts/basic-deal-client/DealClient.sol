@@ -46,6 +46,7 @@ struct BackupRequest {
 // For every PieceCID, we will store this collection of data
 // It will be a value pair of a commP key
 struct BackupItem {
+    string name;
     uint16 totalDealCount;
     uint16 atLeast1MonthDealCount;
     uint16 targetRedundancy;
@@ -140,6 +141,7 @@ contract DealClient {
 
         // Initialize new backup entry        
         backupItems[backupMeta.pieceCID] = BackupItem({
+            name: backupMeta.name,
             totalDealCount: 0,
             atLeast1MonthDealCount: 0,
             targetRedundancy: defaultTargetRedundancy,
@@ -235,7 +237,7 @@ contract DealClient {
     }
 
     // View function for the nameLookupArray
-    function getNameLookupArraySegment(uint64 from, uint64 count) public returns (NameEntry[] memory) {
+    function getNameLookupArraySegment(uint64 from, uint64 count) public view returns (NameEntry[] memory) {
         require(from < nameLookupArray.length, "from value can't be larger then the size of the array");
         if (from+count > uint64(nameLookupArray.length)) count = uint64(nameLookupArray.length);
 
@@ -248,6 +250,11 @@ contract DealClient {
         }
 
         return result;
+    }
+
+    // Get the name of the backup with commP
+    function getNameForCommp(bytes commP) public view returns (string memory) {
+        return backupItems[commp].name;
     }
 
     function keepTargetRedundancy(bytes memory commP) public returns (bool) {

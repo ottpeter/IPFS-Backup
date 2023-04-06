@@ -21,7 +21,7 @@ const inProgressBackups = {};             // Object that contains backupObj's
 // Start backup (create InProgress object)
 async function startBackup(name, res) {
   console.log("IPFS-Backup started...");  
-  const folderName = name;
+  const folderName = name  + "folder" + Date.now();
   console.log("Folder: ", folderName);
   inProgressBackups[folderName] = Object.assign({}, backupObj);
   inProgressBackups[folderName].name = folderName;
@@ -187,6 +187,7 @@ async function addToFilecoin(folderName) {
   const contractAddr = process.env.DEAL_CONTRACT;
   
   const BackupRequestStruct = {
+    name: folderName,
     pieceCID: cidHex,
     pieceSize: inProgressBackups[folderName].pieceSize,
     label: inProgressBackups[folderName].payloadCID,

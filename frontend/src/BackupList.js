@@ -4,18 +4,24 @@ import { Link } from 'react-router-dom';
 
 // @whichOneSwitch full | folder | incremental (inceremental does not exist yet)
 export default function BackupList({whichOneSwitch, backupList}) {
+  const folderRegEx = /folder([0-9]{13,14})/;
+  const backupRegEx = /backup([0-9]{13,14})/;
+  const incRegEx = /inc([0-9]{13,14})/;
   let title = null;
-  const RegEx = /[0-9]{13,14}/;
+  let RegEx = /[0-9]{13,14}/;
   
   switch (whichOneSwitch) {
     case "full":
       title = "Full Backups";
+      RegEx = backupRegEx
       break;
     case "folder":
       title = "Folder Backups";
+      RegEx = folderRegEx
       break;
     case "incremental":
       title = "Incremental Backups";
+      RegEx = incRegEx;
       break;
     default:
       title = "{Application error}";
@@ -28,7 +34,8 @@ export default function BackupList({whichOneSwitch, backupList}) {
         {backupList.length > 0 ? (
           <ul>
             {backupList.map((backup) => {
-              const dateString = RegEx.exec(backup.name)[0];
+              const match = RegEx.exec(backup.name);
+              const dateString = match ? match[1] : '';
               const timestamp = Number.parseInt(dateString);
               const time = new Date(timestamp);
 

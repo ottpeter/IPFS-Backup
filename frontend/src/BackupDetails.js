@@ -6,10 +6,16 @@ import { network } from './network';
 import { useParams } from 'react-router-dom';
 
 export default function BackupDetails() {
-  const RegEx = /[0-9]{13,14}/;
+  const backupRegEx = /backup([0-9]{13,14})/;
+  const folderRegEx = /folder([0-9]{13,14})/;
+  const incRegEx = /inc([0-9]{13,14})/;
+
+  let RegEx = /[0-9]{13,14}/;
+
   const { commP } = useParams();
   const [loading, setLoading] = useState(true);
   const [date, setDate] = useState(null);
+  const [type, setType] = useState("");
   const [totalDealCount, setTotalDealCount] = useState(0);
   const [atLeastMonth, setAtLeastMonth] = useState(0);
   const [targetRedundancy, setTargetRedundancy] = useState(0);
@@ -24,14 +30,13 @@ export default function BackupDetails() {
 
   const networkId = network.defaultNetwork;
   const contractAddr = network.contract;
+  const provider = new ethers.BrowserProvider(window.ethereum)
   const commPasBytes = new CID(commP).bytes;
   console.log(`Getting BackupItem for ${commP} on network ${networkId}`);
 
-  const provider = new ethers.BrowserProvider(window.ethereum)
+  
   useEffect(() => {
-    //const dateString = RegEx.exec(backup.name)[0];
-    //const timestamp = Number.parseInt(dateString);
-    //const time = new Date(timestamp);
+    
     
     async function loadBackupItem() {
       await provider.send("eth_requestAccounts", []);                                                   // MetaMask requires requesting permission to connect users accounts
@@ -40,20 +45,49 @@ export default function BackupDetails() {
 
       const converted = Number.parseInt(balanceOfContract.toString());
       console.log("Balance of contract: ", converted);
-
+      
       const dealClient = new ethers.Contract(contractAddr, contractObj.abi, provider);                  // Contract Instance
       const backupItem = await dealClient.getBackupItem(commPasBytes);                                  // Smart contract call (view)
       
-      setTotalDealCount(Number.parseInt(backupItem[0].toString()));
-      setAtLeastMonth(Number.parseInt(backupItem[1].toString()));
-      setTargetRedundancy(Number.parseInt(backupItem[2].toString()));
-      setPieceSize(Number.parseInt(backupItem[3].toString()));
-      setPayloadCID(backupItem[4]);
-      setDealDuration(Number.parseInt(backupItem[5].toString()));
-      setMaxPricePerEpoch(Number.parseInt(backupItem[6].toString()));
-      setOriginalLocation(backupItem[7]);
-      setCarSize(Number.parseInt(backupItem[8].toString()))
-      setDealArrayId(Number.parseInt(backupItem[9].toString()));
+      
+
+      const name = backupItem[0].toString();
+      
+      // We don't know which one it is.
+      // We need to find out, then do it accordingly
+      
+      let match = backupRegEx.exec(name);
+      console.log(match);
+      if (match.length > 0) {
+        setType("full");
+      } else {
+        match = folderRegEx.exec(name);
+        if (match.length > 0) {
+          setType("folder");
+        } else {
+          match = incRegEx.exec(name);
+          if (match.length > 0) {
+            setType("incremental");
+          }
+        }
+      }
+
+      const dateString = match ? match[1] : '';
+      const timestamp = Number.parseInt(dateString);
+      const time = new Date(timestamp);
+      setDate(time)
+
+      
+      setTotalDealCount(Number.parseInt(backupItem[1].toString()));
+      setAtLeastMonth(Number.parseInt(backupItem[2].toString()));
+      setTargetRedundancy(Number.parseInt(backupItem[3].toString()));
+      setPieceSize(Number.parseInt(backupItem[4].toString()));
+      setPayloadCID(backupItem[5]);
+      setDealDuration(Number.parseInt(backupItem[6].toString()));
+      setMaxPricePerEpoch(Number.parseInt(backupItem[7].toString()));
+      setOriginalLocation(backupItem[8]);
+      setCarSize(Number.parseInt(backupItem[9].toString()))
+      setDealArrayId(Number.parseInt(backupItem[10].toString()));
 
       const fetchedDeals = await dealClient.getDeals(commPasBytes);
 
@@ -83,7 +117,7 @@ export default function BackupDetails() {
     await provider.send("eth_requestAccounts", []);
     const signer = await provider.getSigner()
     const dealClient = new ethers.Contract(contractAddr, contractObj.abi, signer);
-    const backupItem = await dealClient.refreshMetadataForBackupItem(commPasBytes);
+    const result = await dealClient.refreshMetadataForBackupItem(commPasBytes);
   }
 
   return (
@@ -138,10 +172,10 @@ export default function BackupDetails() {
           <p className="label">{"Payload Size: "}</p>
           <p className="value">{carSize}</p>
         </div>
-        <div className="infoElement">
+        {/*<div className="infoElement">
           <p className="label">{"Deal Array ID: "}</p>
           <p className="value">{dealArrayId}</p>
-        </div>
+        </div>*/}
         <div className="infoElement">
           <p className="label">{"Deals:"}</p>
           <p className="value">{null}</p>

@@ -183,6 +183,21 @@ h2 {
   border-bottom: 1px solid red;
 }
 
+#redundancyButton {
+  border: none;
+  background: #FFFFFF;
+  border: 1px solid var(--less-yellow);
+  color: var(--less-yellow);
+  font-size: 1.8em;
+  cursor: pointer;
+  width: 140px;
+  height: 50px;
+}
+#redundancyButton:hover {
+  box-shadow: var(--favorite-color) 0px 5px 15px;
+  color: var(--favorite-color);
+}
+
 .backupSection {
   margin-bottom: 24px;
 }
