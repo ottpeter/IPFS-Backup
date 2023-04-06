@@ -70,7 +70,7 @@ export default function BackupDetails() {
           isActive: dealItem[5]
         }
       });
- 
+
       setDeals(processedDeals)
       console.log("Fetched Deals: ", fetchedDeals);
       console.log("backupItem: ", backupItem  );
@@ -179,7 +179,7 @@ export default function BackupDetails() {
                   </div>
                   <div className="infoElement">
                     <p className="label">{"Active:"}</p>
-                    <p className="value">{deal.isActive}</p>
+                    <p className="value">{deal.isActive.toString()}</p>
                   </div>
                 </li>
               );
