@@ -70,7 +70,7 @@ export default function BackupDetails() {
           isActive: dealItem[5]
         }
       });
-
+ 
       setDeals(processedDeals)
       console.log("Fetched Deals: ", fetchedDeals);
       console.log("backupItem: ", backupItem  );
