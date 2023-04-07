@@ -120,7 +120,7 @@ export default function BackupDetails() {
 
   return (
     <main id="backupDetails">
-      <h1>Full backup of the IPFS repository, made at {date}</h1>
+      <h1>Full backup of the IPFS repository, made at {date ? date.toDateString() : "-"}</h1>
       <h2>
         <button onClick={refreshMetadata}>{"Refresh Metadata"}</button>
       </h2>
