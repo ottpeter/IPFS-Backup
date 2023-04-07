@@ -56,7 +56,7 @@ async function copyToMFS(ipfs, arrayOfCIDs, folderName) {
   console.log("array of cids: ", arrayOfCIDs);console.log("array of cid leng", arrayOfCIDs.length)
     for (let i = 0; i < arrayOfCIDs.length; i++) {
       console.log("x")
-      await ipfs.files.cp("/ipfs/" + arrayOfCIDs[i].toString(), "/" + folderName + "/" + arrayOfCIDs[i].toString())
+      await ipfs.files.cp("/ipfs/" + arrayOfCIDs[i].toString(), "/" + folderName + "/" + arrayOfCIDs[i].toString());
     }
   
     inProgressBackups[folderName].copyToMFSReady = true;

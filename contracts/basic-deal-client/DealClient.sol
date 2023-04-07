@@ -253,8 +253,8 @@ contract DealClient {
     }
 
     // Get the name of the backup with commP
-    function getNameForCommp(bytes commP) public view returns (string memory) {
-        return backupItems[commp].name;
+    function getNameForCommp(bytes memory commP) public view returns (string memory) {
+        return backupItems[commP].name;
     }
 
     function keepTargetRedundancy(bytes memory commP) public returns (bool) {
@@ -327,9 +327,9 @@ contract DealClient {
         return true;
     }
 
-    function changeTargetRedundancy(bytes commP, uint16 newValue) public returns (bool) {
+    function changeTargetRedundancy(bytes memory commP, uint16 newValue) public returns (bool) {
         if (backupItems[commP].pieceSize == 0) return false;
-        backupItemss[commP].targetRedundancy = newValue;
+        backupItems[commP].targetRedundancy = newValue;
         return true;
     }
 
