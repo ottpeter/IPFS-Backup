@@ -1,5 +1,4 @@
 const express = require('express');
-//const cors = require('cors')
 require('dotenv').config();
 const backupRoutes = require('./routes/backup');
 const fetchRoutes = require('./routes/fetch');
