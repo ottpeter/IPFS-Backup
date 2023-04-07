@@ -49,16 +49,20 @@ async function fillArrayWithPinnedCIDs(ipfs, folderName) {
 }
 
 async function copyToMFS(ipfs, arrayOfCIDs, folderName) {
-  console.log("Copying pinned content to MFS...");
-  //console.log("arrayOfCIDs: ", arrayOfCIDs);
-  await ipfs.files.mkdir("/" + folderName);
-
-  for (let i = 0; i < arrayOfCIDs.length; i++) {
-    await ipfs.files.cp("/ipfs/" + arrayOfCIDs[i].toString(), "/" + folderName + "/" + arrayOfCIDs[i].toString())
+  try {
+    console.log("Copying pinned content to MFS...");
+    //console.log("arrayOfCIDs: ", arrayOfCIDs);
+    await ipfs.files.mkdir("/" + folderName);
+  
+    for (let i = 0; i < arrayOfCIDs.length; i++) {
+      await ipfs.files.cp("/ipfs/" + arrayOfCIDs[i].toString(), "/" + folderName + "/" + arrayOfCIDs[i].toString())
+    }
+  
+    inProgressBackups[folderName].copyToMFSReady = true;
+    console.log("All content copied to MFS.");
+  } catch (error) {
+    console.error("There was an error while trying to copy files into MFS: ", error);
   }
-
-  inProgressBackups[folderName].copyToMFSReady = true;
-  console.log("All content copied to MFS.");
 }
 
 async function createCAR(ipfs, CID, folderName) {
