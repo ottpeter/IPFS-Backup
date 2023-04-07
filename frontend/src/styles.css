@@ -184,7 +184,6 @@ h2 {
 }
 
 #redundancyButton {
-  border: none;
   background: #FFFFFF;
   border: 1px solid var(--less-yellow);
   color: var(--less-yellow);
@@ -202,9 +201,45 @@ h2 {
   margin-bottom: 24px;
 }
 
-.createBackupSection {
-  width: 80vw;
-  background-color: var(--developer-red);
+.createBackupStart {
+  width: inherit;
+  margin: 6vh 6vw 6vh 6vw;
+  padding-left: 1vw;
+  padding-right: 1vw;
+  height: 12vh;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 20px;
+  font-size: 1.6rem;
+  background-color: var(--main-white);
+  border: 1px solid var(--favorite-color);
+  color: var(--menu-color);
+}
+
+.createBackupDetails {
+  width: inherit;
+  margin: 6vh 6vw 6vh 6vw;
+  height: 12vh;
+  /*border: 1px solid var(--favorite-color);*/
+  background-color: black;
+}
+
+button {
+  border: 2px solid var(--less-yellow);
+  background-color: var(--default-background-color);
+  border-radius: 12px;
+  width: 12vw;
+  height: 8vh;
+  color: var(--less-yellow);
+  font-size: 2.5rem;
+}
+button:hover {
+  border: 2px solid var(--favorite-color);
+  color: var(--favorite-color);
+}
+button:active {
+  box-shadow: inset 0 0 20px 0 var(--favorite-color);
 }
 
 #backup {

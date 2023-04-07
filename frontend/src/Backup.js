@@ -27,19 +27,25 @@ export default function Backup() {
 
   return (
     <main>
-      <section className="createBackupSection">
-        <p>{"Full Backup"}</p>
-        <button onClick={startFullBackup}>{"Start"}</button>
+      <section className="backupSection">
+        <article className="createBackupStart">
+          <p>{"Full Backup"}</p>
+          <button onClick={startFullBackup} className="reduncyButton">{"Start"}</button>
+        </article>
       </section>
 
-      <section className="createBackupSection">
-        <p>{"Folder Backup"}</p>
-        {/** Some tree structure */}
+      <section className="backupSection">
+        <article className="createBackupStart">
+          <p>{"Folder Backup"}</p>
+          {/** Some tree structure */}
+        </article>
       </section>
 
-      <section className="createBackupSection">
-        {progressIndicator1 && <p>{"Progress one done."}</p>}
-        {progressIndicator2 && <p>{"Progress two done."}</p>}
+      <section className="backupSection">
+        <article className="createBackupDetails">
+          {progressIndicator1 && <p>{"Progress one done."}</p>}
+          {progressIndicator2 && <p>{"Progress two done."}</p>}
+        </article>
       </section>
     </main>
   )
