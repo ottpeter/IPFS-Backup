@@ -196,14 +196,16 @@ contract DealClient {
 
         for (uint16 i = 0; i < dealArrays[dealArrayIndex].length; i++) {
             uint64 dealId = dealArrays[dealArrayIndex][i].dealId;
-            try MarketAPI.getDealActivation(dealId) returns (MarketTypes.GetDealActivationReturn memory result) {
+            /*try MarketAPI.getDealActivation(dealId) returns (MarketTypes.GetDealActivationReturn memory result) {
                 dealArrays[dealArrayIndex][i].status = result;
             } catch {
                 // deal expired. If other error and deal is actually active, that would be a problem.
                 bool success = removeDeal(dealArrayIndex, i);
                 require(success, "There was an error while removing expired deal from the array");
                 continue;
-            }
+            }*/
+            // Will run into errors, smart contract will revert if EX_DEAL_EXPIRED. But it will compile.
+            dealArrays[dealArrayIndex][i].status = MarketAPI.getDealActivation(dealId);
 
             if (dealArrays[dealArrayIndex][i].status.activated > 0 && dealArrays[dealArrayIndex][i].status.terminated < 1) {
                 newDealCount++;
