@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ethers } from 'ethers';
+import axios from 'axios';
 import CID from 'cids';
 import contractObj from "./DealClient.json"
 import { network } from './network';
@@ -18,6 +19,12 @@ export default function Backup() {
     //const signer = await provider.getSigner();
     //const dealClient = new ethers.Contract(contractAddr, contractObj.abi, provider);                  // Contract Instance
     //const result = await dealClient.getBackupItem(commPasBytes);                                      // Smart contract call (view)
+
+    axios
+      .get(START_URL)
+      .then(function (response) {
+        console.log(response);
+      });
 
     const response = await fetch(START_URL, {
       method: "GET",
