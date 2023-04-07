@@ -119,7 +119,11 @@ export default function BackupDetails() {
       {type === "folder" && <h1>Folder backup of X, made at {date ? date.toDateString() : "-"}</h1>}
       {type === "incremental" && <h1>Folder backup of X, made at {date ? date.toDateString() : "-"}</h1>}
       <h2>
-        <button onClick={refreshMetadata}>{"Refresh Metadata"}</button>
+        <button onClick={refreshMetadata}>{"Refresh "}</button>
+        {/**tooltip */}
+        <button>Keep target redundancy</button>
+        <button>really just refresh</button>
+        <button>change</button>
       </h2>
 
       {loading && <div className="loading">
