@@ -50,7 +50,7 @@ async function fillArrayWithPinnedCIDs(ipfs, folderName) {
 
 async function copyToMFS(ipfs, arrayOfCIDs, folderName) {
   try {
-    console.log("Copying pinned content to MFS...");
+    console.log("Copying pinned content to MFS...");console.log("folder name: ", folderName)
     //console.log("arrayOfCIDs: ", arrayOfCIDs);
     await ipfs.files.mkdir("/" + folderName);
   
