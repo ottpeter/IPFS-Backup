@@ -27,18 +27,15 @@ function App() {
       setContractFunds(converted);
 
       // Get the list of backups
-      console.log("dealClient: ", dealClient)
-      const inputParams = {
-        from: 0,
-        count: 100
-      }
-      const fetchedList = await dealClient.getNameLookupArraySegment(0, 100);
+      const nameLookupArray = await dealClient.getNameLookupArraySegment(0, 100);
+      //console.log("fetchedList: ", fetchedList
+      /*
 
       const nameLookupArray = [
         { name: "backup1680606586626",  commP: "baga6ea4seaqos4r6jutakkbkmo7dfproobrcvaaijrjwbbn6jq5u233lfc6amla" },
         { name: "hello42_folder1680606586626", commP: "baga6ea4seaqeuvzsi5iwo7oooae7uhb7kfahjclfwzlpdijgvibvnteuzjye6ji" },
         { name: "backup1680266820969", commP: "baga6ea4seaqeuvzsi5iwo7oooae7uhb7kfahjclfwzlpdijgvibvnteuzjye6ji"}
-      ];
+      ];*/
       const FullRegEx = /backup[0-9]{12,14}/gm;
       const IncRegEx = /inc[0-9]{12,14}/gm;
 
