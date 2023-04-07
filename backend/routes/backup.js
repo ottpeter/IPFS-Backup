@@ -4,6 +4,7 @@ const { fillArrayWithPinnedCIDs, copyToMFS, createCAR, addBackCAR, calculateComm
 
 // This will start the backup process. Probably we will change it to POST instead of GET, and it would be good if we could give in some parameters, like PeerID
 router.get('/start', async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');  
   const folderName = "backup" + Date.now();
   const { ipfs, CID, globSource, _ } = await startBackup(folderName, res);
   const arrayOfCIDs = await fillArrayWithPinnedCIDs(ipfs, folderName);
