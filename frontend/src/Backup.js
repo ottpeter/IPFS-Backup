@@ -20,17 +20,16 @@ export default function Backup() {
     //const dealClient = new ethers.Contract(contractAddr, contractObj.abi, provider);                  // Contract Instance
     //const result = await dealClient.getBackupItem(commPasBytes);                                      // Smart contract call (view)
 
-    axios
+    /*axios
       .get(START_URL)
       .then(function (response) {
         console.log(response);
-      });
+      });*/
 
     const response = await fetch(START_URL, {
       method: "GET",
-      
     });
-    console.log(await response.json());
+    //console.log(await response.json());
   }
 
   return (
