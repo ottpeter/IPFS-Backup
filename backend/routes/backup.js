@@ -18,7 +18,7 @@ router.get('/start', async (req, res) => {
 // This will backup a single folder, that it is pointed to
 router.get('/folder', async (req, res) => {
   const folderName = req.query.name  + "_folder" + Date.now();
-  const { ipfs, CID, globSource, _ } = await startBackup(req.query.name, res);
+  const { ipfs, CID, globSource, _ } = await startBackup(folderName, res);
   const { payloadCID, payloadSize }  = await createCAR(ipfs, CID, folderName);
   await calculateCommP(folderName, payloadCID, CID);
 }); 
