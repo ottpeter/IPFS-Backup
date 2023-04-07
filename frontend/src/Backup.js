@@ -4,8 +4,9 @@ import CID from 'cids';
 import contractObj from "./DealClient.json"
 import { network } from './network';
 
-const START_URL = "http://45.91.171.156:3000/backup/start";
-const UPDATE_URL = "http://45.91.171.156:3000/backup/show-inprogress";
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+const START_URL = `http://${BASE_URL}:3000/backup/start`;
+const UPDATE_URL = `http://${BASE_URL}:3000/backup/show-inprogress`;
 const FIRST_UPDATE_INTERVAL = 1500;         // ms
 const SECOND_UPDATE_INTERVAL = 20000;       // ms
 

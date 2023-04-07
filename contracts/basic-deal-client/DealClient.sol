@@ -243,7 +243,7 @@ contract DealClient {
         require(from < nameLookupArray.length, "from value can't be larger then the size of the array");
         if (from+count > uint64(nameLookupArray.length)) count = uint64(nameLookupArray.length);
 
-        NameEntry[] memory result;
+        NameEntry[] memory result = new NameEntry[](count);
         uint64 index = 0;
 
         for (uint64 i = from; i < from+count; i++) {

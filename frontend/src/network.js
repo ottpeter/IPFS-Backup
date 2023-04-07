@@ -13,7 +13,7 @@ const network = {
       cache: "./cache",
       artifacts: "./artifacts",
   },
-  contract: "0x1cbB663F29a3EF12528BB8F66A906131f277b7CB"
+  contract: "0x19fc8Ed475aBEd0f44E9EBd81B04140CBf770d60"
 }
 
 module.exports = { network };
