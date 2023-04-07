@@ -5,6 +5,8 @@ import contractObj from "./DealClient.json"
 import { network } from './network';
 import { useParams } from 'react-router-dom';
 
+const CONTRACT_ADDRESS = network.contract;
+
 export default function BackupDetails() {
   const backupRegEx = /backup([0-9]{13,14})/;
   const folderRegEx = /folder([0-9]{13,14})/;
@@ -29,29 +31,18 @@ export default function BackupDetails() {
   const [deals, setDeals] = useState([]);
 
   const networkId = network.defaultNetwork;
-  const contractAddr = network.contract;
   const provider = new ethers.BrowserProvider(window.ethereum)
   const commPasBytes = new CID(commP).bytes;
-  console.log(`Getting BackupItem for ${commP} on network ${networkId}`);
 
   
   useEffect(() => {
-    
-    
     async function loadBackupItem() {
       await provider.send("eth_requestAccounts", []);
       const signer = await provider.getSigner()
-      console.log("The block number", (await provider.getBlockNumber()));
-      
-
-      
-      
-      const dealClient = new ethers.Contract(contractAddr, contractObj.abi, provider);                  // Contract Instance
+      const dealClient = new ethers.Contract(CONTRACT_ADDRESS, contractObj.abi, provider);              // Contract Instance
       const backupItem = await dealClient.getBackupItem(commPasBytes);                                  // Smart contract call (view)
       
-      
-
-      const name = backupItem[0].toString();
+      const name = backupItem[0].toString();                                                            // Backup name (e.g. backup1680889209258)
     
       
       let match = backupRegEx.exec(name);
@@ -73,8 +64,7 @@ export default function BackupDetails() {
       const dateString = match ? match[1] : '';
       const timestamp = Number.parseInt(dateString);
       const time = new Date(timestamp);
-      setDate(time)
-
+      setDate(time);
       
       setTotalDealCount(Number.parseInt(backupItem[1].toString()));
       setAtLeastMonth(Number.parseInt(backupItem[2].toString()));
@@ -89,21 +79,26 @@ export default function BackupDetails() {
 
       const fetchedDeals = await dealClient.getDeals(commPasBytes);
 
-      const processedDeals = fetchedDeals.map((dealItem) => {
-        return {
-          dealId: Number.parseInt(dealItem[0].toString()),
-          providerAddress: dealItem[1],
-          startEpoch: Number.parseInt(dealItem[2].toString()),
-          endEpoch: Number.parseInt(dealItem[3].toString()),
-          status: {
-            activated: Number.parseInt(dealItem[4][0].toString()),
-            terminated: Number.parseInt(dealItem[4][1].toString())
-          },
-          isActive: dealItem[5]
-        }
-      });
+      if (fetchedDeals.length === 0) {
+        setDeals([]);
+      } else {
+        const processedDeals = fetchedDeals.map((dealItem) => {
+          return {
+            dealId: Number.parseInt(dealItem[0].toString()),
+            providerAddress: dealItem[1],
+            startEpoch: Number.parseInt(dealItem[2].toString()),
+            endEpoch: Number.parseInt(dealItem[3].toString()),
+            status: {
+              activated: Number.parseInt(dealItem[4][0].toString()),
+              terminated: Number.parseInt(dealItem[4][1].toString())
+            },
+            isActive: dealItem[5]
+          }
+        });
+        console.log("processed DEALS", processedDeals)
+        setDeals(processedDeals)
+      }
 
-      setDeals(processedDeals)
       console.log("Fetched Deals: ", fetchedDeals);
       console.log("backupItem: ", backupItem  );
       setLoading(false);
@@ -114,13 +109,15 @@ export default function BackupDetails() {
   async function refreshMetadata() {
     await provider.send("eth_requestAccounts", []);
     const signer = await provider.getSigner()
-    const dealClient = new ethers.Contract(contractAddr, contractObj.abi, signer);
+    const dealClient = new ethers.Contract(CONTRACT_ADDRESS, contractObj.abi, signer);
     const result = await dealClient.refreshMetadataForBackupItem(commPasBytes);
   }
 
   return (
     <main id="backupDetails">
-      <h1>Full backup of the IPFS repository, made at {date ? date.toDateString() : "-"}</h1>
+      {type === "full" && <h1>Full backup of the IPFS repository, made at {date ? date.toDateString() : "-"}</h1>}
+      {type === "folder" && <h1>Folder backup of X, made at {date ? date.toDateString() : "-"}</h1>}
+      {type === "incremental" && <h1>Folder backup of X, made at {date ? date.toDateString() : "-"}</h1>}
       <h2>
         <button onClick={refreshMetadata}>{"Refresh Metadata"}</button>
       </h2>
@@ -182,6 +179,7 @@ export default function BackupDetails() {
           <ul className="dealList">
             {deals.map((deal) => {
               console.log("This is the deal display function.")
+              console.log("Current deal: ", deal)
 
               return (
                 <li className="dealElement" key={deal.dealId}>
@@ -217,7 +215,7 @@ export default function BackupDetails() {
               );
             })}
           </ul>
-        </div>  
+        </div>
       </section>
     </main>
   )
