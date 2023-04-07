@@ -4,7 +4,6 @@ const router = express.Router();
 
 
 router.get('/', function(req, res) {
-  console.log("fetch.")
   let result = null;
   const options = {
     root: path.join(process.env.OUTPUT_ROOT)
