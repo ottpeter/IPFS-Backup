@@ -21,8 +21,8 @@ const inProgressBackups = {};             // Object that contains backupObj's
 // Start backup (create InProgress object)
 async function startBackup(name, res) {
   console.log("IPFS-Backup started...");  
-  const folderName = name  + "folder" + Date.now();
-  console.log("Folder: ", folderName);
+  const folderName = name;
+  console.log("Folder: ", name);
   inProgressBackups[folderName] = Object.assign({}, backupObj);
   inProgressBackups[folderName].name = folderName;
   res.json({message: "IPFS-Backup started", folder: folderName});
