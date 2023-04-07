@@ -202,6 +202,11 @@ h2 {
   margin-bottom: 24px;
 }
 
+.createBackupSection {
+  width: 80vw;
+  background-color: var(--developer-red);
+}
+
 #backup {
   border: 2px solid var(--developer-red);
 }

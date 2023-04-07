@@ -52,7 +52,7 @@ export default function BackupList({whichOneSwitch, backupList}) {
         )
         : 
           <ul>
-            <p>{"This list is empty."}</p>
+            <p key={0}>{"This list is empty."}</p>
           </ul>
         }
       </details>

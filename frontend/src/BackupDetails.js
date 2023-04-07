@@ -39,12 +39,12 @@ export default function BackupDetails() {
     
     
     async function loadBackupItem() {
-      await provider.send("eth_requestAccounts", []);                                                   // MetaMask requires requesting permission to connect users accounts
+      await provider.send("eth_requestAccounts", []);
+      const signer = await provider.getSigner()
       console.log("The block number", (await provider.getBlockNumber()));
-      const balanceOfContract = await provider.getBalance(contractAddr);
+      
 
-      const converted = Number.parseInt(balanceOfContract.toString());
-      console.log("Balance of contract: ", converted);
+      
       
       const dealClient = new ethers.Contract(contractAddr, contractObj.abi, provider);                  // Contract Instance
       const backupItem = await dealClient.getBackupItem(commPasBytes);                                  // Smart contract call (view)
@@ -52,9 +52,7 @@ export default function BackupDetails() {
       
 
       const name = backupItem[0].toString();
-      
-      // We don't know which one it is.
-      // We need to find out, then do it accordingly
+    
       
       let match = backupRegEx.exec(name);
       console.log(match);

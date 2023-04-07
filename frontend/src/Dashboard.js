@@ -22,6 +22,10 @@ function App() {
       await provider.send("eth_requestAccounts", []);
       const signer = await provider.getSigner()
       const dealClient = new ethers.Contract(contractAddr, contractObj.abi, signer);
+      await provider.send("eth_requestAccounts", []);                                                   // MetaMask requires requesting permission to connect users accounts
+      const balanceOfContract = await provider.getBalance(contractAddr);
+      const converted = Number.parseInt(balanceOfContract.toString());
+      setContractFunds(converted);
 
       // Get the list of backups
       const nameLookupArray = [
@@ -31,7 +35,7 @@ function App() {
       ];
       const FullRegEx = /backup[0-9]{12,14}/gm;
       const IncRegEx = /inc[0-9]{12,14}/gm;
-  
+
       // Does not load the details about that backup. Only when we click on it.
       let fullList = [];
       let folderList = [];
