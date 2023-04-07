@@ -239,8 +239,10 @@ contract DealClient {
     }
 
     // View function for the nameLookupArray
-    function getNameLookupArraySegment(uint64 from, uint64 count) public view returns (NameEntry[] memory) {
-        require(from < nameLookupArray.length-1, "from value can't be larger then the size of the array");
+    function getNameLookupArraySegment(uint64 from, uint64 count) public view returns (NameEntry[] memory) {    
+        require(nameLookupArray.length > 0, "Array is empty");
+        require(from < nameLookupArray.length, "from value can't be larger than or equal to the size of the array");
+        
         if (from+count > uint64(nameLookupArray.length)) count = uint64(nameLookupArray.length);
 
         NameEntry[] memory result = new NameEntry[](count);
