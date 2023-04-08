@@ -138,6 +138,7 @@ contract DealClient {
     // Another function will bring up the BackupItem to target redundancy if this does not succeed at first
     function startBackup(BackupRequest calldata backupMeta) public returns (bool) {
         require (msg.sender == owner);
+        // will need to do a DUPLICATE require, but we are not doing it yet for convenience in testing
 
         // Initialize new backup entry        
         backupItems[backupMeta.pieceCID] = BackupItem({
