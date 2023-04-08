@@ -146,6 +146,16 @@ h2 {
   cursor: pointer;
 }
 
+#detailsButtonContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.detailsButton {
+  margin-right: 24px;
+  font-size: 1.5rem;
+}
+
 #detailsCard {
   margin-top: 4vh;
   margin-left: 8vw;
@@ -247,6 +257,10 @@ button:hover {
 button:active {
   box-shadow: inset 0 0 20px 0 var(--favorite-color);
 }
+button:disabled {
+  color: grey;
+  border: 2px solid grey;
+}
 
 #backup {
   border: 2px solid var(--developer-red);
@@ -266,4 +280,11 @@ button:active {
   position: fixed;
   top: 2vh;
   right: 2vw;
+}
+
+.toastClass {
+  background-color: var(--menu-color);
+  color: var(--favorite-color);
+  height: var(--menu-height);
+  margin-top: -2vh;
 }

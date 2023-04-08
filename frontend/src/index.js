@@ -1,19 +1,23 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { Flip, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import reportWebVitals from './reportWebVitals';
 import { HashRouter, Route, Navigate, Routes } from "react-router-dom";
 import Dashboard from './Dashboard';
 import StartBackup from './StartBackup';
+import BackupDetails from './BackupDetails';
 import Menu from './Menu';
 import Footer from './Footer';
+import 'react-tooltip/dist/react-tooltip.css';
 import './styles.css';
-import BackupDetails from './BackupDetails';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <HashRouter>
+      <ToastContainer toastClassName={'toastClass'} closeButton={false} transition={Flip}/>
       <Menu />
       <Routes>
         <Route
