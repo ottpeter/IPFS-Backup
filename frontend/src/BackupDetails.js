@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Flip, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { ethers } from 'ethers';
 import CID from 'cids';
 import { Tooltip } from 'react-tooltip';

@@ -26,13 +26,19 @@ export default function StartBackup() {
   const [dealRequestMade, setDealRequestMade] = useState(false);
   const [dealPublished, setDealPublished] = useState(false);
   const [errorOne, setErrorOne] = useState(null);
-  const [errorTwo, setErrorTwo] = useState(null);
+  const [done, setDone] = useState(false);
   
   useEffect(() => {
     if (backupName !== "") {
       clock = setInterval(() => refrshStatus(), FIRST_UPDATE_INTERVAL);
     }
   }, [backupName]);
+
+  useEffect(() => {
+    scroll.scrollToBottom({
+      containerId: "terminal"
+    });
+  }, [done])
 
   async function startFullBackup() {
     const response = await fetch(START_URL, {
@@ -66,6 +72,7 @@ export default function StartBackup() {
       
       clearInterval(clock);
       clock = setInterval(() => refreshDealStatus(), SECOND_UPDATE_INTERVAL);
+      setDone(true);
     }
     if (ourBackup["commPCalculationError"]) setErrorOne(ourBackup["commPCalculationError"]);
 

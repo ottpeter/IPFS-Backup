@@ -286,5 +286,5 @@ button:disabled {
   background-color: var(--menu-color);
   color: var(--favorite-color);
   height: var(--menu-height);
-  margin-top: -2vh;
+  margin-top: -2.1vh;
 }
