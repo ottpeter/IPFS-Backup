@@ -5,6 +5,7 @@ task(
     "Start the backup proccess, it will create a BackupItem in the contract, and later the contract can keep target redundancy based on that. It will try to make initial deals."
   )
     .addParam("contract", "The address of the deal client solidity")
+    .addParam("name", "Name of the backup (this serves as a timestamp as well)")
     .addParam("pieceCid", "PiceCID, alias commP")
     .addParam("pieceSize", "Size of PieceCID")
     .addParam("label", "The deal label (typically the raw cid)")

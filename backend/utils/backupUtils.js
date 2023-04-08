@@ -22,7 +22,7 @@ const inProgressBackups = {};             // Object that contains backupObj's
 async function startBackup(name, res) {
   console.log("IPFS-Backup started...");  
   const folderName = name;
-  console.log("Folder: ", folderName);
+  console.log("Folder: ", name);
   inProgressBackups[folderName] = Object.assign({}, backupObj);
   inProgressBackups[folderName].name = folderName;
   res.json({message: "IPFS-Backup started", folder: folderName});
@@ -49,16 +49,20 @@ async function fillArrayWithPinnedCIDs(ipfs, folderName) {
 }
 
 async function copyToMFS(ipfs, arrayOfCIDs, folderName) {
-  console.log("Copying pinned content to MFS...");
-  //console.log("arrayOfCIDs: ", arrayOfCIDs);
-  await ipfs.files.mkdir("/" + folderName);
+  try {
+    console.log("Copying pinned content to MFS...");
+    //console.log("arrayOfCIDs: ", arrayOfCIDs);
+    await ipfs.files.mkdir("/" + folderName);
 
-  for (let i = 0; i < arrayOfCIDs.length; i++) {
-    await ipfs.files.cp("/ipfs/" + arrayOfCIDs[i].toString(), "/" + folderName + "/" + arrayOfCIDs[i].toString())
+    for (let i = 0; i < arrayOfCIDs.length; i++) {
+      await ipfs.files.cp("/ipfs/" + arrayOfCIDs[i].toString(), "/" + folderName + "/" + arrayOfCIDs[i].toString());
+    }
+  
+    inProgressBackups[folderName].copyToMFSReady = true;
+    console.log("All content copied to MFS.");
+  } catch (error) {
+    console.error("There was an error while trying to copy files into MFS: ", error);
   }
-
-  inProgressBackups[folderName].copyToMFSReady = true;
-  console.log("All content copied to MFS.");
 }
 
 async function createCAR(ipfs, CID, folderName) {
@@ -101,24 +105,6 @@ async function createCAR(ipfs, CID, folderName) {
   return { payloadCID: rootCID, payloadSize: stat.cumulativeSize };
 }
 
-async function addBackCAR(ipfs, CID, folderName, globSource) {
-  console.log("Adding back CAR file to IPFS...");
-  console.log("Probably this function shouldn't be used (obsolate) addBackCAR()");
-  const fileName = folderName + ".car";
-  const path = "./outputCARfiles/" + fileName;
-  const ipfsAddResult = await ipfs.addAll(globSource(path, "**/*"));
-  const carStats = await ipfsAddResult.next();
-  console.log("The CAR file was added to IPFS.");
-  
-  const v0 = CID.asCID(carStats.value.cid)
-  console.log("carCID: ", v0);
-  console.log("carSize: ", carStats.value.size);
-
-  //console.log("Probably this is PieceCID: ", v0.toV1());                    // !! NOT TRUE
-  //console.log("Probably this is PieceSize: ", carStats.value.size);         // We used the one from the file system (ls -la), and it was different
-
-  //return { pieceCID: v0.toV1(), pieceSize: carStats.value.size};
-}
 
 
 async function calculateCommP(folderName, payloadCID, CID) {
@@ -187,12 +173,13 @@ async function addToFilecoin(folderName) {
   const contractAddr = process.env.DEAL_CONTRACT;
   
   const BackupRequestStruct = {
+    name: folderName,
     pieceCID: cidHex,
     pieceSize: inProgressBackups[folderName].pieceSize,
     label: inProgressBackups[folderName].payloadCID,
     dealDuration: 600000,
     maxPricePerEpoch: 0,                                                      // Max price per epoch
-    originalLocation: "http://45.91.171.156:3000/fetch?fileName=" + folderName + ".car",
+    originalLocation: `http://${process.env.SERVER}:3000/fetch?fileName=${folderName}.car`,
     carSize: inProgressBackups[folderName].payloadSize,
   }
 
@@ -258,7 +245,9 @@ async function checkDealStatus(folderName) {
       },
       isActivated: deal.isActivated
     })));
-    delete inProgressBackups[folderName];
+    setTimeout(() => {
+      delete inProgressBackups[folderName];
+    }, 1000 * 60 * 15)
 
   } catch (error) {
     inProgressBackups[folderName].dealIdError = error;
@@ -295,7 +284,6 @@ module.exports = {
   fillArrayWithPinnedCIDs, 
   copyToMFS, 
   createCAR, 
-  addBackCAR, 
   calculateCommP, 
   addToFilecoin, 
   listActiveBackups, 

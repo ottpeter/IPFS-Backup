@@ -33,6 +33,7 @@ contract MockMarket {
 
 // This is the object that is coming from the backup script, it will contain information that we need to create a Deal Request
 struct BackupRequest {
+    string name;                                            // Name of the backup, for example 'backup1680088311714'
     bytes pieceCID;                                         // Can be casted to CommonTypes.Cid | CommonTypes.Cid(pieceCID)
     uint64 pieceSize;                                       // Power of 2
     string label;                                           // PayloadCID
@@ -45,6 +46,7 @@ struct BackupRequest {
 // For every PieceCID, we will store this collection of data
 // It will be a value pair of a commP key
 struct BackupItem {
+    string name;
     uint16 totalDealCount;
     uint16 atLeast1MonthDealCount;
     uint16 targetRedundancy;
@@ -64,7 +66,7 @@ struct BackupItemDeal {
     int64 startEpoch;
     int64 endEpoch;
     MarketTypes.GetDealActivationReturn status;
-    bool isActivated;  // probably change name to 'active' or 'isActive'
+    bool isActive;
 }
 
 struct ExtraParamsV1 {
@@ -72,6 +74,12 @@ struct ExtraParamsV1 {
     uint64 car_size;
     bool skip_ipni_announce;
     bool remove_unsealed_copy;
+}
+
+// A pair of backup name and associated commP
+struct NameEntry {
+    string name;
+    bytes commP;
 }
 
 function serializeExtraParamsV1(
@@ -93,14 +101,15 @@ contract DealClient {
     uint64 constant public AUTHENTICATE_MESSAGE_METHOD_NUM = 2643134072;
     uint64 constant public DATACAP_RECEIVER_HOOK_METHOD_NUM = 3726118371;
     uint64 constant public MARKET_NOTIFY_DEAL_METHOD_NUM = 4186741094;
-    int64 constant public ONE_MONTH = 86400;                               // Approximately 1 month in epochs
+    int64 constant public ONE_MONTH = 86400;                                // Approximately 1 month in epochs
 
     mapping(bytes32 => bytes) public dealProposals;                         // We will have this instead of dealProposals. uniqId -> commP
     mapping(bytes => BackupItem) public backupItems;                        // commP -> BackupItem - this is the one that we will keep on the long run
     mapping(uint64 => BackupItemDeal[]) public dealArrays;                  // dealArrayId -> BackupItemDeal[]
+    NameEntry[] nameLookupArray;                                            // Will help to get commP based on backup name
     uint64 dealArrayNonce = 0;                                              // Will be used as identifier for dealArrays
+    uint64 nameLookupArrayNonce = 0;                                        // Index of next nameLookupArray[index]
     uint16 defaultTargetRedundancy = 2;                                     // Default target redundancy, that will be copied to every BackupItem, if other value not specified
-
 
     event ReceivedDataCap(string received);
     event DealProposalCreate(bytes32 indexed id, uint64 size, bool indexed verified, uint256 price);
@@ -114,15 +123,25 @@ contract DealClient {
         owner = msg.sender;
     }
 
+    function removeDeal(uint64 arrayId, uint64 index) internal returns (bool) {
+        if (index >= dealArrays[arrayId].length) return false;
+
+        for (uint64 i = index; i < dealArrays[arrayId].length-1;i++) {
+            dealArrays[arrayId][i] = dealArrays[arrayId][i+1];
+        }
+        dealArrays[arrayId].pop();
+
+        return true;
+    }
 
     // Start the backup proccess, an entry should be created in 'backupItems' after this
     // Another function will bring up the BackupItem to target redundancy if this does not succeed at first
     function startBackup(BackupRequest calldata backupMeta) public returns (bool) {
-        emit Log("Backup started");
         require (msg.sender == owner);
 
         // Initialize new backup entry        
         backupItems[backupMeta.pieceCID] = BackupItem({
+            name: backupMeta.name,
             totalDealCount: 0,
             atLeast1MonthDealCount: 0,
             targetRedundancy: defaultTargetRedundancy,
@@ -135,6 +154,12 @@ contract DealClient {
             dealArrayId: dealArrayNonce
         });
         dealArrayNonce = dealArrayNonce + 1;
+
+        nameLookupArray.push(NameEntry({
+            name: backupMeta.name,
+            commP: backupMeta.pieceCID
+        }));
+        nameLookupArrayNonce = nameLookupArrayNonce + 1;
 
         uint64 index = backupItems[backupMeta.pieceCID].dealArrayId;
         // We make as many deals, as target redundancy
@@ -164,43 +189,97 @@ contract DealClient {
         return dealArrays[index];
     }
 
-    function refreshMetadataForBackupItem(bytes memory commP) public {
+    function refreshMetadataForBackupItem(bytes memory commP) public returns (bool) {
         uint64 dealArrayIndex = backupItems[commP].dealArrayId;
         uint16 newDealCount = 0;
         uint16 new1MonthPlusCount = 0;
 
         for (uint16 i = 0; i < dealArrays[dealArrayIndex].length; i++) {
             uint64 dealId = dealArrays[dealArrayIndex][i].dealId;
+            /*try MarketAPI.getDealActivation(dealId) returns (MarketTypes.GetDealActivationReturn memory result) {
+                dealArrays[dealArrayIndex][i].status = result;
+            } catch {
+                // deal expired. If other error and deal is actually active, that would be a problem.
+                bool success = removeDeal(dealArrayIndex, i);
+                require(success, "There was an error while removing expired deal from the array");
+                continue;
+            }*/
+            // Will run into errors, smart contract will revert if EX_DEAL_EXPIRED. But it will compile.
             dealArrays[dealArrayIndex][i].status = MarketAPI.getDealActivation(dealId);
-            
-            //dealArrays[dealArrayIndex][i].status.activated = activated;
-            //dealArrays[dealArrayIndex][i].status.terminated = terminated;
 
             if (dealArrays[dealArrayIndex][i].status.activated > 0 && dealArrays[dealArrayIndex][i].status.terminated < 1) {
                 newDealCount++;
-                dealArrays[dealArrayIndex][i].isActivated = true;
+                dealArrays[dealArrayIndex][i].isActive = true;
                 if (dealArrays[dealArrayIndex][i].endEpoch + ONE_MONTH > int64(uint64(block.number))) new1MonthPlusCount++;
             }
             if (dealArrays[dealArrayIndex][i].status.terminated > 0) {
-                // TODO
-                // remove this deal
+                bool success = removeDeal(dealArrayIndex, i);
+                require(success, "There was an error while removing expired deal from the array");
             }
         }
         backupItems[commP].totalDealCount = newDealCount;
         backupItems[commP].atLeast1MonthDealCount = new1MonthPlusCount;
+
+        return true;
     }
 
-    function refreshMetadataForAll() public {
-        // will need an array for this, can not iterate 'backupItems' mapping
-        // We won't be able to do this inside one block
+    function refreshMetadataForAll() public returns (bool) {
+        for (uint64 i = 0; i < nameLookupArray.length; i++) {
+            refreshMetadataForBackupItem(nameLookupArray[i].commP);
+        }
+        return true;
     }
 
     // Refresh metadata for specific BackupItems (list of commP)
-    function refreshMetadataForList(bytes[] memory list[]) public {
-
+    function refreshMetadataForList(bytes[] memory list) public returns (bool) {
+        for (uint64 i = 0; i < list.length; i++) {
+            refreshMetadataForBackupItem(list[i]);
+        }
+        return true;
     }
 
-    function keepTargetRedundancy() public {}
+    // View function for the nameLookupArray
+    function getNameLookupArraySegment(uint64 from, uint64 count) public view returns (NameEntry[] memory) {    
+        NameEntry[] memory result = new NameEntry[](count);
+        if (nameLookupArray.length == 0) return result;
+        require(from < nameLookupArray.length, "from value can't be larger than or equal to the size of the array");
+        
+        if (from+count > uint64(nameLookupArray.length)) count = uint64(nameLookupArray.length);
+
+        uint64 index = 0;
+
+        for (uint64 i = from; i < from+count; i++) {
+            result[index] = nameLookupArray[i];
+            index++;
+        }
+
+        return result;
+    }
+
+    // Get the name of the backup with commP
+    function getNameForCommp(bytes memory commP) public view returns (string memory) {
+        return backupItems[commP].name;
+    }
+
+    function keepTargetRedundancy(bytes memory commP) public returns (bool) {
+        uint64 index = backupItems[commP].dealArrayId;
+        // We bring up atLeast1Month to target redundancy
+        for (uint16 i = backupItems[commP].atLeast1MonthDealCount; i < backupItems[commP].targetRedundancy; i++) {
+            bytes32 uniqId = keccak256(abi.encodePacked(block.timestamp, msg.sender, commP, i));
+            emit UniqId(uniqId);
+            
+            dealProposals[uniqId] = commP;
+
+            emit DealProposalCreate(                                          // Writes the proposal metadata to the event log
+                uniqId,
+                backupItems[commP].pieceSize,
+                false,                                                        // Not verified
+                0                                                             // Initially price is 0
+            );
+        }
+        return true;
+        // problem is with location, original location might not exist anymore
+    }
 
     // Returns a CBOR-encoded DealProposal.
     function getDealProposal(bytes32 proposalId) view public returns (bytes memory) {
@@ -247,8 +326,15 @@ contract DealClient {
         return defaultTargetRedundancy;
     }
 
-    function changeDefaultTargetRedundancy(uint16 newValue) public {
+    function changeDefaultTargetRedundancy(uint16 newValue) public returns (bool) {
         defaultTargetRedundancy = newValue;
+        return true;
+    }
+
+    function changeTargetRedundancy(bytes memory commP, uint16 newValue) public returns (bool) {
+        if (backupItems[commP].pieceSize == 0) return false;
+        backupItems[commP].targetRedundancy = newValue;
+        return true;
     }
 
     // TODO fix in filecoin-solidity. They're using the wrong hex value.
@@ -290,7 +376,7 @@ contract DealClient {
                 activated: -1,                  // Epoch at which the deal was activated, or -1.
                 terminated: -1                  // Epoch at which the deal was terminated abnormally, or -1.
             }),
-            isActivated: false
+            isActive: false
         }));
     }
 
