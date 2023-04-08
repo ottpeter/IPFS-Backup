@@ -31,6 +31,14 @@ function App() {
 
       // Get the list of backups
       const fetchedList = await dealClient.getNameLookupArraySegment(0, 100);
+      if (fetchedList.length === 0) {
+        setFullBackupList([]);
+        setFolderBackupList([]);
+        setIncBackupList([]);
+        setDefaultRedundancy(await dealClient.getDefaultTargetRedundancy());
+        return;
+      }
+
       console.log("fetchedList: ", fetchedList)
       const nameLookupArray = fetchedList.map((rawData) => {
         console.log("rawData: ", rawData);

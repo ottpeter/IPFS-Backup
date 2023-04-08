@@ -230,7 +230,7 @@ h2 {
 .createBackupDetails {
   width: inherit;
   margin: 6vh 6vw 6vh 6vw;
-  height: 60vh;
+  height: 40vh;
   overflow-y: scroll;
   /*border: 1px solid var(--favorite-color);*/
   background-color: black;

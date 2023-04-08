@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { animateScroll } from 'react-scroll';
 import { network } from './network';
 import { Link } from 'react-router-dom';
 
@@ -10,6 +11,7 @@ const SECOND_UPDATE_INTERVAL = 20000;       // ms
 
 export default function StartBackup() {
   let clock = null;
+  let scroll = animateScroll;
   const [backupName, setBackupName] = useState("");
   const [fillArrayReady, setFillArrayReady] = useState(false);
   const [copyToMFSReady, setCopyToMFSReady] = useState(false);
@@ -66,6 +68,10 @@ export default function StartBackup() {
       clock = setInterval(() => refreshDealStatus(), SECOND_UPDATE_INTERVAL);
     }
     if (ourBackup["commPCalculationError"]) setErrorOne(ourBackup["commPCalculationError"]);
+
+    scroll.scrollToBottom({
+      containerId: "terminal"
+    });
   }
   
   async function refreshDealStatus() {
@@ -80,13 +86,12 @@ export default function StartBackup() {
       setDealPublished(true);
       clearInterval(clock)
     }
-  }
 
-  const AlwaysScrollToBottom = () => {
-    const elementRef = useRef();
-    useEffect(() => elementRef.current.scrollIntoView());
-    return <div ref={elementRef} />;
-  };
+    scroll.scrollToBottom({
+      containerId: "terminal"
+    });
+  }
+  
 
   return (
     <main>
@@ -105,7 +110,7 @@ export default function StartBackup() {
       </section>
 
       <section className="backupSection">
-        <article className="createBackupDetails">
+        <article id="terminal" className="createBackupDetails">
           <p>
             <code>{"Click on 'Start' or select a folder and click 'Start'."}</code>
           </p>
@@ -188,7 +193,6 @@ export default function StartBackup() {
               <code>{"The backup proccess is now finished."}</code>
             </p>
 
-            <AlwaysScrollToBottom />
           </>
           }
         </article>
