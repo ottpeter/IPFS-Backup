@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { decodeBase58, encodeBase58, ethers } from 'ethers';
+import { ethers } from 'ethers';
 import { network } from './network';
 import contractObj from "./DealClient.json"
 import BackupList from './BackupList';
@@ -19,14 +19,7 @@ function App() {
 
   useEffect(() => {
     const loadData = async () => {
-      /**exp area */
       const fromHexString = (hexString) => Uint8Array.from(hexString.match(/.{1,2}/g).map((byte) => parseInt(byte, 16)));
-      const byteArray = fromHexString("0x0181e203922020644695b176b700e710e994967b298ae422099bd3ad05bd8e4bffd206130aa611");
-      const newCID = new CID(byteArray.subarray(1))
-      console.log("CID: ", newCID.toString())
-      
-      
-      /**-< exp area */
 
       await provider.send("eth_requestAccounts", []);
       const signer = await provider.getSigner()
@@ -36,33 +29,24 @@ function App() {
       const converted = Number.parseInt(balanceOfContract.toString());
       setContractFunds(converted);
 
-//      console.log("cidHex: ", cidHex)
       // Get the list of backups
       const fetchedList = await dealClient.getNameLookupArraySegment(0, 100);
+      console.log("fetchedList: ", fetchedList)
       const nameLookupArray = fetchedList.map((rawData) => {
         console.log("rawData: ", rawData);
         console.log("name: ", rawData.name)
+        console.log("hex commP: ", rawData.commP)
         const byteArray = fromHexString(rawData.commP);
         const cidObj = new CID(byteArray.subarray(1))
-        console.log("CID: ", cidObj.toString())
-        //const byteArray = buffer.Buffer.from(rawData.commP);
-        //console.log(byteArray)
-        //console.log("commP: ",  new CID(byteArray).toBaseEncodedString("base58btc"))
+        console.log("commP: ", cidObj.toString())
 
         return {
           name: rawData.name,
           commP: cidObj.toString()
         }
-      })
+      });
       console.log(nameLookupArray)
-      //console.log("fetchedList: ", fetchedList
-      /*
 
-      const nameLookupArray = [
-        { name: "backup1680606586626",  commP: "baga6ea4seaqos4r6jutakkbkmo7dfproobrcvaaijrjwbbn6jq5u233lfc6amla" },
-        { name: "hello42_folder1680606586626", commP: "baga6ea4seaqeuvzsi5iwo7oooae7uhb7kfahjclfwzlpdijgvibvnteuzjye6ji" },
-        { name: "backup1680266820969", commP: "baga6ea4seaqeuvzsi5iwo7oooae7uhb7kfahjclfwzlpdijgvibvnteuzjye6ji"}
-      ];*/
       const FullRegEx = /backup[0-9]{12,14}/gm;
       const IncRegEx = /inc[0-9]{12,14}/gm;
 
@@ -83,7 +67,7 @@ function App() {
 
       const redundancy = await dealClient.getDefaultTargetRedundancy();
 
-      console.log(fullBackupList)
+    console.log(fullBackupList)
       setFullBackupList(fullList);
       setFolderBackupList(folderList);
       setIncBackupList(incList);

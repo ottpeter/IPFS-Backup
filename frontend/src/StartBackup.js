@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { network } from './network';
 import { Link } from 'react-router-dom';
 
@@ -81,6 +81,12 @@ export default function StartBackup() {
       clearInterval(clock)
     }
   }
+
+  const AlwaysScrollToBottom = () => {
+    const elementRef = useRef();
+    useEffect(() => elementRef.current.scrollIntoView());
+    return <div ref={elementRef} />;
+  };
 
   return (
     <main>
@@ -181,6 +187,8 @@ export default function StartBackup() {
             <p>
               <code>{"The backup proccess is now finished."}</code>
             </p>
+
+            <AlwaysScrollToBottom />
           </>
           }
         </article>
