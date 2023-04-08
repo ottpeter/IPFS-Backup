@@ -7,7 +7,7 @@ const { getFileSystem, createIPFSinstance } = require("../utils/ipfsUtils");
 router.get('/mfs-tree', async function(req, res) {
   let result = null;
   const {ipfs, CID, globSource } = await createIPFSinstance();
-  const tree = await getFileSystem(ipfs, '/');
+  const tree = await getFileSystem(ipfs, '/', 0, 1);
 
   console.log("Tree: ", tree)
 
