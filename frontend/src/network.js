@@ -13,7 +13,7 @@ const network = {
       cache: "./cache",
       artifacts: "./artifacts",
   },
-  contract: "0xb400558f61FCD70bFfB591ea0bcD158131Df295e",
+  contract: "0x1141eC466E5ab8dd839CfEF7aeA2F3eE1FeCacD2",
   server: "5.180.183.88"
 }
 
