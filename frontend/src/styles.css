@@ -229,9 +229,6 @@ h2 {
   padding: 12px;
   padding: 12px;
 }
-.createBackupDetails p code {
-  
-}
 
 
 button {
@@ -253,6 +250,14 @@ button:active {
 
 #backup {
   border: 2px solid var(--developer-red);
+}
+
+.backupDoneMessage a {
+  text-decoration: none;
+  color: var(--less-yellow);
+}
+.backupDoneMessage a:hover {
+  color: var(--favorite-color);
 }
 
 .loading {

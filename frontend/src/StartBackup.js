@@ -174,7 +174,9 @@ export default function StartBackup() {
           {dealPublished && <>
             <p>
               <code>{"The deal was published."}</code><br></br>
-              <code>{"You can check the health of this backup item here: "}<Link to={'/backupDetails/' + commP}>{commP}</Link></code>
+              <code className="backupDoneMessage">{"You can check the health of this backup item here: "}
+                <Link to={'/backupDetails/' + commP}>{commP} </Link>
+              </code>
             </p>
             <p>
               <code>{"The backup proccess is now finished."}</code>
