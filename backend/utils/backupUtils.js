@@ -245,7 +245,9 @@ async function checkDealStatus(folderName) {
       },
       isActivated: deal.isActivated
     })));
-    delete inProgressBackups[folderName];
+    setTimeout(() => {
+      delete inProgressBackups[folderName];
+    }, 1000 * 60 * 15)
 
   } catch (error) {
     inProgressBackups[folderName].dealIdError = error;

@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import reportWebVitals from './reportWebVitals';
 import { HashRouter, Route, Navigate, Routes } from "react-router-dom";
 import Dashboard from './Dashboard';
-import Backup from './Backup';
+import StartBackup from './StartBackup';
 import Menu from './Menu';
 import Footer from './Footer';
 import './styles.css';
@@ -31,7 +31,7 @@ root.render(
         <Route
           exact
           path='/backup'
-          element={<Backup />}>
+          element={<StartBackup />}>
         </Route>
 
         <Route

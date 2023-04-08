@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { ethers } from 'ethers';
-import CID from 'cids';
-import contractObj from "./DealClient.json"
 import { network } from './network';
+import { Link } from 'react-router-dom';
 
 const BASE_URL = network.server;
 const START_URL = `http://${BASE_URL}:3000/backup/start`;
@@ -10,15 +8,8 @@ const UPDATE_URL = `http://${BASE_URL}:3000/backup/show-inprogress`;
 const FIRST_UPDATE_INTERVAL = 1500;         // ms
 const SECOND_UPDATE_INTERVAL = 20000;       // ms
 
-export default function Backup() {
-  const networkId = network.defaultNetwork;
-  const contractAddr = network.contract;
-  const provider = new ethers.BrowserProvider(window.ethereum);
-
-
-  
+export default function StartBackup() {
   let clock = null;
-  //const [theInterval, setTheInterval] = useState(null);
   const [backupName, setBackupName] = useState("");
   const [fillArrayReady, setFillArrayReady] = useState(false);
   const [copyToMFSReady, setCopyToMFSReady] = useState(false);
@@ -32,7 +23,6 @@ export default function Backup() {
   const [cumulativeSize, setCumulativeSize] = useState(null);
   const [dealRequestMade, setDealRequestMade] = useState(false);
   const [dealPublished, setDealPublished] = useState(false);
-  const [dealAccepted, setDealAccepted] = useState(false);
   const [errorOne, setErrorOne] = useState(null);
   const [errorTwo, setErrorTwo] = useState(null);
   
@@ -43,11 +33,6 @@ export default function Backup() {
   }, [backupName]);
 
   async function startFullBackup() {
-    //await provider.send("eth_requestAccounts", []);
-    //const signer = await provider.getSigner();
-    //const dealClient = new ethers.Contract(contractAddr, contractObj.abi, provider);                  // Contract Instance
-    //const result = await dealClient.getBackupItem(commPasBytes);                                      // Smart contract call (view)
-
     const response = await fetch(START_URL, {
       method: 'GET',
     })
@@ -91,12 +76,10 @@ export default function Backup() {
     const newStatus = await updateResp.json();
     const ourBackup = newStatus[backupName];
     if (ourBackup["dealRequestMade"]) setDealRequestMade(true);
-    if (ourBackup["dealPublished"]) setDealPublished(true);
-    if (ourBackup["dealAccepted"]) {
-      setDealAccepted(true);
+    if (ourBackup["dealPublished"]) {
+      setDealPublished(true);
       clearInterval(clock)
     }
-
   }
 
   return (
@@ -166,7 +149,7 @@ export default function Backup() {
               <code>{"Cummulative Size: "}{cumulativeSize}</code>
             </p>
             <p>
-              <code>{"Making deal request..."}</code>
+              <code>{"Making deal requests..."}</code>
             </p>
           </>
           }
@@ -180,31 +163,24 @@ export default function Backup() {
 
           {dealRequestMade && <>
             <p>
-              <code>{"The deal request was made."}</code>
+              <code>{"The deal requests were made."}</code>
             </p>
             <p>
-              <code>{"Waiting for deal to be published..."}</code>
+              <code>{"Waiting for deals to be published..."}</code>
             </p>
           </>
           }
 
           {dealPublished && <>
             <p>
-              <code>{"The deal was published."}</code>
+              <code>{"The deal was published."}</code><br></br>
+              <code>{"You can check the health of this backup item here: "}<Link to={'/backupDetails/' + commP}>{commP}</Link></code>
             </p>
             <p>
-              <code>{"Waiting for deals to be accepted..."}</code>
+              <code>{"The backup proccess is now finished."}</code>
             </p>
           </>
           }
-
-          {dealAccepted && <>
-            <p>
-              <code>{"The deals were accepted. The backup proccess is now finished."}</code>
-            </p>
-          </>
-          }
-          
         </article>
       </section>
     </main>
