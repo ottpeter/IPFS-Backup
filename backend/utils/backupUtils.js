@@ -105,24 +105,6 @@ async function createCAR(ipfs, CID, folderName) {
   return { payloadCID: rootCID, payloadSize: stat.cumulativeSize };
 }
 
-async function addBackCAR(ipfs, CID, folderName, globSource) {
-  console.log("Adding back CAR file to IPFS...");
-  console.log("Probably this function shouldn't be used (obsolate) addBackCAR()");
-  const fileName = folderName + ".car";
-  const path = "./outputCARfiles/" + fileName;
-  const ipfsAddResult = await ipfs.addAll(globSource(path, "**/*"));
-  const carStats = await ipfsAddResult.next();
-  console.log("The CAR file was added to IPFS.");
-  
-  const v0 = CID.asCID(carStats.value.cid)
-  console.log("carCID: ", v0);
-  console.log("carSize: ", carStats.value.size);
-
-  //console.log("Probably this is PieceCID: ", v0.toV1());                    // !! NOT TRUE
-  //console.log("Probably this is PieceSize: ", carStats.value.size);         // We used the one from the file system (ls -la), and it was different
-
-  //return { pieceCID: v0.toV1(), pieceSize: carStats.value.size};
-}
 
 
 async function calculateCommP(folderName, payloadCID, CID) {
@@ -197,7 +179,7 @@ async function addToFilecoin(folderName) {
     label: inProgressBackups[folderName].payloadCID,
     dealDuration: 600000,
     maxPricePerEpoch: 0,                                                      // Max price per epoch
-    originalLocation: "http://45.91.171.156:3000/fetch?fileName=" + folderName + ".car",
+    originalLocation: `http://${process.env.SERVER}:3000/fetch?fileName=${folderName}.car`,
     carSize: inProgressBackups[folderName].payloadSize,
   }
 
@@ -300,7 +282,6 @@ module.exports = {
   fillArrayWithPinnedCIDs, 
   copyToMFS, 
   createCAR, 
-  addBackCAR, 
   calculateCommP, 
   addToFilecoin, 
   listActiveBackups, 

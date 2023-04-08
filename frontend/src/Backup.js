@@ -33,7 +33,6 @@ export default function Backup() {
   const [dealRequestMade, setDealRequestMade] = useState(false);
   const [dealPublished, setDealPublished] = useState(false);
   const [dealAccepted, setDealAccepted] = useState(false);
-  const [dealActive, setDealActive] = useState(false);
   const [errorOne, setErrorOne] = useState(null);
   const [errorTwo, setErrorTwo] = useState(null);
   
@@ -63,10 +62,7 @@ export default function Backup() {
     });
 
     const newStatus = await updateResp.json();
-    console.log("bn. ", backupName)
-    console.log(newStatus )
     const ourBackup = newStatus[backupName];
-    console.log("OUR BACKUP: ", ourBackup)
     if (ourBackup["fillArrayReady"]) setFillArrayReady(true);
     if (ourBackup["copyToMFSReady"]) {
       setCopyToMFSReady(true);
@@ -79,13 +75,28 @@ export default function Backup() {
       setCommP(ourBackup["commP"]);
       setPieceSize(ourBackup["pieceSize"]);
       setCumulativeSize(ourBackup["cumulativeSize"]);
+      setPayloadSize(ourBackup["payloadSize"]);
+      
+      clearInterval(clock);
+      clock = setInterval(() => refreshDealStatus(), SECOND_UPDATE_INTERVAL);
     }
     if (ourBackup["commPCalculationError"]) setErrorOne(ourBackup["commPCalculationError"]);
-    if (ourBackup["dealRequestMade"]) {
-      console.log("DEAL REQUEST MADE!");
-      // Start another timer.
-
+  }
+  
+  async function refreshDealStatus() {
+    const updateResp = await fetch(UPDATE_URL, {
+      method: 'GET',
+    });
+    
+    const newStatus = await updateResp.json();
+    const ourBackup = newStatus[backupName];
+    if (ourBackup["dealRequestMade"]) setDealRequestMade(true);
+    if (ourBackup["dealPublished"]) setDealPublished(true);
+    if (ourBackup["dealAccepted"]) {
+      setDealAccepted(true);
+      clearInterval(clock)
     }
+
   }
 
   return (
@@ -160,7 +171,7 @@ export default function Backup() {
           </>
           }
 
-          {errorOne && <>
+          {errorOne && (Object.keys(errorOne).length > 0) && <>
             <p>
               <code>{"There was an error while calculating CommP: "}{JSON.stringify(errorOne)}</code>
             </p>
