@@ -281,7 +281,13 @@ function clearInProgressBackups() {
 
 // Delete all files in the backup folder
 async function clearBackupFolder(ipfs) {
-  const response = await ipfs.files.rm("/" + BASE_FOLDER, { recursive: true });
+  try {
+    const response = await ipfs.files.rm("/" + BASE_FOLDER, { recursive: true });
+    return true;
+  } catch (error) {
+    console.error("There was an error deleteing the backup folder: ", error);
+    return false;
+  }
 }
 
 function delay(time) {
