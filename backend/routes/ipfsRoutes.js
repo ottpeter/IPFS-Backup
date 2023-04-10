@@ -8,7 +8,7 @@ router.get('/mfs-tree', async function(req, res) {
   let maxDepth = 50;
   if (req.query.depth) maxDepth = parseInt(req.query.depth);
   
-  const {ipfs, CID, globSource } = await createIPFSinstance();
+  const {ipfs, CID, globSource } = await createIPFSinstance(); 
   const tree = await getFileSystem(ipfs, '/', 0, maxDepth);
   
   console.log("Tree: ", tree)
