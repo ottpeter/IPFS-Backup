@@ -65,9 +65,9 @@ async function copyToMFS(ipfs, arrayOfCIDs, folderName) {
   }
 }
 
-async function createCAR(ipfs, CID, backupName) {
+async function createCAR(ipfs, backupName, folderName) {
   console.log("Statistics about the newly created backup folder: ");
-  const stat = await ipfs.files.stat("/" + backupName);
+  const stat = await ipfs.files.stat("/" + folderName);
   console.log(stat);
   const v0RootCID = await stat.cid;
   const rootCID = v0RootCID.toV1()

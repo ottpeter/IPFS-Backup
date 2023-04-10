@@ -9,7 +9,7 @@ router.get('/start', async (req, res) => {
   const { ipfs, CID, globSource } = await startBackup(folderName, res);
   const arrayOfCIDs = await fillArrayWithPinnedCIDs(ipfs, folderName);
   await copyToMFS(ipfs, arrayOfCIDs, folderName);
-  const { payloadCID, payloadSize } = await createCAR(ipfs, CID, folderName, globSource);
+  const { payloadCID, payloadSize } = await createCAR(ipfs, folderName, folderName);
   await calculateCommP(folderName, folderName, payloadCID);
   //await addToFilecoin();        // we chained this to calculateCommP, because couldn't solve it other way
   //await checkDealStatus();      // we chained this to addToFilecoin
@@ -20,7 +20,7 @@ router.get('/folder', async (req, res) => {
   const folderName = req.query.name;
   const backupName = req.query.name  + "_folder" + Date.now();
   const { ipfs, CID, globSource, _ } = await startBackup(folderName, res);
-  const { payloadCID, payloadSize }  = await createCAR(ipfs, CID, folderName);
+  const { payloadCID, payloadSize }  = await createCAR(ipfs, backupName, folderName);
   await calculateCommP(folderName, backupName, payloadCID);
 }); 
 
