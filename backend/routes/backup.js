@@ -21,7 +21,7 @@ router.get('/start', async (req, res) => {
 router.get('/folder', async (req, res) => {
   const folderName = req.query.name;
   let backupName = req.query.name  + "_folder" + Date.now();
-  backupName.replace('/', '$');
+  backupName = backupName.replace('/', '$');
   const { ipfs, CID, globSource, _ } = await startBackup(backupName, folderName, res);
   const { payloadCID, payloadSize }  = await createCAR(ipfs, backupName, folderName);
   await calculateCommP(folderName, backupName, payloadCID);
