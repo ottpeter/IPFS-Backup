@@ -21,19 +21,19 @@ const inProgressBackups = {};             // Object that contains backupObj's
 // Start backup (create InProgress object)
 async function startBackup(name, res) {
   console.log("IPFS-Backup started...");  
-  const folderName = name;
+  const backupName = name;
   console.log("Folder: ", name);
-  inProgressBackups[folderName] = Object.assign({}, backupObj);
-  inProgressBackups[folderName].name = folderName;
-  res.json({message: "IPFS-Backup started", folder: folderName});
+  inProgressBackups[backupName] = Object.assign({}, backupObj);
+  inProgressBackups[backupName].name = backupName;
+  res.json({message: "IPFS-Backup started", folder: backupName});
   const { create, CID, globSource } = await import('kubo-rpc-client');
   const ipfs = create();          // Default, http://localhost:5001
 
-  return { ipfs, CID, globSource, folderName};
+  return { ipfs, CID, globSource};
 }
 
 // This will give back an array of CIDs, that are individual files or folders (not fragments of files)
-async function fillArrayWithPinnedCIDs(ipfs, folderName) {
+async function fillArrayWithPinnedCIDs(ipfs, backupName) {
   console.log("Getting list of pinned content...")
   const pinList = await ipfs.pin.ls({type: "recursive"});
   let nextItem = null;
@@ -44,7 +44,7 @@ async function fillArrayWithPinnedCIDs(ipfs, folderName) {
     if (!nextItem.done) resultArray.push(nextItem.value.cid)
   } while (!nextItem.done);
 
-  inProgressBackups[folderName].fillArrayReady = true;
+  inProgressBackups[backupName].fillArrayReady = true;
   return resultArray;
 }
 
@@ -65,20 +65,20 @@ async function copyToMFS(ipfs, arrayOfCIDs, folderName) {
   }
 }
 
-async function createCAR(ipfs, CID, folderName) {
+async function createCAR(ipfs, CID, backupName) {
   console.log("Statistics about the newly created backup folder: ");
-  const stat = await ipfs.files.stat("/" + folderName);
+  const stat = await ipfs.files.stat("/" + backupName);
   console.log(stat);
   const v0RootCID = await stat.cid;
   const rootCID = v0RootCID.toV1()
   const totalSize = stat.cumulativeSize;
   let copiedBytes = 0;
-  inProgressBackups[folderName].payloadCID = rootCID.toString();
-  inProgressBackups[folderName].cumulativeSize = stat.cumulativeSize;
+  inProgressBackups[backupName].payloadCID = rootCID.toString();
+  inProgressBackups[backupName].cumulativeSize = stat.cumulativeSize;
 
   const exportResult = await ipfs.dag.export(rootCID);
   let buffer = {value: undefined, done: false};
-  const fileName = folderName + ".car";
+  const fileName = backupName + ".car";
   if (fs.existsSync("./outputCARfiles/" + fileName)) {
     fs.unlinkSync("./outputCARfiles/" + fileName);
     console.log("Deleted old CAR file with the same name.");
@@ -92,14 +92,14 @@ async function createCAR(ipfs, CID, folderName) {
         fs.appendFileSync("./outputCARfiles/" + fileName, buffer.value);
         copiedBytes = copiedBytes + buffer.value.length;
         const percent = ((copiedBytes/totalSize)*100).toFixed(2);
-        inProgressBackups[folderName].carExportPercent = percent;
+        inProgressBackups[backupName].carExportPercent = percent;
       } catch (error) {
         console.error(error);
       }
     }
   } while (!buffer.done);
 
-  inProgressBackups[folderName].carExportReady = true;  
+  inProgressBackups[backupName].carExportReady = true;  
   console.log("The CAR file was exported. File name: ", fileName);
     
   return { payloadCID: rootCID, payloadSize: stat.cumulativeSize };
@@ -107,7 +107,7 @@ async function createCAR(ipfs, CID, folderName) {
 
 
 
-async function calculateCommP(folderName, payloadCID, CID) {
+async function calculateCommP(folderName, backupName, payloadCID) {
   let commPCid = null;
   let payloadSize = null;
   let paddedPieceSize = null;
@@ -138,24 +138,24 @@ async function calculateCommP(folderName, payloadCID, CID) {
       payloadSize = payloadLine.match(PayloadRegValueEx)[0];
       paddedPieceSize = paddedPieceLine.match(PaddedPieceValueRegex)[0];
       
-      inProgressBackups[folderName].commPCalculationReady = true;
-      inProgressBackups[folderName].commP = commPCid;
-      inProgressBackups[folderName].payloadSize = payloadSize;
-      inProgressBackups[folderName].pieceSize = paddedPieceSize;
+      inProgressBackups[backupName].commPCalculationReady = true;
+      inProgressBackups[backupName].commP = commPCid;
+      inProgressBackups[backupName].payloadSize = payloadSize;
+      inProgressBackups[backupName].pieceSize = paddedPieceSize;
 
       console.log("CommP: ", commPCid)
       console.log("Payload size: ", payloadSize);
       console.log("Piece Size: ", paddedPieceSize);
-      addToFilecoin(folderName);
+      addToFilecoin(folderName, backupName);
     } catch (error) {
       console.error("There was an error while trying to calculate commP!", error);
-      inProgressBackups[folderName].commPCalculationError = error;
+      inProgressBackups[backupName].commPCalculationError = error;
     }
   });
   
   ps.on('close', (code) => {
     if (code !== 0) {
-      inProgressBackups[folderName].commPCalculationError = code;
+      inProgressBackups[backupName].commPCalculationError = code;
       console.error("stream-commp returned a non-zero exit value!");
     }
     return;
@@ -165,22 +165,22 @@ async function calculateCommP(folderName, payloadCID, CID) {
   return {commPCid, paddedPieceSize}
 }
 
-async function addToFilecoin(folderName) {
+async function addToFilecoin(folderName, backupName) {
   // Convert piece CID string to hex bytes
-  const cid = inProgressBackups[folderName].commP;
+  const cid = inProgressBackups[backupName].commP;
   const cidHexRaw = new CID(cid).toString('base16').substring(1);
   const cidHex = "0x" + cidHexRaw;
   const contractAddr = process.env.DEAL_CONTRACT;
   
   const BackupRequestStruct = {
-    name: folderName,
+    name: backupName,
     pieceCID: cidHex,
-    pieceSize: inProgressBackups[folderName].pieceSize,
-    label: inProgressBackups[folderName].payloadCID,
+    pieceSize: inProgressBackups[backupName].pieceSize,
+    label: inProgressBackups[backupName].payloadCID,
     dealDuration: 600000,
     maxPricePerEpoch: 0,                                                      // Max price per epoch
     originalLocation: `http://${process.env.SERVER}:3000/fetch?fileName=${folderName}.car`,
-    carSize: inProgressBackups[folderName].payloadSize,
+    carSize: inProgressBackups[backupName].payloadSize,
   }
 
   const networkId = network.defaultNetwork;
@@ -195,17 +195,17 @@ async function addToFilecoin(folderName) {
 
   const event = transactionReceipt.events[0].topics[1];                                             // Listen for DealProposalCreate event
 
-  inProgressBackups[folderName].dealRequestMade = true;
+  inProgressBackups[backupName].dealRequestMade = true;
   console.log("Complete! Event Emitted. ProposalId is:", event);
 
-  checkDealStatus(folderName);
+  checkDealStatus(backupName);
 }
 
-async function checkDealStatus(folderName) {
+async function checkDealStatus(backupName) {
   try {
     const networkId = network.defaultNetwork;
     const contractAddr = process.env.DEAL_CONTRACT;
-    const commPasBytes = new CID(inProgressBackups[folderName].commP).bytes;
+    const commPasBytes = new CID(inProgressBackups[backupName].commP).bytes;
     console.log("Waiting for DealID on network", networkId);
     const wallet = new ethers.Wallet(network.networks[networkId].accounts[0], ethers.provider);       // Create a new wallet instance
     const DealClient = await ethers.getContractFactory("DealClient", wallet);                         // Contract Factory
@@ -220,7 +220,7 @@ async function checkDealStatus(folderName) {
       //dealID = result.toNumber();
       console.log("Deals array: ", deals);
       if (deals.length > 0) {
-        inProgressBackups[folderName].dealPublished = true;
+        inProgressBackups[backupName].dealPublished = true;
         break;
       }
       try_count++;
@@ -228,7 +228,7 @@ async function checkDealStatus(folderName) {
     } while (try_count < max_try && deals.length === 0);
   
     if (try_count === max_try && deals.length === 0) {
-      inProgressBackups[folderName].dealIdError = `Tried to get the DealID ${try_count} times without success. Most likely there was an error with making the deal.`;
+      inProgressBackups[backupName].dealIdError = `Tried to get the DealID ${try_count} times without success. Most likely there was an error with making the deal.`;
       console.error(`Tried to get the DealID ${try_count} times without success. Most likely there was an error with making the deal.`);
       return;
     }
@@ -246,11 +246,11 @@ async function checkDealStatus(folderName) {
       isActivated: deal.isActivated
     })));
     setTimeout(() => {
-      delete inProgressBackups[folderName];
+      delete inProgressBackups[backupName];
     }, 1000 * 60 * 15)
 
   } catch (error) {
-    inProgressBackups[folderName].dealIdError = error;
+    inProgressBackups[backupName].dealIdError = error;
     console.error("There was an error while trying to get DealID", error);
   }
 }

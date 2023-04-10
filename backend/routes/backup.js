@@ -6,21 +6,22 @@ const { fillArrayWithPinnedCIDs, copyToMFS, createCAR, addBackCAR, calculateComm
 router.get('/start', async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');  
   const folderName = "backup" + Date.now();
-  const { ipfs, CID, globSource, _ } = await startBackup(folderName, res);
+  const { ipfs, CID, globSource } = await startBackup(folderName, res);
   const arrayOfCIDs = await fillArrayWithPinnedCIDs(ipfs, folderName);
   await copyToMFS(ipfs, arrayOfCIDs, folderName);
   const { payloadCID, payloadSize } = await createCAR(ipfs, CID, folderName, globSource);
-  await calculateCommP(folderName, payloadCID);
+  await calculateCommP(folderName, folderName, payloadCID);
   //await addToFilecoin();        // we chained this to calculateCommP, because couldn't solve it other way
   //await checkDealStatus();      // we chained this to addToFilecoin
 });
 
 // This will backup a single folder, that it is pointed to
 router.get('/folder', async (req, res) => {
-  const folderName = req.query.name  + "_folder" + Date.now();
+  const folderName = req.query.name;
+  const backupName = req.query.name  + "_folder" + Date.now();
   const { ipfs, CID, globSource, _ } = await startBackup(folderName, res);
   const { payloadCID, payloadSize }  = await createCAR(ipfs, CID, folderName);
-  await calculateCommP(folderName, payloadCID, CID);
+  await calculateCommP(folderName, backupName, payloadCID);
 }); 
 
 // Delete backup folders
