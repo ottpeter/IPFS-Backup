@@ -5,7 +5,7 @@ const fetchRoutes = require('./routes/fetch');
 const metadataRoutes = require('./routes/metadata');
 const ipfsRoutes = require('./routes/ipfsRoutes');
 const app = express();
-const port = 3000;
+const port = 3001;
 
 app.get('/', (req, res) => {
   res.send("Hello there! This is the backend of the IPFS-Backup application.");
