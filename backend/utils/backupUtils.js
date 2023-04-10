@@ -279,6 +279,11 @@ function clearInProgressBackups() {
   }
 }
 
+// Delete all files in the backup folder
+async function clearBackupFolder(ipfs) {
+  const response = await ipfs.files.rm("/" + BASE_FOLDER + "/*");
+}
+
 function delay(time) {
   return new Promise(resolve => setTimeout(resolve, time));
 } 
@@ -292,5 +297,6 @@ module.exports = {
   calculateCommP, 
   addToFilecoin, 
   listActiveBackups, 
-  clearInProgressBackups
+  clearInProgressBackups,
+  clearBackupFolder
 }

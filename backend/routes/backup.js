@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { fillArrayWithPinnedCIDs, copyToMFS, createCAR, addBackCAR, calculateCommP, listActiveBackups, startBackup, clearInProgressBackups } = require('../utils/backupUtils');
+const { fillArrayWithPinnedCIDs, copyToMFS, createCAR, addBackCAR, calculateCommP, listActiveBackups, startBackup, clearInProgressBackups, clearBackupFolder } = require('../utils/backupUtils');
 
 const BASE_FOLDER = "IPFS_BACKUP_PREPARE_FOLDER";
 
@@ -33,7 +33,10 @@ router.get('/delete', async (req, res) => {
   const ipfs = create();          // Default, http://localhost:5001
   const lsResult = ipfs.files.ls('/');
 
-  let nextItem = null;
+  const response = await clearBackupFolder(ipfs);
+  console.log("DELETE RESPONSE: ", response);
+
+/*  let nextItem = null;
   let resultArray = [];
 
   do {
@@ -44,7 +47,7 @@ router.get('/delete', async (req, res) => {
   for (let i = 0; i < resultArray.length; i++) {
     ipfs.files.rm("/" + resultArray[i].name, { recursive: true });
   }
-  console.log("Old backup folders deleted.");
+  console.log("Old backup folders deleted.");*/
   res.json({message: "Old backup folders deleted."});
 });
 
