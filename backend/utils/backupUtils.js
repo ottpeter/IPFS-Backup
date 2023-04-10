@@ -4,7 +4,7 @@ const { ethers } = require('hardhat');
 const { network } = require("../network");
 const CID = require('cids');
 
-const BASE_FOLDER = "IPFS_BACKUP_PREPARE_FOLDER";
+const BASE_FOLDER = "IPFS_BACKUPS";
 
 const backupObj = {
   name: "",
@@ -53,7 +53,7 @@ async function copyToMFS(ipfs, arrayOfCIDs, folderName) {
   try {
     console.log("Copying pinned content to MFS...");
     //console.log("arrayOfCIDs: ", arrayOfCIDs);
-    await ipfs.files.mkdir(BASE_FOLDER + "/" + folderName, { parents: true});
+    await ipfs.files.mkdir("/" + BASE_FOLDER + "/" + folderName, { parents: true });
 
     for (let i = 0; i < arrayOfCIDs.length; i++) {
       await ipfs.files.cp("/ipfs/" + arrayOfCIDs[i].toString(), BASE_FOLDER +  "/" + folderName + "/" + arrayOfCIDs[i].toString());
