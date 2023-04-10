@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const { fillArrayWithPinnedCIDs, copyToMFS, createCAR, addBackCAR, calculateCommP, listActiveBackups, startBackup, clearInProgressBackups } = require('../utils/backupUtils');
 
+const BASE_FOLDER = "IPFS_BACKUP_PREPARE_FOLDER";
+
 // This will start the backup process. Probably we will change it to POST instead of GET, and it would be good if we could give in some parameters, like PeerID
 router.get('/start', async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');  

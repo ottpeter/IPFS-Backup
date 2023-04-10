@@ -4,6 +4,8 @@ const { ethers } = require('hardhat');
 const { network } = require("../network");
 const CID = require('cids');
 
+const BASE_FOLDER = "IPFS_BACKUP_PREPARE_FOLDER";
+
 const backupObj = {
   name: "",
   fillArrayReady: false,
@@ -51,10 +53,10 @@ async function copyToMFS(ipfs, arrayOfCIDs, folderName) {
   try {
     console.log("Copying pinned content to MFS...");
     //console.log("arrayOfCIDs: ", arrayOfCIDs);
-    await ipfs.files.mkdir("/" + folderName);
+    await ipfs.files.mkdir(BASE_FOLDER + "/" + folderName, { parents: true});
 
     for (let i = 0; i < arrayOfCIDs.length; i++) {
-      await ipfs.files.cp("/ipfs/" + arrayOfCIDs[i].toString(), "/" + folderName + "/" + arrayOfCIDs[i].toString());
+      await ipfs.files.cp("/ipfs/" + arrayOfCIDs[i].toString(), BASE_FOLDER +  "/" + folderName + "/" + arrayOfCIDs[i].toString());
     }
   
     inProgressBackups[folderName].copyToMFSReady = true;
@@ -66,7 +68,11 @@ async function copyToMFS(ipfs, arrayOfCIDs, folderName) {
 
 async function createCAR(ipfs, backupName, folderName) {
   console.log("Statistics about the newly created backup folder: ");
-  const stat = await ipfs.files.stat("/" + folderName);
+  let path = "";
+  if (backupName === folderName) path = BASE_FOLDER + "/" + folderName;           // If this is a full backup, include base folder in path
+  else path = "/" + folderName
+
+  const stat = await ipfs.files.stat(path);
   console.log(stat);
   const v0RootCID = await stat.cid;
   const rootCID = v0RootCID.toV1()
@@ -77,7 +83,7 @@ async function createCAR(ipfs, backupName, folderName) {
 
   const exportResult = await ipfs.dag.export(rootCID);
   let buffer = {value: undefined, done: false};
-  const fileName = backupName + ".car";
+  const fileName = backupName + ".car"; console.log("FILENAME: ", fileName)
   if (fs.existsSync("./outputCARfiles/" + fileName)) {
     fs.unlinkSync("./outputCARfiles/" + fileName);
     console.log("Deleted old CAR file with the same name.");
@@ -145,7 +151,7 @@ async function calculateCommP(folderName, backupName, payloadCID) {
       console.log("CommP: ", commPCid)
       console.log("Payload size: ", payloadSize);
       console.log("Piece Size: ", paddedPieceSize);
-      addToFilecoin(folderName, backupName);
+      addToFilecoin(backupName, folderName);
     } catch (error) {
       console.error("There was an error while trying to calculate commP!", error);
       inProgressBackups[backupName].commPCalculationError = error;
@@ -164,7 +170,7 @@ async function calculateCommP(folderName, backupName, payloadCID) {
   return {commPCid, paddedPieceSize}
 }
 
-async function addToFilecoin(folderName, backupName) {
+async function addToFilecoin(backupName, folderName) { return;
   // Convert piece CID string to hex bytes
   const cid = inProgressBackups[backupName].commP;
   const cidHexRaw = new CID(cid).toString('base16').substring(1);
@@ -178,7 +184,7 @@ async function addToFilecoin(folderName, backupName) {
     label: inProgressBackups[backupName].payloadCID,
     dealDuration: 600000,
     maxPricePerEpoch: 0,                                                      // Max price per epoch
-    originalLocation: `http://${process.env.SERVER}:3000/fetch?fileName=${folderName}.car`,
+    originalLocation: `http://${process.env.SERVER}:3000/fetch?fileName=${backupName}.car`,
     carSize: inProgressBackups[backupName].payloadSize,
   }
 
