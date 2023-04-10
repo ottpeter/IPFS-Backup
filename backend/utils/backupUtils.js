@@ -69,7 +69,7 @@ async function copyToMFS(ipfs, arrayOfCIDs, folderName) {
 async function createCAR(ipfs, backupName, folderName) {
   console.log("Statistics about the newly created backup folder: ");
   let path = "";
-  if (backupName === folderName) path = BASE_FOLDER + "/" + folderName;           // If this is a full backup, include base folder in path
+  if (backupName === folderName) path = "/" + BASE_FOLDER + "/" + folderName;           // If this is a full backup, include base folder in path
   else path = "/" + folderName
 
   const stat = await ipfs.files.stat(path);
