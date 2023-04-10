@@ -82,8 +82,8 @@ async function createCAR(ipfs, backupName, folderName) {
   inProgressBackups[backupName].cumulativeSize = stat.cumulativeSize;
 
   const exportResult = await ipfs.dag.export(rootCID);
-  let buffer = {value: undefined, done: false}; console.log("BACKUP NAME: ", backupName); console.log("FOLDER NAME: ", folderName);
-  const fileName = backupName + ".car"; console.log("FILENAME FILENAME: ", fileName)
+  let buffer = {value: undefined, done: false};
+  const fileName = backupName + ".car";
   if (fs.existsSync("./outputCARfiles/" + fileName)) {
     fs.unlinkSync("./outputCARfiles/" + fileName);
     console.log("Deleted old CAR file with the same name.");
@@ -170,7 +170,7 @@ async function calculateCommP(folderName, backupName, payloadCID) {
   return {commPCid, paddedPieceSize}
 }
 
-async function addToFilecoin(backupName, folderName) { return;
+async function addToFilecoin(backupName, folderName) {
   // Convert piece CID string to hex bytes
   const cid = inProgressBackups[backupName].commP;
   const cidHexRaw = new CID(cid).toString('base16').substring(1);
