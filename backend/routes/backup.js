@@ -6,7 +6,7 @@ const { fillArrayWithPinnedCIDs, copyToMFS, createCAR, addBackCAR, calculateComm
 router.get('/start', async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');  
   const folderName = "backup" + Date.now();
-  const { ipfs, CID, globSource } = await startBackup(folderName, res);
+  const { ipfs, CID, globSource } = await startBackup(folderName, folderName, res);
   const arrayOfCIDs = await fillArrayWithPinnedCIDs(ipfs, folderName);
   await copyToMFS(ipfs, arrayOfCIDs, folderName);
   const { payloadCID, payloadSize } = await createCAR(ipfs, folderName, folderName);
@@ -19,7 +19,7 @@ router.get('/start', async (req, res) => {
 router.get('/folder', async (req, res) => {
   const folderName = req.query.name;
   const backupName = req.query.name  + "_folder" + Date.now();
-  const { ipfs, CID, globSource, _ } = await startBackup(folderName, res);
+  const { ipfs, CID, globSource, _ } = await startBackup(backupName, folderName, res);
   const { payloadCID, payloadSize }  = await createCAR(ipfs, backupName, folderName);
   await calculateCommP(folderName, backupName, payloadCID);
 }); 

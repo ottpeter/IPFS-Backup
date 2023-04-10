@@ -19,13 +19,12 @@ const backupObj = {
 const inProgressBackups = {};             // Object that contains backupObj's
 
 // Start backup (create InProgress object)
-async function startBackup(name, res) {
+async function startBackup(backupName, folderName, res) {
   console.log("IPFS-Backup started...");  
-  const backupName = name;
-  console.log("Folder: ", name);
+  console.log("Folder: ", folderName);
   inProgressBackups[backupName] = Object.assign({}, backupObj);
   inProgressBackups[backupName].name = backupName;
-  res.json({message: "IPFS-Backup started", folder: backupName});
+  res.json({message: "IPFS-Backup started", folder: folderName, backupName: backupName});
   const { create, CID, globSource } = await import('kubo-rpc-client');
   const ipfs = create();          // Default, http://localhost:5001
 
