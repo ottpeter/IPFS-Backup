@@ -41,6 +41,8 @@ export default function StartBackup() {
     const loadMfsTree = async () => {
       const response = await fetch(MFS_TREE_URL, { method: 'GET'});
       const tree = (await response.json()).mfsTree;
+      delete tree[BACKUP_FOLDER];
+      
       console.log("Tree: ", tree);
       if (tree) setMfsTree(tree);
     }
