@@ -8,7 +8,7 @@ const BASE_URL = network.server;
 const START_URL = `http://${BASE_URL}:3000/backup/start`;
 const FOLDER_START_BASE_URL = `http://${BASE_URL}:3000/backup/folder?name=`;
 const UPDATE_URL = `http://${BASE_URL}:3000/backup/show-inprogress`;
-const MFS_TREE_URL = `http://${BASE_URL}:3000/ipfs/mfs-tree`;
+const MFS_TREE_URL = `http://${BASE_URL}:3000/ipfs/mfs-tree?depth=1`;
 const FIRST_UPDATE_INTERVAL = 1500;         // ms
 const SECOND_UPDATE_INTERVAL = 20000;       // ms
 

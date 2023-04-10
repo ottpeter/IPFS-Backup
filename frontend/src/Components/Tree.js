@@ -25,6 +25,6 @@ export default function Tree({ mfsTreeObj, setPath, depth = 0  , path = "" }) {
       </div>
     )
   } else {
-    return <></>;
+    return <p></p>;
   }
 }
