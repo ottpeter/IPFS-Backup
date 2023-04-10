@@ -7,6 +7,7 @@
   --menu-hover-color: #660066;
   --developer-red: #FF0000;
   --main-white: #FFFFDD;
+  --less-white: #EEEECC;
   --backup-list-header: #545761;
   --backup-list-details: #111214;
 
@@ -213,7 +214,7 @@ h2 {
 
 .createBackupStart {
   width: inherit;
-  margin: 6vh 6vw 6vh 6vw;
+  margin: 6vh 6vw 0vh 6vw;
   padding-left: 1vw;
   padding-right: 1vw;
   height: 12vh;
@@ -240,6 +241,20 @@ h2 {
   padding: 12px;
 }
 
+#treeContainer {
+  width: inherit;
+  margin: 1vh 6vw 6vh 6vw;
+  padding: 1vw;
+  height: 12vh;
+  border-radius: 20px;
+  border: 1px solid var(--favorite-color);
+  background-color: var(--less-white);
+  color: black;
+  overflow-y: scroll;
+}
+.mfsEntry:hover {
+  color: var(--less-yellow);
+}
 
 button {
   border: 2px solid var(--less-yellow);

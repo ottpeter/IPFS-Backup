@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function Tree({ mfsTreeObj, depth = 0  , path = "" }) {
+export default function Tree({ mfsTreeObj, setPath, depth = 0  , path = "" }) {
   let dashString = "";
   for (let i = 0; i < depth; i++) {
     dashString += "--";
@@ -8,7 +8,7 @@ export default function Tree({ mfsTreeObj, depth = 0  , path = "" }) {
 
   if (typeof mfsTreeObj === "object" && mfsTreeObj !== null) {
     return (
-      <div>
+      <div className="mfsFolder">
         {Object.entries(mfsTreeObj).map(([key, value]) => 
         {
         if (key === "/") 
@@ -16,10 +16,10 @@ export default function Tree({ mfsTreeObj, depth = 0  , path = "" }) {
         else
           return (
             <React.Fragment>
-              <p onClick={() => window.alert(path + key)}>
+              <code onClick={() => setPath(path + key)} className="mfsEntry">
                 {dashString}{key}
-              </p>
-              <Tree mfsTreeObj={value} depth={depth+1} path={path + "/" + key}/>
+              </code>
+              <Tree mfsTreeObj={value} setPath={setPath} depth={depth+1} path={path + "/" + key + "/"}/>
             </React.Fragment>
           )})}
       </div>
