@@ -34,7 +34,6 @@ router.get('/delete', async (req, res) => {
   const lsResult = ipfs.files.ls('/');
 
   const response = await clearBackupFolder(ipfs);
-  console.log("DELETE RESPONSE: ", response);
 
 /*  let nextItem = null;
   let resultArray = [];
@@ -48,7 +47,8 @@ router.get('/delete', async (req, res) => {
     ipfs.files.rm("/" + resultArray[i].name, { recursive: true });
   }
   console.log("Old backup folders deleted.");*/
-  res.json({message: "Old backup folders deleted."});
+  if (response) res.json({message: "Old backup folders deleted."});
+  else res.json({message: "Error deleting backup folder", error: true});
 });
 
 router.get('/run-commp', async (req, res) => {
