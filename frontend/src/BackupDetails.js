@@ -11,7 +11,7 @@ const CONTRACT_ADDRESS = network.contract;
 
 export default function BackupDetails() {
   const backupRegEx = /backup([0-9]{13,14})/;
-  const folderRegEx = /folder([0-9]{13,14})/;
+  const folderRegEx = /.*folder([0-9]{13,14})/;
   const incRegEx = /inc([0-9]{13,14})/;
 
   let RegEx = /[0-9]{13,14}/;
@@ -47,16 +47,19 @@ export default function BackupDetails() {
     
     let match = backupRegEx.exec(name);
     console.log(match);
-    if (match.length > 0) {
+    if (match) {
       setType("full");
     } else {
       match = folderRegEx.exec(name);
-      if (match.length > 0) {
+      if (match) {
         setType("folder");
       } else {
         match = incRegEx.exec(name);
-        if (match.length > 0) {
+        if (match) {
           setType("incremental");
+        } else {
+          console.error("Error. We don't no what type of backup is this.");
+          return;
         }
       }
     }

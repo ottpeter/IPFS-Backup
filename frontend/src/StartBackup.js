@@ -64,7 +64,7 @@ export default function StartBackup() {
       .catch((err) => console.error("There was an error while tring to start full backup: ", err));
 
     const json = await response.json();
-    setBackupName(json.folder);
+    setBackupName(json.backupName);
   }
 
   async function startFolderBackup() {
@@ -73,7 +73,7 @@ export default function StartBackup() {
       .catch((err) => console.error("There was an error while trying to start folder backup: ", err));
 
     const json = await response.json();
-    setBackupName(json.folder);
+    setBackupName(json.backupName);
   }
 
   async function refrshStatus() {
