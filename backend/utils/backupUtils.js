@@ -83,7 +83,7 @@ async function createCAR(ipfs, backupName, folderName) {
 
   const exportResult = await ipfs.dag.export(rootCID);
   let buffer = {value: undefined, done: false};
-  const fileName = backupName + ".car"; console.log("FILENAME: ", fileName)
+  const fileName = backupName + ".car"; console.log("FILENAME FILENAME: ", fileName)
   if (fs.existsSync("./outputCARfiles/" + fileName)) {
     fs.unlinkSync("./outputCARfiles/" + fileName);
     console.log("Deleted old CAR file with the same name.");
