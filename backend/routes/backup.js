@@ -1,26 +1,30 @@
 const express = require('express');
 const router = express.Router();
-const { fillArrayWithPinnedCIDs, copyToMFS, createCAR, addBackCAR, calculateCommP, listActiveBackups, startBackup, clearInProgressBackups } = require('../utils/backupUtils');
+const { fillArrayWithPinnedCIDs, copyToMFS, createCAR, addBackCAR, calculateCommP, listActiveBackups, startBackup, clearInProgressBackups, clearBackupFolder } = require('../utils/backupUtils');
+
+const BASE_FOLDER = "IPFS_BACKUP_PREPARE_FOLDER";
 
 // This will start the backup process. Probably we will change it to POST instead of GET, and it would be good if we could give in some parameters, like PeerID
 router.get('/start', async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');  
   const folderName = "backup" + Date.now();
-  const { ipfs, CID, globSource, _ } = await startBackup(folderName, res);
+  const { ipfs, CID, globSource } = await startBackup(folderName, folderName, res);
   const arrayOfCIDs = await fillArrayWithPinnedCIDs(ipfs, folderName);
   await copyToMFS(ipfs, arrayOfCIDs, folderName);
-  const { payloadCID, payloadSize } = await createCAR(ipfs, CID, folderName, globSource);
-  await calculateCommP(folderName, payloadCID);
+  const { payloadCID, payloadSize } = await createCAR(ipfs, folderName, folderName);
+  await calculateCommP(folderName, folderName, payloadCID);
   //await addToFilecoin();        // we chained this to calculateCommP, because couldn't solve it other way
   //await checkDealStatus();      // we chained this to addToFilecoin
 });
 
 // This will backup a single folder, that it is pointed to
 router.get('/folder', async (req, res) => {
-  const folderName = req.query.name  + "_folder" + Date.now();
-  const { ipfs, CID, globSource, _ } = await startBackup(folderName, res);
-  const { payloadCID, payloadSize }  = await createCAR(ipfs, CID, folderName);
-  await calculateCommP(folderName, payloadCID, CID);
+  const folderName = req.query.name;
+  let backupName = req.query.name  + "_folder" + Date.now();
+  backupName = backupName.replace(/\//g, '$');
+  const { ipfs, CID, globSource, _ } = await startBackup(backupName, folderName, res);
+  const { payloadCID, payloadSize }  = await createCAR(ipfs, backupName, folderName);
+  await calculateCommP(folderName, backupName, payloadCID);
 }); 
 
 // Delete backup folders
@@ -30,7 +34,9 @@ router.get('/delete', async (req, res) => {
   const ipfs = create();          // Default, http://localhost:5001
   const lsResult = ipfs.files.ls('/');
 
-  let nextItem = null;
+  const response = await clearBackupFolder(ipfs);
+
+/*  let nextItem = null;
   let resultArray = [];
 
   do {
@@ -41,8 +47,9 @@ router.get('/delete', async (req, res) => {
   for (let i = 0; i < resultArray.length; i++) {
     ipfs.files.rm("/" + resultArray[i].name, { recursive: true });
   }
-  console.log("Old backup folders deleted.");
-  res.json({message: "Old backup folders deleted."});
+  console.log("Old backup folders deleted.");*/
+  if (response) res.json({message: "Old backup folders deleted."});
+  else res.json({message: "Error deleting backup folder", error: true});
 });
 
 router.get('/run-commp', async (req, res) => {

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { decodeBase58, encodeBase58, ethers } from 'ethers';
+import { ethers } from 'ethers';
+import { toast } from 'react-toastify';
 import { network } from './network';
 import contractObj from "./DealClient.json"
 import BackupList from './BackupList';
@@ -18,80 +19,77 @@ function App() {
   const provider = new ethers.BrowserProvider(window.ethereum);
 
   useEffect(() => {
-    const loadData = async () => {
-      /**exp area */
-      const fromHexString = (hexString) => Uint8Array.from(hexString.match(/.{1,2}/g).map((byte) => parseInt(byte, 16)));
-      const byteArray = fromHexString("0x0181e203922020644695b176b700e710e994967b298ae422099bd3ad05bd8e4bffd206130aa611");
-      const newCID = new CID(byteArray.subarray(1))
-      console.log("CID: ", newCID.toString())
-      
-      
-      /**-< exp area */
-
-      await provider.send("eth_requestAccounts", []);
-      const signer = await provider.getSigner()
-      const dealClient = new ethers.Contract(CONTRACT_ADDRESS, contractObj.abi, signer);
-      await provider.send("eth_requestAccounts", []);                                                   // MetaMask requires requesting permission to connect users accounts
-      const balanceOfContract = await provider.getBalance(CONTRACT_ADDRESS);
-      const converted = Number.parseInt(balanceOfContract.toString());
-      setContractFunds(converted);
-
-//      console.log("cidHex: ", cidHex)
-      // Get the list of backups
-      const fetchedList = await dealClient.getNameLookupArraySegment(0, 100);
-      const nameLookupArray = fetchedList.map((rawData) => {
-        console.log("rawData: ", rawData);
-        console.log("name: ", rawData.name)
-        const byteArray = fromHexString(rawData.commP);
-        const cidObj = new CID(byteArray.subarray(1))
-        console.log("CID: ", cidObj.toString())
-        //const byteArray = buffer.Buffer.from(rawData.commP);
-        //console.log(byteArray)
-        //console.log("commP: ",  new CID(byteArray).toBaseEncodedString("base58btc"))
-
-        return {
-          name: rawData.name,
-          commP: cidObj.toString()
-        }
-      })
-      console.log(nameLookupArray)
-      //console.log("fetchedList: ", fetchedList
-      /*
-
-      const nameLookupArray = [
-        { name: "backup1680606586626",  commP: "baga6ea4seaqos4r6jutakkbkmo7dfproobrcvaaijrjwbbn6jq5u233lfc6amla" },
-        { name: "hello42_folder1680606586626", commP: "baga6ea4seaqeuvzsi5iwo7oooae7uhb7kfahjclfwzlpdijgvibvnteuzjye6ji" },
-        { name: "backup1680266820969", commP: "baga6ea4seaqeuvzsi5iwo7oooae7uhb7kfahjclfwzlpdijgvibvnteuzjye6ji"}
-      ];*/
-      const FullRegEx = /backup[0-9]{12,14}/gm;
-      const IncRegEx = /inc[0-9]{12,14}/gm;
-
-      // Does not load the details about that backup. Only when we click on it.
-      let fullList = [];
-      let folderList = [];
-      let incList = [];
-  
-      for (let i = 0; i < nameLookupArray.length; i++) {
-        if (nameLookupArray[i].name.match(FullRegEx) !== null) {
-          fullList.push(nameLookupArray[i]);
-        } else if (nameLookupArray[i].name.match(IncRegEx) !== null) {
-          incList.push(nameLookupArray[i]);
-        } else {
-          folderList.push(nameLookupArray[i]);
-        }
+    toast.promise(loadData, {
+      pending: {
+        render(){
+          return "Loading..."
+        },
+      },
+      error: {
+        render({data}){
+          return "Error while loading data."
+        },
       }
+    }, { toastId: 0});
+  }, []);
 
-      const redundancy = await dealClient.getDefaultTargetRedundancy();
+  const loadData = async () => {
+    const fromHexString = (hexString) => Uint8Array.from(hexString.match(/.{1,2}/g).map((byte) => parseInt(byte, 16)));
 
-      console.log(fullBackupList)
-      setFullBackupList(fullList);
-      setFolderBackupList(folderList);
-      setIncBackupList(incList);
-      setDefaultRedundancy(redundancy)
+    await provider.send("eth_requestAccounts", []);
+    const signer = await provider.getSigner()
+    const dealClient = new ethers.Contract(CONTRACT_ADDRESS, contractObj.abi, signer);
+    await provider.send("eth_requestAccounts", []);                                                   // MetaMask requires requesting permission to connect users accounts
+    const balanceOfContract = await provider.getBalance(CONTRACT_ADDRESS);
+    const converted = Number.parseInt(balanceOfContract.toString());
+    setContractFunds(converted);
+
+    // Get the list of backups
+    const fetchedList = await dealClient.getNameLookupArraySegment(0, 100);
+    if (fetchedList.length === 0) {
+      setFullBackupList([]);
+      setFolderBackupList([]);
+      setIncBackupList([]);
+      setDefaultRedundancy(await dealClient.getDefaultTargetRedundancy());
+      return;
     }
 
-    loadData();
-  }, []);
+    const nameLookupArray = fetchedList.map((rawData) => {
+      const byteArray = fromHexString(rawData.commP);
+      const cidObj = new CID(byteArray.subarray(1))
+
+      return {
+        name: rawData.name,
+        commP: cidObj.toString()
+      }
+    });
+
+    const FullRegEx = /backup[0-9]{12,14}/gm;
+    const IncRegEx = /inc[0-9]{12,14}/gm;
+
+    // Does not load the details about that backup. Only when we click on it.
+    let fullList = [];
+    let folderList = [];
+    let incList = [];
+
+    for (let i = 0; i < nameLookupArray.length; i++) {
+      if (nameLookupArray[i].name.match(FullRegEx) !== null) {
+        fullList.push(nameLookupArray[i]);
+      } else if (nameLookupArray[i].name.match(IncRegEx) !== null) {
+        incList.push(nameLookupArray[i]);
+      } else {
+        folderList.push(nameLookupArray[i]);
+      }
+    }
+
+    const redundancy = await dealClient.getDefaultTargetRedundancy();
+
+  console.log(fullBackupList)
+    setFullBackupList(fullList);
+    setFolderBackupList(folderList);
+    setIncBackupList(incList);
+    setDefaultRedundancy(redundancy)
+  }
 
   async function changeTargetRedundancy() {
     await provider.send("eth_requestAccounts", []);

@@ -33,14 +33,14 @@ export default function BackupList({whichOneSwitch, backupList}) {
         <summary>{title}</summary>
         {backupList.length > 0 ? (
           <ul>
-            {backupList.map((backup) => {
+            {backupList.map((backup, index) => {
               const match = RegEx.exec(backup.name);
               const dateString = match ? match[1] : '';
               const timestamp = Number.parseInt(dateString);
               const time = new Date(timestamp);
 
               return (
-                <li className="backupEntry">
+                <li className="backupEntry" key={index}>
                   <Link to={`/backupDetails/${backup.commP}`}>
                     <p>{"Time of backup: "}{time.toDateString()}</p>
                     <p>{"CommP:"}{backup.commP}</p>

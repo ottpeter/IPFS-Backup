@@ -138,6 +138,7 @@ contract DealClient {
     // Another function will bring up the BackupItem to target redundancy if this does not succeed at first
     function startBackup(BackupRequest calldata backupMeta) public returns (bool) {
         require (msg.sender == owner);
+        // will need to do a DUPLICATE require, but we are not doing it yet for convenience in testing
 
         // Initialize new backup entry        
         backupItems[backupMeta.pieceCID] = BackupItem({
@@ -196,14 +197,14 @@ contract DealClient {
 
         for (uint16 i = 0; i < dealArrays[dealArrayIndex].length; i++) {
             uint64 dealId = dealArrays[dealArrayIndex][i].dealId;
-            /*try MarketAPI.getDealActivation(dealId) returns (MarketTypes.GetDealActivationReturn memory result) {
+            try MarketAPI.getDealActivation(dealId) returns (MarketTypes.GetDealActivationReturn memory result) {
                 dealArrays[dealArrayIndex][i].status = result;
             } catch {
                 // deal expired. If other error and deal is actually active, that would be a problem.
                 bool success = removeDeal(dealArrayIndex, i);
                 require(success, "There was an error while removing expired deal from the array");
                 continue;
-            }*/
+            }
             // Will run into errors, smart contract will revert if EX_DEAL_EXPIRED. But it will compile.
             dealArrays[dealArrayIndex][i].status = MarketAPI.getDealActivation(dealId);
 
@@ -240,11 +241,11 @@ contract DealClient {
 
     // View function for the nameLookupArray
     function getNameLookupArraySegment(uint64 from, uint64 count) public view returns (NameEntry[] memory) {    
+        if (from+count > uint64(nameLookupArray.length)) count = uint64(nameLookupArray.length);
         NameEntry[] memory result = new NameEntry[](count);
         if (nameLookupArray.length == 0) return result;
         require(from < nameLookupArray.length, "from value can't be larger than or equal to the size of the array");
         
-        if (from+count > uint64(nameLookupArray.length)) count = uint64(nameLookupArray.length);
 
         uint64 index = 0;
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Flip, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { ethers } from 'ethers';
 import CID from 'cids';
 import { Tooltip } from 'react-tooltip';
@@ -10,14 +10,14 @@ import { useParams } from 'react-router-dom';
 const CONTRACT_ADDRESS = network.contract;
 
 export default function BackupDetails() {
-  const backupRegEx = /backup([0-9]{13,14})/;
-  const folderRegEx = /folder([0-9]{13,14})/;
+  const backupRegEx = /()backup([0-9]{13,14})/;
+  const folderRegEx = /(.*)_folder([0-9]{13,14})/;
   const incRegEx = /inc([0-9]{13,14})/;
 
   let RegEx = /[0-9]{13,14}/;
 
   const { commP } = useParams();
-  const [loading, setLoading] = useState(true);
+  const [folderName, setFolderName] = useState("");
   const [date, setDate] = useState(null);
   const [type, setType] = useState("");
   const [totalDealCount, setTotalDealCount] = useState(0);
@@ -47,21 +47,25 @@ export default function BackupDetails() {
     
     let match = backupRegEx.exec(name);
     console.log(match);
-    if (match.length > 0) {
+    if (match) {
       setType("full");
     } else {
       match = folderRegEx.exec(name);
-      if (match.length > 0) {
+      if (match) {
         setType("folder");
+        setFolderName(match[1]);
       } else {
         match = incRegEx.exec(name);
-        if (match.length > 0) {
+        if (match) {
           setType("incremental");
+        } else {
+          console.error("Error. We don't no what type of backup is this.");
+          return;
         }
       }
     }
 
-    const dateString = match ? match[1] : '';
+    const dateString = match ? match[2] : '';
     const timestamp = Number.parseInt(dateString);
     const time = new Date(timestamp);
     setDate(time);
@@ -234,7 +238,7 @@ export default function BackupDetails() {
   return (
     <main id="backupDetails">
       {type === "full" && <h1>Full backup of the IPFS repository, made at {date ? date.toDateString() : "-"}</h1>}
-      {type === "folder" && <h1>Folder backup of X, made at {date ? date.toDateString() : "-"}</h1>}
+      {type === "folder" && <h1>Folder backup of <i>{folderName}</i>, made at {date ? date.toDateString() : "-"}</h1>}
       {type === "incremental" && <h1>Folder backup of X, made at {date ? date.toDateString() : "-"}</h1>}
       <h2 id="detailsButtonContainer">
         <Tooltip anchorSelect=".tooltip-anchor" />

@@ -3,6 +3,7 @@ require('dotenv').config();
 const backupRoutes = require('./routes/backup');
 const fetchRoutes = require('./routes/fetch');
 const metadataRoutes = require('./routes/metadata');
+const ipfsRoutes = require('./routes/ipfsRoutes');
 const app = express();
 const port = 3000;
 
@@ -22,6 +23,7 @@ app.use(function(req, res, next) {
 app.use('/backup', backupRoutes);
 app.use('/fetch', fetchRoutes);
 app.use('/metadata', metadataRoutes);
+app.use('/ipfs', ipfsRoutes);
 
 app.listen(port, () => {
   console.log(`IPFS-Backup API server listening on port ${port}`);
