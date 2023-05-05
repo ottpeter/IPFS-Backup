@@ -1,8 +1,8 @@
 pragma solidity ^0.8.0;
 
-import {MarketAPI} from "@zondax/filecoin-solidity/contracts/v0.8/MarketAPI.sol";
-import {MarketTypes} from "@zondax/filecoin-solidity/contracts/v0.8/types/MarketTypes.sol";
-import {CommonTypes} from "@zondax/filecoin-solidity/contracts/v0.8/types/CommonTypes.sol";
+import {MarketAPI} from "../zondax-fork/MarketAPI.sol";
+import {MarketTypes} from "../zondax-fork/types/MarketTypes.sol";
+import {CommonTypes} from "../zondax-fork/types/CommonTypes.sol";
 
 contract FilecoinMarketConsumer {
     string public dealLabel;
