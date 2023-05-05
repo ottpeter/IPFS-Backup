@@ -14,7 +14,7 @@
  *  limitations under the License.
  ********************************************************************************/
 //
-// THIS CODE WAS SECURITY REVIEWED BY KUDELSKI SECURITY, BUT NOT FORMALLY AUDITED
+// DRAFT!! THIS CODE HAS NOT BEEN AUDITED - USE ONLY FOR PROTOTYPING
 
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.0;
@@ -27,17 +27,12 @@ library PrecompilesAPI {
     address constant RESOLVE_ADDRESS_PRECOMPILE_ADDR = 0xFE00000000000000000000000000000000000001;
     address constant LOOKUP_DELEGATED_ADDRESS_PRECOMPILE_ADDR = 0xfE00000000000000000000000000000000000002;
 
-    /// @notice an error happened trying to call the actor
-    error FailToCallActor();
-
     /// @notice get the actor id from an actor address
     /// @param addr actor address you want to get id from (in bytes format, not string)
     /// @return the actor id
     function resolveAddress(CommonTypes.FilAddress memory addr) internal view returns (uint64) {
         (bool success, bytes memory raw_response) = address(RESOLVE_ADDRESS_PRECOMPILE_ADDR).staticcall(addr.data);
-        if (!success) {
-            revert FailToCallActor();
-        }
+        require(success == true, "resolve address error");
 
         uint256 actor_id = abi.decode(raw_response, (uint256));
 
@@ -51,9 +46,7 @@ library PrecompilesAPI {
         bytes memory delegatedAddr = abi.encodePacked(hex"040a", addr);
 
         (bool success, bytes memory raw_response) = address(RESOLVE_ADDRESS_PRECOMPILE_ADDR).staticcall(delegatedAddr);
-        if (!success) {
-            revert FailToCallActor();
-        }
+        require(success == true, "resolve eth address error");
 
         uint256 actor_id = abi.decode(raw_response, (uint256));
 
@@ -65,9 +58,7 @@ library PrecompilesAPI {
     /// @return delegated address in bytes format (not string)
     function lookupDelegatedAddress(uint64 actor_id) internal view returns (bytes memory) {
         (bool success, bytes memory raw_response) = address(LOOKUP_DELEGATED_ADDRESS_PRECOMPILE_ADDR).staticcall(abi.encodePacked(uint256(actor_id)));
-        if (!success) {
-            revert FailToCallActor();
-        }
+        require(success == true, "lookup delegated address error");
 
         return raw_response;
     }

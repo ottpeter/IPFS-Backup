@@ -14,11 +14,12 @@
  *  limitations under the License.
  ********************************************************************************/
 //
-// THIS CODE WAS SECURITY REVIEWED BY KUDELSKI SECURITY, BUT NOT FORMALLY AUDITED
+// DRAFT!! THIS CODE HAS NOT BEEN AUDITED - USE ONLY FOR PROTOTYPING
 
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.17;
 
+import "../cbor/BigIntCbor.sol";
 
 /// @title Filecoin actors' common types for Solidity.
 /// @author Zondax AG
@@ -63,14 +64,5 @@ library CommonTypes {
         bytes data;
     }
 
-    /// @param data deal proposal label in bytes format (it can be utf8 string or arbitrary bytes string).
-    /// @param isString indicates if the data is string or raw bytes
-    struct DealLabel {
-        bytes data;
-        bool isString;
-    }
-
     type FilActorId is uint64;
-
-    type ChainEpoch is int64;
 }

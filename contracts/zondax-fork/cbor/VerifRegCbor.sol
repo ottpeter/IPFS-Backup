@@ -14,19 +14,17 @@
  *  limitations under the License.
  ********************************************************************************/
 //
-// THIS CODE WAS SECURITY REVIEWED BY KUDELSKI SECURITY, BUT NOT FORMALLY AUDITED
+// DRAFT!! THIS CODE HAS NOT BEEN AUDITED - USE ONLY FOR PROTOTYPING
 
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.17;
 
-import "solidity-cborutils/contracts/CBOR.sol";
+import "../external/CBOR.sol";
 
 import "../types/CommonTypes.sol";
 import "../types/VerifRegTypes.sol";
-
 import "../utils/CborDecode.sol";
 import "../utils/Misc.sol";
-
 import "./BigIntCbor.sol";
 import "./FilecoinCbor.sol";
 
@@ -42,16 +40,9 @@ library VerifRegCBOR {
     /// @param params GetClaimsParams to serialize as cbor
     /// @return cbor serialized data as bytes
     function serializeGetClaimsParams(VerifRegTypes.GetClaimsParams memory params) internal pure returns (bytes memory) {
-        uint256 capacity = 0;
-        uint claimIdsLen = params.claim_ids.length;
+        CBOR.CBORBuffer memory buf = CBOR.create(64);
 
-        capacity += Misc.getPrefixSize(2);
-        capacity += Misc.getFilActorIdSize(params.provider);
-        capacity += Misc.getPrefixSize(claimIdsLen);
-        for (uint i = 0; i < claimIdsLen; i++) {
-            capacity += Misc.getFilActorIdSize(params.claim_ids[i]);
-        }
-        CBOR.CBORBuffer memory buf = CBOR.create(capacity);
+        uint claimIdsLen = params.claim_ids.length;
 
         buf.startFixedArray(2);
         buf.writeFilActorId(params.provider);
@@ -100,9 +91,9 @@ library VerifRegCBOR {
             (ret.claims[i].client, byteIdx) = rawResp.readFilActorId(byteIdx);
             (ret.claims[i].data, byteIdx) = rawResp.readBytes(byteIdx);
             (ret.claims[i].size, byteIdx) = rawResp.readUInt64(byteIdx);
-            (ret.claims[i].term_min, byteIdx) = rawResp.readChainEpoch(byteIdx);
-            (ret.claims[i].term_max, byteIdx) = rawResp.readChainEpoch(byteIdx);
-            (ret.claims[i].term_start, byteIdx) = rawResp.readChainEpoch(byteIdx);
+            (ret.claims[i].term_min, byteIdx) = rawResp.readInt64(byteIdx);
+            (ret.claims[i].term_max, byteIdx) = rawResp.readInt64(byteIdx);
+            (ret.claims[i].term_start, byteIdx) = rawResp.readInt64(byteIdx);
             (ret.claims[i].sector, byteIdx) = rawResp.readFilActorId(byteIdx);
         }
 
@@ -113,17 +104,11 @@ library VerifRegCBOR {
     /// @param params AddVerifiedClientParams to serialize as cbor
     /// @return cbor serialized data as bytes
     function serializeAddVerifiedClientParams(VerifRegTypes.AddVerifiedClientParams memory params) internal pure returns (bytes memory) {
-        uint256 capacity = 0;
-        bytes memory allowance = params.allowance.serializeBigInt();
-
-        capacity += Misc.getPrefixSize(2);
-        capacity += Misc.getBytesSize(params.addr.data);
-        capacity += Misc.getBytesSize(allowance);
-        CBOR.CBORBuffer memory buf = CBOR.create(capacity);
+        CBOR.CBORBuffer memory buf = CBOR.create(64);
 
         buf.startFixedArray(2);
         buf.writeBytes(params.addr.data);
-        buf.writeBytes(allowance);
+        buf.writeBytes(params.allowance);
 
         return buf.data();
     }
@@ -132,16 +117,9 @@ library VerifRegCBOR {
     /// @param params RemoveExpiredAllocationsParams to serialize as cbor
     /// @return cbor serialized data as bytes
     function serializeRemoveExpiredAllocationsParams(VerifRegTypes.RemoveExpiredAllocationsParams memory params) internal pure returns (bytes memory) {
-        uint256 capacity = 0;
-        uint allocationIdsLen = params.allocation_ids.length;
+        CBOR.CBORBuffer memory buf = CBOR.create(64);
 
-        capacity += Misc.getPrefixSize(2);
-        capacity += Misc.getFilActorIdSize(params.client);
-        capacity += Misc.getPrefixSize(allocationIdsLen);
-        for (uint i = 0; i < allocationIdsLen; i++) {
-            capacity += Misc.getFilActorIdSize(params.allocation_ids[i]);
-        }
-        CBOR.CBORBuffer memory buf = CBOR.create(capacity);
+        uint allocationIdsLen = params.allocation_ids.length;
 
         buf.startFixedArray(2);
         buf.writeFilActorId(params.client);
@@ -197,17 +175,9 @@ library VerifRegCBOR {
     /// @param params ExtendClaimTermsParams to serialize as cbor
     /// @return cbor serialized data as bytes
     function serializeExtendClaimTermsParams(VerifRegTypes.ExtendClaimTermsParams memory params) internal pure returns (bytes memory) {
-        uint256 capacity = 0;
-        uint termsLen = params.terms.length;
+        CBOR.CBORBuffer memory buf = CBOR.create(64);
 
-        capacity += Misc.getPrefixSize(1);
-        capacity += Misc.getPrefixSize(termsLen);
-        for (uint i = 0; i < termsLen; i++) {
-            capacity += Misc.getFilActorIdSize(params.terms[i].provider);
-            capacity += Misc.getFilActorIdSize(params.terms[i].claim_id);
-            capacity += Misc.getChainEpochSize(params.terms[i].term_max);
-        }
-        CBOR.CBORBuffer memory buf = CBOR.create(capacity);
+        uint termsLen = params.terms.length;
 
         buf.startFixedArray(1);
         buf.startFixedArray(uint64(termsLen));
@@ -215,7 +185,7 @@ library VerifRegCBOR {
             buf.startFixedArray(3);
             buf.writeFilActorId(params.terms[i].provider);
             buf.writeFilActorId(params.terms[i].claim_id);
-            buf.writeChainEpoch(params.terms[i].term_max);
+            buf.writeInt64(params.terms[i].term_max);
         }
 
         return buf.data();
@@ -251,16 +221,9 @@ library VerifRegCBOR {
     /// @param params RemoveExpiredClaimsParams to serialize as cbor
     /// @return cbor serialized data as bytes
     function serializeRemoveExpiredClaimsParams(VerifRegTypes.RemoveExpiredClaimsParams memory params) internal pure returns (bytes memory) {
-        uint256 capacity = 0;
-        uint claimIdsLen = params.claim_ids.length;
+        CBOR.CBORBuffer memory buf = CBOR.create(64);
 
-        capacity += Misc.getPrefixSize(2);
-        capacity += Misc.getFilActorIdSize(params.provider);
-        capacity += Misc.getPrefixSize(claimIdsLen);
-        for (uint i = 0; i < claimIdsLen; i++) {
-            capacity += Misc.getFilActorIdSize(params.claim_ids[i]);
-        }
-        CBOR.CBORBuffer memory buf = CBOR.create(capacity);
+        uint claimIdsLen = params.claim_ids.length;
 
         buf.startFixedArray(2);
         buf.writeFilActorId(params.provider);

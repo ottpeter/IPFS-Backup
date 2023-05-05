@@ -14,15 +14,14 @@
  *  limitations under the License.
  ********************************************************************************/
 //
-// THIS CODE WAS SECURITY REVIEWED BY KUDELSKI SECURITY, BUT NOT FORMALLY AUDITED
+// DRAFT!! THIS CODE HAS NOT BEEN AUDITED - USE ONLY FOR PROTOTYPING
 
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.17;
 
-import "solidity-cborutils/contracts/CBOR.sol";
+import "../external/CBOR.sol";
 
 import "../types/AccountTypes.sol";
-
 import "../utils/CborDecode.sol";
 import "../utils/Misc.sol";
 
@@ -36,13 +35,7 @@ library AccountCBOR {
     /// @param params AuthenticateMessageParams to serialize as cbor
     /// @return cbor serialized data as bytes
     function serializeAuthenticateMessageParams(AccountTypes.AuthenticateMessageParams memory params) internal pure returns (bytes memory) {
-        uint256 capacity = 0;
-
-        capacity += Misc.getPrefixSize(2);
-        capacity += Misc.getBytesSize(params.signature);
-        capacity += Misc.getBytesSize(params.message);
-
-        CBOR.CBORBuffer memory buf = CBOR.create(capacity);
+        CBOR.CBORBuffer memory buf = CBOR.create(64);
 
         buf.startFixedArray(2);
         buf.writeBytes(params.signature);

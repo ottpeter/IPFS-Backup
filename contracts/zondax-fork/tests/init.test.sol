@@ -1,5 +1,5 @@
 /*******************************************************************************
- *   (c) 2023 Zondax AG
+ *   (c) 2022 Zondax AG
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,24 +14,23 @@
  *  limitations under the License.
  ********************************************************************************/
 //
-// THIS CODE WAS SECURITY REVIEWED BY KUDELSKI SECURITY, BUT NOT FORMALLY AUDITED
+// DRAFT!! THIS CODE HAS NOT BEEN AUDITED - USE ONLY FOR PROTOTYPING
 
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.17;
 
-import "../types/MinerTypes.sol";
-import "../cbor/MinerCbor.sol";
+import "../types/InitTypes.sol";
+import "../InitAPI.sol";
 
-/// @notice This file is meant to serve as a deployable contract to test
+/// @notice This file is meant to serve as a deployable contract of the init actor API, as the library by itself is not.
+/// @notice It imports the library and create a callable method for each method in the library
 /// @author Zondax AG
-contract DeserializeParamsTest {
-    using MinerCBOR for *;
+contract InitApiTest {
+    function exec(InitTypes.ExecParams memory params) public returns (InitTypes.ExecReturn memory) {
+        return InitAPI.exec(params);
+    }
 
-    function deserializeGetVestingFundsReturn() public pure {
-        bytes memory params = hex"8181820040";
-
-        MinerTypes.GetVestingFundsReturn memory result = params.deserializeGetVestingFundsReturn();
-
-        require(result.vesting_funds.length == 1, "result length should be 1");
+    function exec4(InitTypes.Exec4Params memory params) public returns (InitTypes.Exec4Return memory) {
+        return InitAPI.exec4(params);
     }
 }

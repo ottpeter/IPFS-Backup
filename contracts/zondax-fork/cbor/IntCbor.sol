@@ -14,15 +14,14 @@
  *  limitations under the License.
  ********************************************************************************/
 //
-// THIS CODE WAS SECURITY REVIEWED BY KUDELSKI SECURITY, BUT NOT FORMALLY AUDITED
+// DRAFT!! THIS CODE HAS NOT BEEN AUDITED - USE ONLY FOR PROTOTYPING
 
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.17;
 
-import "solidity-cborutils/contracts/CBOR.sol";
+import "../external/CBOR.sol";
 
 import "../utils/CborDecode.sol";
-import "../utils/Misc.sol";
 
 /// @title This library is a set of functions meant to handle CBOR serialization and deserialization for uint64 type
 /// @author Zondax AG
@@ -34,8 +33,7 @@ library Uint64CBOR {
     /// @param id value to serialize
     /// @return cbor encoded bytes
     function serialize(uint64 id) internal pure returns (bytes memory) {
-        uint256 capacity = Misc.getPrefixSize(uint256(id));
-        CBOR.CBORBuffer memory buf = CBOR.create(capacity);
+        CBOR.CBORBuffer memory buf = CBOR.create(64);
 
         buf.writeUInt64(id);
 

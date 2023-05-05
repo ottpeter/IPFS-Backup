@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  *   (c) 2023 Zondax AG
  *
@@ -14,13 +15,13 @@
  *  limitations under the License.
  ********************************************************************************/
 //
-// THIS CODE WAS SECURITY REVIEWED BY KUDELSKI SECURITY, BUT NOT FORMALLY AUDITED
+// DRAFT!! THIS CODE HAS NOT BEEN AUDITED - USE ONLY FOR PROTOTYPING
 
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.17;
 
 import "../utils/Leb128.sol";
-import "@ensdomains/buffer/contracts/Buffer.sol";
+import "../external/Buffer.sol";
 
 /// @notice This file is meant to serve as a deployable contract of the Leb128 lib, as the library by itself is not.
 /// @notice It imports the library and create a callable method for each method in the library
@@ -29,487 +30,601 @@ contract Leb128Generated10Test {
     using Buffer for Buffer.buffer;
 
     function unsiged_integer_leb128_encoding_generated() public pure {
-        bytes memory expected630 = hex"8bdcf5a40f";
-        uint64 value630 = 4103958027;
 
-        Buffer.buffer memory result630 = Leb128.encodeUnsignedLeb128FromUInt64(value630);
+        bytes memory expected774 = hex"b6c1eac8dde7ebb7ef01";
+        uint64 value774 = 17253201377649926326;
 
-        require(keccak256(result630.buf) == keccak256(expected630), "'4103958027' is not returning '8bdcf5a40f'");
+        Buffer.buffer memory result774 = Leb128.encodeUnsignedLeb128FromUInt64(value774);
 
-        bytes memory expected631 = hex"c3a09c9c08";
-        uint64 value631 = 2206666819;
+        require(keccak256(result774.buf) == keccak256(expected774), "'17253201377649926326' is not returning 'b6c1eac8dde7ebb7ef01'");    
 
-        Buffer.buffer memory result631 = Leb128.encodeUnsignedLeb128FromUInt64(value631);
+        bytes memory expected775 = hex"ecf6b4b6f2f493d8d601";
+        uint64 value775 = 15469952299346770796;
 
-        require(keccak256(result631.buf) == keccak256(expected631), "'2206666819' is not returning 'c3a09c9c08'");
+        Buffer.buffer memory result775 = Leb128.encodeUnsignedLeb128FromUInt64(value775);
 
-        bytes memory expected632 = hex"dcd1d7b206";
-        uint64 value632 = 1716906204;
+        require(keccak256(result775.buf) == keccak256(expected775), "'15469952299346770796' is not returning 'ecf6b4b6f2f493d8d601'");    
 
-        Buffer.buffer memory result632 = Leb128.encodeUnsignedLeb128FromUInt64(value632);
+        bytes memory expected776 = hex"f585a5d5c0deedfd50";
+        uint64 value776 = 5835458901455749877;
 
-        require(keccak256(result632.buf) == keccak256(expected632), "'1716906204' is not returning 'dcd1d7b206'");
+        Buffer.buffer memory result776 = Leb128.encodeUnsignedLeb128FromUInt64(value776);
 
-        bytes memory expected633 = hex"acdfbfa509";
-        uint64 value633 = 2494558124;
+        require(keccak256(result776.buf) == keccak256(expected776), "'5835458901455749877' is not returning 'f585a5d5c0deedfd50'");    
 
-        Buffer.buffer memory result633 = Leb128.encodeUnsignedLeb128FromUInt64(value633);
+        bytes memory expected777 = hex"9a88cb859caaa3d2f701";
+        uint64 value777 = 17844543005813556250;
 
-        require(keccak256(result633.buf) == keccak256(expected633), "'2494558124' is not returning 'acdfbfa509'");
+        Buffer.buffer memory result777 = Leb128.encodeUnsignedLeb128FromUInt64(value777);
 
-        bytes memory expected634 = hex"b09f8fb307";
-        uint64 value634 = 1986252720;
+        require(keccak256(result777.buf) == keccak256(expected777), "'17844543005813556250' is not returning '9a88cb859caaa3d2f701'");    
 
-        Buffer.buffer memory result634 = Leb128.encodeUnsignedLeb128FromUInt64(value634);
+        bytes memory expected778 = hex"d984bdeecce1aefb44";
+        uint64 value778 = 4969364902516834905;
 
-        require(keccak256(result634.buf) == keccak256(expected634), "'1986252720' is not returning 'b09f8fb307'");
+        Buffer.buffer memory result778 = Leb128.encodeUnsignedLeb128FromUInt64(value778);
 
-        bytes memory expected635 = hex"82afa5ef09";
-        uint64 value635 = 2649315202;
+        require(keccak256(result778.buf) == keccak256(expected778), "'4969364902516834905' is not returning 'd984bdeecce1aefb44'");    
 
-        Buffer.buffer memory result635 = Leb128.encodeUnsignedLeb128FromUInt64(value635);
+        bytes memory expected779 = hex"9ad993c4d5c986f05c";
+        uint64 value779 = 6692377965772467354;
 
-        require(keccak256(result635.buf) == keccak256(expected635), "'2649315202' is not returning '82afa5ef09'");
+        Buffer.buffer memory result779 = Leb128.encodeUnsignedLeb128FromUInt64(value779);
 
-        bytes memory expected636 = hex"e4bab0ea0b";
-        uint64 value636 = 3175882084;
+        require(keccak256(result779.buf) == keccak256(expected779), "'6692377965772467354' is not returning '9ad993c4d5c986f05c'");    
 
-        Buffer.buffer memory result636 = Leb128.encodeUnsignedLeb128FromUInt64(value636);
+        bytes memory expected780 = hex"ffc688f8aee395bd14";
+        uint64 value780 = 1475587601107919743;
 
-        require(keccak256(result636.buf) == keccak256(expected636), "'3175882084' is not returning 'e4bab0ea0b'");
+        Buffer.buffer memory result780 = Leb128.encodeUnsignedLeb128FromUInt64(value780);
 
-        bytes memory expected637 = hex"f4d28afc0d";
-        uint64 value637 = 3749882228;
+        require(keccak256(result780.buf) == keccak256(expected780), "'1475587601107919743' is not returning 'ffc688f8aee395bd14'");    
 
-        Buffer.buffer memory result637 = Leb128.encodeUnsignedLeb128FromUInt64(value637);
+        bytes memory expected781 = hex"daa2cea1deb9f5aa35";
+        uint64 value781 = 3843212937304183130;
 
-        require(keccak256(result637.buf) == keccak256(expected637), "'3749882228' is not returning 'f4d28afc0d'");
+        Buffer.buffer memory result781 = Leb128.encodeUnsignedLeb128FromUInt64(value781);
 
-        bytes memory expected638 = hex"aaa8f9d70d";
-        uint64 value638 = 3674100778;
+        require(keccak256(result781.buf) == keccak256(expected781), "'3843212937304183130' is not returning 'daa2cea1deb9f5aa35'");    
 
-        Buffer.buffer memory result638 = Leb128.encodeUnsignedLeb128FromUInt64(value638);
+        bytes memory expected782 = hex"8ec4afc1d7b3bbd78701";
+        uint64 value782 = 9777013101649715726;
 
-        require(keccak256(result638.buf) == keccak256(expected638), "'3674100778' is not returning 'aaa8f9d70d'");
+        Buffer.buffer memory result782 = Leb128.encodeUnsignedLeb128FromUInt64(value782);
 
-        bytes memory expected639 = hex"b6e99bf603";
-        uint64 value639 = 1053226166;
+        require(keccak256(result782.buf) == keccak256(expected782), "'9777013101649715726' is not returning '8ec4afc1d7b3bbd78701'");    
 
-        Buffer.buffer memory result639 = Leb128.encodeUnsignedLeb128FromUInt64(value639);
+        bytes memory expected783 = hex"9eb1c7e6c8ae93e515";
+        uint64 value783 = 1570152583066146974;
 
-        require(keccak256(result639.buf) == keccak256(expected639), "'1053226166' is not returning 'b6e99bf603'");
+        Buffer.buffer memory result783 = Leb128.encodeUnsignedLeb128FromUInt64(value783);
 
-        bytes memory expected640 = hex"d9d4b449";
-        uint64 value640 = 153954905;
+        require(keccak256(result783.buf) == keccak256(expected783), "'1570152583066146974' is not returning '9eb1c7e6c8ae93e515'");    
 
-        Buffer.buffer memory result640 = Leb128.encodeUnsignedLeb128FromUInt64(value640);
+        bytes memory expected784 = hex"e896dadbb7aacdeef001";
+        uint64 value784 = 17356087171625683816;
 
-        require(keccak256(result640.buf) == keccak256(expected640), "'153954905' is not returning 'd9d4b449'");
+        Buffer.buffer memory result784 = Leb128.encodeUnsignedLeb128FromUInt64(value784);
 
-        bytes memory expected641 = hex"92d78dfc06";
-        uint64 value641 = 1870883730;
+        require(keccak256(result784.buf) == keccak256(expected784), "'17356087171625683816' is not returning 'e896dadbb7aacdeef001'");    
 
-        Buffer.buffer memory result641 = Leb128.encodeUnsignedLeb128FromUInt64(value641);
+        bytes memory expected785 = hex"a9a9b0d3ddfbb59546";
+        uint64 value785 = 5056090879529063593;
 
-        require(keccak256(result641.buf) == keccak256(expected641), "'1870883730' is not returning '92d78dfc06'");
+        Buffer.buffer memory result785 = Leb128.encodeUnsignedLeb128FromUInt64(value785);
 
-        bytes memory expected642 = hex"d78defaa09";
-        uint64 value642 = 2505819863;
+        require(keccak256(result785.buf) == keccak256(expected785), "'5056090879529063593' is not returning 'a9a9b0d3ddfbb59546'");    
 
-        Buffer.buffer memory result642 = Leb128.encodeUnsignedLeb128FromUInt64(value642);
+        bytes memory expected786 = hex"8696e5f3f4efcffc2e";
+        uint64 value786 = 3384806410955606790;
 
-        require(keccak256(result642.buf) == keccak256(expected642), "'2505819863' is not returning 'd78defaa09'");
+        Buffer.buffer memory result786 = Leb128.encodeUnsignedLeb128FromUInt64(value786);
 
-        bytes memory expected643 = hex"9ff480f908";
-        uint64 value643 = 2401253919;
+        require(keccak256(result786.buf) == keccak256(expected786), "'3384806410955606790' is not returning '8696e5f3f4efcffc2e'");    
 
-        Buffer.buffer memory result643 = Leb128.encodeUnsignedLeb128FromUInt64(value643);
+        bytes memory expected787 = hex"93a1f49eb8ebe1a467";
+        uint64 value787 = 7442628686330531987;
 
-        require(keccak256(result643.buf) == keccak256(expected643), "'2401253919' is not returning '9ff480f908'");
+        Buffer.buffer memory result787 = Leb128.encodeUnsignedLeb128FromUInt64(value787);
 
-        bytes memory expected644 = hex"b095b4a201";
-        uint64 value644 = 340593328;
+        require(keccak256(result787.buf) == keccak256(expected787), "'7442628686330531987' is not returning '93a1f49eb8ebe1a467'");    
 
-        Buffer.buffer memory result644 = Leb128.encodeUnsignedLeb128FromUInt64(value644);
+        bytes memory expected788 = hex"e1ccc0d2c8b6e8ea12";
+        uint64 value788 = 1357168659508766305;
 
-        require(keccak256(result644.buf) == keccak256(expected644), "'340593328' is not returning 'b095b4a201'");
+        Buffer.buffer memory result788 = Leb128.encodeUnsignedLeb128FromUInt64(value788);
 
-        bytes memory expected645 = hex"cfe7b5ce03";
-        uint64 value645 = 969765839;
+        require(keccak256(result788.buf) == keccak256(expected788), "'1357168659508766305' is not returning 'e1ccc0d2c8b6e8ea12'");    
 
-        Buffer.buffer memory result645 = Leb128.encodeUnsignedLeb128FromUInt64(value645);
+        bytes memory expected789 = hex"ddd6d8cddbb9939662";
+        uint64 value789 = 7074114660671564637;
 
-        require(keccak256(result645.buf) == keccak256(expected645), "'969765839' is not returning 'cfe7b5ce03'");
+        Buffer.buffer memory result789 = Leb128.encodeUnsignedLeb128FromUInt64(value789);
 
-        bytes memory expected646 = hex"b09fcab605";
-        uint64 value646 = 1456639920;
+        require(keccak256(result789.buf) == keccak256(expected789), "'7074114660671564637' is not returning 'ddd6d8cddbb9939662'");    
 
-        Buffer.buffer memory result646 = Leb128.encodeUnsignedLeb128FromUInt64(value646);
+        bytes memory expected790 = hex"fcbff5bd9ee18381e801";
+        uint64 value790 = 16717941301969772540;
 
-        require(keccak256(result646.buf) == keccak256(expected646), "'1456639920' is not returning 'b09fcab605'");
+        Buffer.buffer memory result790 = Leb128.encodeUnsignedLeb128FromUInt64(value790);
 
-        bytes memory expected647 = hex"e086bd2b";
-        uint64 value647 = 91177824;
+        require(keccak256(result790.buf) == keccak256(expected790), "'16717941301969772540' is not returning 'fcbff5bd9ee18381e801'");    
 
-        Buffer.buffer memory result647 = Leb128.encodeUnsignedLeb128FromUInt64(value647);
+        bytes memory expected791 = hex"ada6a2d4ef90a49121";
+        uint64 value791 = 2387629661863056173;
 
-        require(keccak256(result647.buf) == keccak256(expected647), "'91177824' is not returning 'e086bd2b'");
+        Buffer.buffer memory result791 = Leb128.encodeUnsignedLeb128FromUInt64(value791);
 
-        bytes memory expected648 = hex"cce3e1820d";
-        uint64 value648 = 3495457228;
+        require(keccak256(result791.buf) == keccak256(expected791), "'2387629661863056173' is not returning 'ada6a2d4ef90a49121'");    
 
-        Buffer.buffer memory result648 = Leb128.encodeUnsignedLeb128FromUInt64(value648);
+        bytes memory expected792 = hex"f7edf9d88192b18e6d";
+        uint64 value792 = 7862375172691359479;
 
-        require(keccak256(result648.buf) == keccak256(expected648), "'3495457228' is not returning 'cce3e1820d'");
+        Buffer.buffer memory result792 = Leb128.encodeUnsignedLeb128FromUInt64(value792);
 
-        bytes memory expected649 = hex"dbe8f9fb0b";
-        uint64 value649 = 3212735579;
+        require(keccak256(result792.buf) == keccak256(expected792), "'7862375172691359479' is not returning 'f7edf9d88192b18e6d'");    
 
-        Buffer.buffer memory result649 = Leb128.encodeUnsignedLeb128FromUInt64(value649);
+        bytes memory expected793 = hex"f0d1ae83ba93e7a9f501";
+        uint64 value793 = 17677645154584602864;
 
-        require(keccak256(result649.buf) == keccak256(expected649), "'3212735579' is not returning 'dbe8f9fb0b'");
+        Buffer.buffer memory result793 = Leb128.encodeUnsignedLeb128FromUInt64(value793);
 
-        bytes memory expected650 = hex"98f7af8301";
-        uint64 value650 = 275512216;
+        require(keccak256(result793.buf) == keccak256(expected793), "'17677645154584602864' is not returning 'f0d1ae83ba93e7a9f501'");    
 
-        Buffer.buffer memory result650 = Leb128.encodeUnsignedLeb128FromUInt64(value650);
+        bytes memory expected794 = hex"87809cdb8cc6c99138";
+        uint64 value794 = 4045118881321648135;
 
-        require(keccak256(result650.buf) == keccak256(expected650), "'275512216' is not returning '98f7af8301'");
+        Buffer.buffer memory result794 = Leb128.encodeUnsignedLeb128FromUInt64(value794);
 
-        bytes memory expected651 = hex"be81c9c002";
-        uint64 value651 = 672284862;
+        require(keccak256(result794.buf) == keccak256(expected794), "'4045118881321648135' is not returning '87809cdb8cc6c99138'");    
 
-        Buffer.buffer memory result651 = Leb128.encodeUnsignedLeb128FromUInt64(value651);
+        bytes memory expected795 = hex"baf0b4be8ee1c89d7e";
+        uint64 value795 = 9095902393560545338;
 
-        require(keccak256(result651.buf) == keccak256(expected651), "'672284862' is not returning 'be81c9c002'");
+        Buffer.buffer memory result795 = Leb128.encodeUnsignedLeb128FromUInt64(value795);
 
-        bytes memory expected652 = hex"98bed6ca03";
-        uint64 value652 = 961912600;
+        require(keccak256(result795.buf) == keccak256(expected795), "'9095902393560545338' is not returning 'baf0b4be8ee1c89d7e'");    
 
-        Buffer.buffer memory result652 = Leb128.encodeUnsignedLeb128FromUInt64(value652);
+        bytes memory expected796 = hex"f0e2ef80d390b2e90e";
+        uint64 value796 = 1068136536003572080;
 
-        require(keccak256(result652.buf) == keccak256(expected652), "'961912600' is not returning '98bed6ca03'");
+        Buffer.buffer memory result796 = Leb128.encodeUnsignedLeb128FromUInt64(value796);
 
-        bytes memory expected653 = hex"f8b3fbbe0b";
-        uint64 value653 = 3084835320;
+        require(keccak256(result796.buf) == keccak256(expected796), "'1068136536003572080' is not returning 'f0e2ef80d390b2e90e'");    
 
-        Buffer.buffer memory result653 = Leb128.encodeUnsignedLeb128FromUInt64(value653);
+        bytes memory expected797 = hex"a3deb1e881fbcfe965";
+        uint64 value797 = 7337278415349509923;
 
-        require(keccak256(result653.buf) == keccak256(expected653), "'3084835320' is not returning 'f8b3fbbe0b'");
+        Buffer.buffer memory result797 = Leb128.encodeUnsignedLeb128FromUInt64(value797);
 
-        bytes memory expected654 = hex"cffcf468";
-        uint64 value654 = 220020303;
+        require(keccak256(result797.buf) == keccak256(expected797), "'7337278415349509923' is not returning 'a3deb1e881fbcfe965'");    
 
-        Buffer.buffer memory result654 = Leb128.encodeUnsignedLeb128FromUInt64(value654);
+        bytes memory expected798 = hex"9bdeb0c29bc7eb9318";
+        uint64 value798 = 1740551343930355483;
 
-        require(keccak256(result654.buf) == keccak256(expected654), "'220020303' is not returning 'cffcf468'");
+        Buffer.buffer memory result798 = Leb128.encodeUnsignedLeb128FromUInt64(value798);
 
-        bytes memory expected655 = hex"e28caa9009";
-        uint64 value655 = 2450163298;
+        require(keccak256(result798.buf) == keccak256(expected798), "'1740551343930355483' is not returning '9bdeb0c29bc7eb9318'");    
 
-        Buffer.buffer memory result655 = Leb128.encodeUnsignedLeb128FromUInt64(value655);
+        bytes memory expected799 = hex"c3bcc8b594b0b88436";
+        uint64 value799 = 3893609823214902851;
 
-        require(keccak256(result655.buf) == keccak256(expected655), "'2450163298' is not returning 'e28caa9009'");
+        Buffer.buffer memory result799 = Leb128.encodeUnsignedLeb128FromUInt64(value799);
 
-        bytes memory expected656 = hex"d38ae28d0f";
-        uint64 value656 = 4055401811;
+        require(keccak256(result799.buf) == keccak256(expected799), "'3893609823214902851' is not returning 'c3bcc8b594b0b88436'");    
 
-        Buffer.buffer memory result656 = Leb128.encodeUnsignedLeb128FromUInt64(value656);
+        bytes memory expected800 = hex"8ae3d7c8c6a8839ae801";
+        uint64 value800 = 16732013103060218250;
 
-        require(keccak256(result656.buf) == keccak256(expected656), "'4055401811' is not returning 'd38ae28d0f'");
+        Buffer.buffer memory result800 = Leb128.encodeUnsignedLeb128FromUInt64(value800);
 
-        bytes memory expected657 = hex"acd4e9aa04";
-        uint64 value657 = 1163553324;
+        require(keccak256(result800.buf) == keccak256(expected800), "'16732013103060218250' is not returning '8ae3d7c8c6a8839ae801'");    
 
-        Buffer.buffer memory result657 = Leb128.encodeUnsignedLeb128FromUInt64(value657);
+        bytes memory expected801 = hex"f6b185e0f3dbfaf58d01";
+        uint64 value801 = 10226525623380170998;
 
-        require(keccak256(result657.buf) == keccak256(expected657), "'1163553324' is not returning 'acd4e9aa04'");
+        Buffer.buffer memory result801 = Leb128.encodeUnsignedLeb128FromUInt64(value801);
 
-        bytes memory expected658 = hex"f9f5b5bd04";
-        uint64 value658 = 1202551545;
+        require(keccak256(result801.buf) == keccak256(expected801), "'10226525623380170998' is not returning 'f6b185e0f3dbfaf58d01'");    
 
-        Buffer.buffer memory result658 = Leb128.encodeUnsignedLeb128FromUInt64(value658);
+        bytes memory expected802 = hex"9c98d4bcd0c9b7a61a";
+        uint64 value802 = 1895133965637192732;
 
-        require(keccak256(result658.buf) == keccak256(expected658), "'1202551545' is not returning 'f9f5b5bd04'");
+        Buffer.buffer memory result802 = Leb128.encodeUnsignedLeb128FromUInt64(value802);
 
-        bytes memory expected659 = hex"dc89ffc207";
-        uint64 value659 = 2019542236;
+        require(keccak256(result802.buf) == keccak256(expected802), "'1895133965637192732' is not returning '9c98d4bcd0c9b7a61a'");    
 
-        Buffer.buffer memory result659 = Leb128.encodeUnsignedLeb128FromUInt64(value659);
+        bytes memory expected803 = hex"f0f8e3eba5aec4a9dd01";
+        uint64 value803 = 15948109888341212272;
 
-        require(keccak256(result659.buf) == keccak256(expected659), "'2019542236' is not returning 'dc89ffc207'");
+        Buffer.buffer memory result803 = Leb128.encodeUnsignedLeb128FromUInt64(value803);
 
-        bytes memory expected660 = hex"b786dda40a";
-        uint64 value660 = 2761376567;
+        require(keccak256(result803.buf) == keccak256(expected803), "'15948109888341212272' is not returning 'f0f8e3eba5aec4a9dd01'");    
 
-        Buffer.buffer memory result660 = Leb128.encodeUnsignedLeb128FromUInt64(value660);
+        bytes memory expected804 = hex"c3d79ef5d7eabea670";
+        uint64 value804 = 8092118975093648323;
 
-        require(keccak256(result660.buf) == keccak256(expected660), "'2761376567' is not returning 'b786dda40a'");
+        Buffer.buffer memory result804 = Leb128.encodeUnsignedLeb128FromUInt64(value804);
 
-        bytes memory expected661 = hex"b2c2c2ff05";
-        uint64 value661 = 1609605426;
+        require(keccak256(result804.buf) == keccak256(expected804), "'8092118975093648323' is not returning 'c3d79ef5d7eabea670'");    
 
-        Buffer.buffer memory result661 = Leb128.encodeUnsignedLeb128FromUInt64(value661);
+        bytes memory expected805 = hex"aa87b2f9f5f2f5f59101";
+        uint64 value805 = 10514734800163341226;
 
-        require(keccak256(result661.buf) == keccak256(expected661), "'1609605426' is not returning 'b2c2c2ff05'");
+        Buffer.buffer memory result805 = Leb128.encodeUnsignedLeb128FromUInt64(value805);
 
-        bytes memory expected662 = hex"a8d7bff601";
-        uint64 value662 = 516942760;
+        require(keccak256(result805.buf) == keccak256(expected805), "'10514734800163341226' is not returning 'aa87b2f9f5f2f5f59101'");    
 
-        Buffer.buffer memory result662 = Leb128.encodeUnsignedLeb128FromUInt64(value662);
+        bytes memory expected806 = hex"a89bd694d999bbd8c001";
+        uint64 value806 = 13884858018854964648;
 
-        require(keccak256(result662.buf) == keccak256(expected662), "'516942760' is not returning 'a8d7bff601'");
+        Buffer.buffer memory result806 = Leb128.encodeUnsignedLeb128FromUInt64(value806);
 
-        bytes memory expected663 = hex"88baefed08";
-        uint64 value663 = 2377899272;
+        require(keccak256(result806.buf) == keccak256(expected806), "'13884858018854964648' is not returning 'a89bd694d999bbd8c001'");    
 
-        Buffer.buffer memory result663 = Leb128.encodeUnsignedLeb128FromUInt64(value663);
+        bytes memory expected807 = hex"9bfcb7d6ddaed8b44c";
+        uint64 value807 = 5506039178247142939;
 
-        require(keccak256(result663.buf) == keccak256(expected663), "'2377899272' is not returning '88baefed08'");
+        Buffer.buffer memory result807 = Leb128.encodeUnsignedLeb128FromUInt64(value807);
 
-        bytes memory expected664 = hex"b2b0beab0d";
-        uint64 value664 = 3580860466;
+        require(keccak256(result807.buf) == keccak256(expected807), "'5506039178247142939' is not returning '9bfcb7d6ddaed8b44c'");    
 
-        Buffer.buffer memory result664 = Leb128.encodeUnsignedLeb128FromUInt64(value664);
+        bytes memory expected808 = hex"fdc2a4be9aa3d4a735";
+        uint64 value808 = 3841378177801331069;
 
-        require(keccak256(result664.buf) == keccak256(expected664), "'3580860466' is not returning 'b2b0beab0d'");
+        Buffer.buffer memory result808 = Leb128.encodeUnsignedLeb128FromUInt64(value808);
 
-        bytes memory expected665 = hex"b9bcf6f507";
-        uint64 value665 = 2126356025;
+        require(keccak256(result808.buf) == keccak256(expected808), "'3841378177801331069' is not returning 'fdc2a4be9aa3d4a735'");    
 
-        Buffer.buffer memory result665 = Leb128.encodeUnsignedLeb128FromUInt64(value665);
+        bytes memory expected809 = hex"d5a7f8d8e1dd96bdf601";
+        uint64 value809 = 17760608059192644565;
 
-        require(keccak256(result665.buf) == keccak256(expected665), "'2126356025' is not returning 'b9bcf6f507'");
+        Buffer.buffer memory result809 = Leb128.encodeUnsignedLeb128FromUInt64(value809);
 
-        bytes memory expected666 = hex"d9cdf5f805";
-        uint64 value666 = 1595762393;
+        require(keccak256(result809.buf) == keccak256(expected809), "'17760608059192644565' is not returning 'd5a7f8d8e1dd96bdf601'");    
 
-        Buffer.buffer memory result666 = Leb128.encodeUnsignedLeb128FromUInt64(value666);
+        bytes memory expected810 = hex"cd868de1c9a4abb461";
+        uint64 value810 = 7019050392006902605;
 
-        require(keccak256(result666.buf) == keccak256(expected666), "'1595762393' is not returning 'd9cdf5f805'");
+        Buffer.buffer memory result810 = Leb128.encodeUnsignedLeb128FromUInt64(value810);
 
-        bytes memory expected667 = hex"ffa3e7de0a";
-        uint64 value667 = 2883179007;
+        require(keccak256(result810.buf) == keccak256(expected810), "'7019050392006902605' is not returning 'cd868de1c9a4abb461'");    
 
-        Buffer.buffer memory result667 = Leb128.encodeUnsignedLeb128FromUInt64(value667);
+        bytes memory expected811 = hex"c8c191d8bed4b1c873";
+        uint64 value811 = 8327374118332948680;
 
-        require(keccak256(result667.buf) == keccak256(expected667), "'2883179007' is not returning 'ffa3e7de0a'");
+        Buffer.buffer memory result811 = Leb128.encodeUnsignedLeb128FromUInt64(value811);
 
-        bytes memory expected668 = hex"b9d286960d";
-        uint64 value668 = 3535907129;
+        require(keccak256(result811.buf) == keccak256(expected811), "'8327374118332948680' is not returning 'c8c191d8bed4b1c873'");    
 
-        Buffer.buffer memory result668 = Leb128.encodeUnsignedLeb128FromUInt64(value668);
+        bytes memory expected812 = hex"c5c4e1c4e8dbb2ca23";
+        uint64 value812 = 2563897145003893317;
 
-        require(keccak256(result668.buf) == keccak256(expected668), "'3535907129' is not returning 'b9d286960d'");
+        Buffer.buffer memory result812 = Leb128.encodeUnsignedLeb128FromUInt64(value812);
 
-        bytes memory expected669 = hex"cfd8c7a804";
-        uint64 value669 = 1158802511;
+        require(keccak256(result812.buf) == keccak256(expected812), "'2563897145003893317' is not returning 'c5c4e1c4e8dbb2ca23'");    
 
-        Buffer.buffer memory result669 = Leb128.encodeUnsignedLeb128FromUInt64(value669);
+        bytes memory expected813 = hex"d9c9c6fcaad8eebaaf01";
+        uint64 value813 = 12643216874244515033;
 
-        require(keccak256(result669.buf) == keccak256(expected669), "'1158802511' is not returning 'cfd8c7a804'");
+        Buffer.buffer memory result813 = Leb128.encodeUnsignedLeb128FromUInt64(value813);
 
-        bytes memory expected670 = hex"8ca2aaed01";
-        uint64 value670 = 497717516;
+        require(keccak256(result813.buf) == keccak256(expected813), "'12643216874244515033' is not returning 'd9c9c6fcaad8eebaaf01'");    
 
-        Buffer.buffer memory result670 = Leb128.encodeUnsignedLeb128FromUInt64(value670);
+        bytes memory expected814 = hex"8e8bd58e9aee9c88b601";
+        uint64 value814 = 13119112646413862286;
 
-        require(keccak256(result670.buf) == keccak256(expected670), "'497717516' is not returning '8ca2aaed01'");
+        Buffer.buffer memory result814 = Leb128.encodeUnsignedLeb128FromUInt64(value814);
 
-        bytes memory expected671 = hex"c3a3fce509";
-        uint64 value671 = 2629767619;
+        require(keccak256(result814.buf) == keccak256(expected814), "'13119112646413862286' is not returning '8e8bd58e9aee9c88b601'");    
 
-        Buffer.buffer memory result671 = Leb128.encodeUnsignedLeb128FromUInt64(value671);
+        bytes memory expected815 = hex"dd8afef0c7e3d4a7fb01";
+        uint64 value815 = 18108784008520238429;
 
-        require(keccak256(result671.buf) == keccak256(expected671), "'2629767619' is not returning 'c3a3fce509'");
+        Buffer.buffer memory result815 = Leb128.encodeUnsignedLeb128FromUInt64(value815);
 
-        bytes memory expected672 = hex"9aea8a24";
-        uint64 value672 = 75674906;
+        require(keccak256(result815.buf) == keccak256(expected815), "'18108784008520238429' is not returning 'dd8afef0c7e3d4a7fb01'");    
 
-        Buffer.buffer memory result672 = Leb128.encodeUnsignedLeb128FromUInt64(value672);
+        bytes memory expected816 = hex"f5f7f3a2b1cdccff19";
+        uint64 value816 = 1873271405493943285;
 
-        require(keccak256(result672.buf) == keccak256(expected672), "'75674906' is not returning '9aea8a24'");
+        Buffer.buffer memory result816 = Leb128.encodeUnsignedLeb128FromUInt64(value816);
 
-        bytes memory expected673 = hex"e6b4d5d202";
-        uint64 value673 = 710236774;
+        require(keccak256(result816.buf) == keccak256(expected816), "'1873271405493943285' is not returning 'f5f7f3a2b1cdccff19'");    
 
-        Buffer.buffer memory result673 = Leb128.encodeUnsignedLeb128FromUInt64(value673);
+        bytes memory expected817 = hex"c8cdd7979fe781957b";
+        uint64 value817 = 8874913961157715656;
 
-        require(keccak256(result673.buf) == keccak256(expected673), "'710236774' is not returning 'e6b4d5d202'");
+        Buffer.buffer memory result817 = Leb128.encodeUnsignedLeb128FromUInt64(value817);
 
-        bytes memory expected674 = hex"e599c7ed09";
-        uint64 value674 = 2645675237;
+        require(keccak256(result817.buf) == keccak256(expected817), "'8874913961157715656' is not returning 'c8cdd7979fe781957b'");    
 
-        Buffer.buffer memory result674 = Leb128.encodeUnsignedLeb128FromUInt64(value674);
+        bytes memory expected818 = hex"bf8adddae4ce9a95a801";
+        uint64 value818 = 12117614803696436543;
 
-        require(keccak256(result674.buf) == keccak256(expected674), "'2645675237' is not returning 'e599c7ed09'");
+        Buffer.buffer memory result818 = Leb128.encodeUnsignedLeb128FromUInt64(value818);
 
-        bytes memory expected675 = hex"e0fad1bf0a";
-        uint64 value675 = 2817817952;
+        require(keccak256(result818.buf) == keccak256(expected818), "'12117614803696436543' is not returning 'bf8adddae4ce9a95a801'");    
 
-        Buffer.buffer memory result675 = Leb128.encodeUnsignedLeb128FromUInt64(value675);
+        bytes memory expected819 = hex"b1b6aab58493c985bd01";
+        uint64 value819 = 13622021734351412017;
 
-        require(keccak256(result675.buf) == keccak256(expected675), "'2817817952' is not returning 'e0fad1bf0a'");
+        Buffer.buffer memory result819 = Leb128.encodeUnsignedLeb128FromUInt64(value819);
 
-        bytes memory expected676 = hex"99c5b18004";
-        uint64 value676 = 1074553497;
+        require(keccak256(result819.buf) == keccak256(expected819), "'13622021734351412017' is not returning 'b1b6aab58493c985bd01'");    
 
-        Buffer.buffer memory result676 = Leb128.encodeUnsignedLeb128FromUInt64(value676);
+        bytes memory expected820 = hex"c6a3dcb4bca7b1e89b01";
+        uint64 value820 = 11227690731560178118;
 
-        require(keccak256(result676.buf) == keccak256(expected676), "'1074553497' is not returning '99c5b18004'");
+        Buffer.buffer memory result820 = Leb128.encodeUnsignedLeb128FromUInt64(value820);
 
-        bytes memory expected677 = hex"d184efe102";
-        uint64 value677 = 742113873;
+        require(keccak256(result820.buf) == keccak256(expected820), "'11227690731560178118' is not returning 'c6a3dcb4bca7b1e89b01'");    
 
-        Buffer.buffer memory result677 = Leb128.encodeUnsignedLeb128FromUInt64(value677);
+        bytes memory expected821 = hex"9dfff597daa88c9bd101";
+        uint64 value821 = 15075290977826340765;
 
-        require(keccak256(result677.buf) == keccak256(expected677), "'742113873' is not returning 'd184efe102'");
+        Buffer.buffer memory result821 = Leb128.encodeUnsignedLeb128FromUInt64(value821);
 
-        bytes memory expected678 = hex"ebf7bff208";
-        uint64 value678 = 2387606507;
+        require(keccak256(result821.buf) == keccak256(expected821), "'15075290977826340765' is not returning '9dfff597daa88c9bd101'");    
 
-        Buffer.buffer memory result678 = Leb128.encodeUnsignedLeb128FromUInt64(value678);
+        bytes memory expected822 = hex"d2b4cb90e4e4d7be34";
+        uint64 value822 = 3782283879983012434;
 
-        require(keccak256(result678.buf) == keccak256(expected678), "'2387606507' is not returning 'ebf7bff208'");
+        Buffer.buffer memory result822 = Leb128.encodeUnsignedLeb128FromUInt64(value822);
 
-        bytes memory expected679 = hex"93c6c2a00e";
-        uint64 value679 = 3826295571;
+        require(keccak256(result822.buf) == keccak256(expected822), "'3782283879983012434' is not returning 'd2b4cb90e4e4d7be34'");    
 
-        Buffer.buffer memory result679 = Leb128.encodeUnsignedLeb128FromUInt64(value679);
+        bytes memory expected823 = hex"e8a8dfeab2dca6de1f";
+        uint64 value823 = 2286873011306353768;
 
-        require(keccak256(result679.buf) == keccak256(expected679), "'3826295571' is not returning '93c6c2a00e'");
+        Buffer.buffer memory result823 = Leb128.encodeUnsignedLeb128FromUInt64(value823);
 
-        bytes memory expected680 = hex"a0cba7bf05";
-        uint64 value680 = 1474946464;
+        require(keccak256(result823.buf) == keccak256(expected823), "'2286873011306353768' is not returning 'e8a8dfeab2dca6de1f'");    
 
-        Buffer.buffer memory result680 = Leb128.encodeUnsignedLeb128FromUInt64(value680);
+        bytes memory expected824 = hex"f5ad9fc8b8dff5efc801";
+        uint64 value824 = 14474524103216191221;
 
-        require(keccak256(result680.buf) == keccak256(expected680), "'1474946464' is not returning 'a0cba7bf05'");
+        Buffer.buffer memory result824 = Leb128.encodeUnsignedLeb128FromUInt64(value824);
 
-        bytes memory expected681 = hex"d79baff90c";
-        uint64 value681 = 3475754455;
+        require(keccak256(result824.buf) == keccak256(expected824), "'14474524103216191221' is not returning 'f5ad9fc8b8dff5efc801'");    
 
-        Buffer.buffer memory result681 = Leb128.encodeUnsignedLeb128FromUInt64(value681);
+        bytes memory expected825 = hex"d6a49ec6bdaa94f99101";
+        uint64 value825 = 10516557500424622678;
 
-        require(keccak256(result681.buf) == keccak256(expected681), "'3475754455' is not returning 'd79baff90c'");
+        Buffer.buffer memory result825 = Leb128.encodeUnsignedLeb128FromUInt64(value825);
 
-        bytes memory expected682 = hex"859acaaf0f";
-        uint64 value682 = 4126313733;
+        require(keccak256(result825.buf) == keccak256(expected825), "'10516557500424622678' is not returning 'd6a49ec6bdaa94f99101'");    
 
-        Buffer.buffer memory result682 = Leb128.encodeUnsignedLeb128FromUInt64(value682);
+        bytes memory expected826 = hex"c6c2cf94d6b5f18457";
+        uint64 value826 = 6271761304563999046;
 
-        require(keccak256(result682.buf) == keccak256(expected682), "'4126313733' is not returning '859acaaf0f'");
+        Buffer.buffer memory result826 = Leb128.encodeUnsignedLeb128FromUInt64(value826);
 
-        bytes memory expected683 = hex"d3a1b19806";
-        uint64 value683 = 1661751507;
+        require(keccak256(result826.buf) == keccak256(expected826), "'6271761304563999046' is not returning 'c6c2cf94d6b5f18457'");    
 
-        Buffer.buffer memory result683 = Leb128.encodeUnsignedLeb128FromUInt64(value683);
+        bytes memory expected827 = hex"9afb9f909ff9c89861";
+        uint64 value827 = 7003418245793840538;
 
-        require(keccak256(result683.buf) == keccak256(expected683), "'1661751507' is not returning 'd3a1b19806'");
+        Buffer.buffer memory result827 = Leb128.encodeUnsignedLeb128FromUInt64(value827);
 
-        bytes memory expected684 = hex"8fd4e0b70b";
-        uint64 value684 = 3069717007;
+        require(keccak256(result827.buf) == keccak256(expected827), "'7003418245793840538' is not returning '9afb9f909ff9c89861'");    
 
-        Buffer.buffer memory result684 = Leb128.encodeUnsignedLeb128FromUInt64(value684);
+        bytes memory expected828 = hex"82a2cbdce699ace141";
+        uint64 value828 = 4738544158561718530;
 
-        require(keccak256(result684.buf) == keccak256(expected684), "'3069717007' is not returning '8fd4e0b70b'");
+        Buffer.buffer memory result828 = Leb128.encodeUnsignedLeb128FromUInt64(value828);
 
-        bytes memory expected685 = hex"abf6a7b70c";
-        uint64 value685 = 3337222955;
+        require(keccak256(result828.buf) == keccak256(expected828), "'4738544158561718530' is not returning '82a2cbdce699ace141'");    
 
-        Buffer.buffer memory result685 = Leb128.encodeUnsignedLeb128FromUInt64(value685);
+        bytes memory expected829 = hex"d792addbae8e9ad12b";
+        uint64 value829 = 3144190332643264855;
 
-        require(keccak256(result685.buf) == keccak256(expected685), "'3337222955' is not returning 'abf6a7b70c'");
+        Buffer.buffer memory result829 = Leb128.encodeUnsignedLeb128FromUInt64(value829);
 
-        bytes memory expected686 = hex"95a9c7ad06";
-        uint64 value686 = 1706153109;
+        require(keccak256(result829.buf) == keccak256(expected829), "'3144190332643264855' is not returning 'd792addbae8e9ad12b'");    
 
-        Buffer.buffer memory result686 = Leb128.encodeUnsignedLeb128FromUInt64(value686);
+        bytes memory expected830 = hex"86b6def9c5e633";
+        uint64 value830 = 227823842728710;
 
-        require(keccak256(result686.buf) == keccak256(expected686), "'1706153109' is not returning '95a9c7ad06'");
+        Buffer.buffer memory result830 = Leb128.encodeUnsignedLeb128FromUInt64(value830);
 
-        bytes memory expected687 = hex"c1aac39c05";
-        uint64 value687 = 1402000705;
+        require(keccak256(result830.buf) == keccak256(expected830), "'227823842728710' is not returning '86b6def9c5e633'");    
 
-        Buffer.buffer memory result687 = Leb128.encodeUnsignedLeb128FromUInt64(value687);
+        bytes memory expected831 = hex"c3f8baa5c2a8deb39001";
+        uint64 value831 = 10405418797642988611;
 
-        require(keccak256(result687.buf) == keccak256(expected687), "'1402000705' is not returning 'c1aac39c05'");
+        Buffer.buffer memory result831 = Leb128.encodeUnsignedLeb128FromUInt64(value831);
 
-        bytes memory expected688 = hex"8c89bbb108";
-        uint64 value688 = 2251211916;
+        require(keccak256(result831.buf) == keccak256(expected831), "'10405418797642988611' is not returning 'c3f8baa5c2a8deb39001'");    
 
-        Buffer.buffer memory result688 = Leb128.encodeUnsignedLeb128FromUInt64(value688);
+        bytes memory expected832 = hex"b6bacde3aaf0c79775";
+        uint64 value832 = 8444002472442420534;
 
-        require(keccak256(result688.buf) == keccak256(expected688), "'2251211916' is not returning '8c89bbb108'");
+        Buffer.buffer memory result832 = Leb128.encodeUnsignedLeb128FromUInt64(value832);
 
-        bytes memory expected689 = hex"c19bcdb60a";
-        uint64 value689 = 2798865857;
+        require(keccak256(result832.buf) == keccak256(expected832), "'8444002472442420534' is not returning 'b6bacde3aaf0c79775'");    
 
-        Buffer.buffer memory result689 = Leb128.encodeUnsignedLeb128FromUInt64(value689);
+        bytes memory expected833 = hex"d8a8c9b2998093e935";
+        uint64 value833 = 3878245798820074584;
 
-        require(keccak256(result689.buf) == keccak256(expected689), "'2798865857' is not returning 'c19bcdb60a'");
+        Buffer.buffer memory result833 = Leb128.encodeUnsignedLeb128FromUInt64(value833);
 
-        bytes memory expected690 = hex"a1d0cd8e06";
-        uint64 value690 = 1641244705;
+        require(keccak256(result833.buf) == keccak256(expected833), "'3878245798820074584' is not returning 'd8a8c9b2998093e935'");    
 
-        Buffer.buffer memory result690 = Leb128.encodeUnsignedLeb128FromUInt64(value690);
+        bytes memory expected834 = hex"a593d5f29a8ee7986f";
+        uint64 value834 = 8012357224138885541;
 
-        require(keccak256(result690.buf) == keccak256(expected690), "'1641244705' is not returning 'a1d0cd8e06'");
+        Buffer.buffer memory result834 = Leb128.encodeUnsignedLeb128FromUInt64(value834);
 
-        bytes memory expected691 = hex"dbd89cae09";
-        uint64 value691 = 2512858203;
+        require(keccak256(result834.buf) == keccak256(expected834), "'8012357224138885541' is not returning 'a593d5f29a8ee7986f'");    
 
-        Buffer.buffer memory result691 = Leb128.encodeUnsignedLeb128FromUInt64(value691);
+        bytes memory expected835 = hex"8289e4fc9f91cb81a601";
+        uint64 value835 = 11962454006436529282;
 
-        require(keccak256(result691.buf) == keccak256(expected691), "'2512858203' is not returning 'dbd89cae09'");
+        Buffer.buffer memory result835 = Leb128.encodeUnsignedLeb128FromUInt64(value835);
 
-        bytes memory expected692 = hex"9db394fa01";
-        uint64 value692 = 524622237;
+        require(keccak256(result835.buf) == keccak256(expected835), "'11962454006436529282' is not returning '8289e4fc9f91cb81a601'");    
 
-        Buffer.buffer memory result692 = Leb128.encodeUnsignedLeb128FromUInt64(value692);
+        bytes memory expected836 = hex"b8aaecc391c596e3af01";
+        uint64 value836 = 12665910134576977208;
 
-        require(keccak256(result692.buf) == keccak256(expected692), "'524622237' is not returning '9db394fa01'");
+        Buffer.buffer memory result836 = Leb128.encodeUnsignedLeb128FromUInt64(value836);
 
-        bytes memory expected693 = hex"a2e4b4860e";
-        uint64 value693 = 3771544098;
+        require(keccak256(result836.buf) == keccak256(expected836), "'12665910134576977208' is not returning 'b8aaecc391c596e3af01'");    
 
-        Buffer.buffer memory result693 = Leb128.encodeUnsignedLeb128FromUInt64(value693);
+        bytes memory expected837 = hex"a7ec9a89bb8ada8fd101";
+        uint64 value837 = 15068877586868647463;
 
-        require(keccak256(result693.buf) == keccak256(expected693), "'3771544098' is not returning 'a2e4b4860e'");
+        Buffer.buffer memory result837 = Leb128.encodeUnsignedLeb128FromUInt64(value837);
 
-        bytes memory expected694 = hex"b7ccd9a60f";
-        uint64 value694 = 4107691575;
+        require(keccak256(result837.buf) == keccak256(expected837), "'15068877586868647463' is not returning 'a7ec9a89bb8ada8fd101'");    
 
-        Buffer.buffer memory result694 = Leb128.encodeUnsignedLeb128FromUInt64(value694);
+        bytes memory expected838 = hex"81c5c3f9cd9acdb63a";
+        uint64 value838 = 4210079315543515777;
 
-        require(keccak256(result694.buf) == keccak256(expected694), "'4107691575' is not returning 'b7ccd9a60f'");
+        Buffer.buffer memory result838 = Leb128.encodeUnsignedLeb128FromUInt64(value838);
 
-        bytes memory expected695 = hex"ffb0fd9f02";
-        uint64 value695 = 603936895;
+        require(keccak256(result838.buf) == keccak256(expected838), "'4210079315543515777' is not returning '81c5c3f9cd9acdb63a'");    
 
-        Buffer.buffer memory result695 = Leb128.encodeUnsignedLeb128FromUInt64(value695);
+        bytes memory expected839 = hex"c19495b3bdd4c0b69f01";
+        uint64 value839 = 11487841127191890497;
 
-        require(keccak256(result695.buf) == keccak256(expected695), "'603936895' is not returning 'ffb0fd9f02'");
+        Buffer.buffer memory result839 = Leb128.encodeUnsignedLeb128FromUInt64(value839);
 
-        bytes memory expected696 = hex"f6a8d0ba0c";
-        uint64 value696 = 3344176246;
+        require(keccak256(result839.buf) == keccak256(expected839), "'11487841127191890497' is not returning 'c19495b3bdd4c0b69f01'");    
 
-        Buffer.buffer memory result696 = Leb128.encodeUnsignedLeb128FromUInt64(value696);
+        bytes memory expected840 = hex"81c7f6fc90b1a8c29101";
+        uint64 value840 = 10485683442469938049;
 
-        require(keccak256(result696.buf) == keccak256(expected696), "'3344176246' is not returning 'f6a8d0ba0c'");
+        Buffer.buffer memory result840 = Leb128.encodeUnsignedLeb128FromUInt64(value840);
 
-        bytes memory expected697 = hex"aaba9db404";
-        uint64 value697 = 1183276330;
+        require(keccak256(result840.buf) == keccak256(expected840), "'10485683442469938049' is not returning '81c7f6fc90b1a8c29101'");    
 
-        Buffer.buffer memory result697 = Leb128.encodeUnsignedLeb128FromUInt64(value697);
+        bytes memory expected841 = hex"90fc9ce59f8db5be9b01";
+        uint64 value841 = 11204063524666424848;
 
-        require(keccak256(result697.buf) == keccak256(expected697), "'1183276330' is not returning 'aaba9db404'");
+        Buffer.buffer memory result841 = Leb128.encodeUnsignedLeb128FromUInt64(value841);
 
-        bytes memory expected698 = hex"bc92bfb30d";
-        uint64 value698 = 3597650236;
+        require(keccak256(result841.buf) == keccak256(expected841), "'11204063524666424848' is not returning '90fc9ce59f8db5be9b01'");    
 
-        Buffer.buffer memory result698 = Leb128.encodeUnsignedLeb128FromUInt64(value698);
+        bytes memory expected842 = hex"f486a2afe1f7fd924b";
+        uint64 value842 = 5415006522766295924;
 
-        require(keccak256(result698.buf) == keccak256(expected698), "'3597650236' is not returning 'bc92bfb30d'");
+        Buffer.buffer memory result842 = Leb128.encodeUnsignedLeb128FromUInt64(value842);
+
+        require(keccak256(result842.buf) == keccak256(expected842), "'5415006522766295924' is not returning 'f486a2afe1f7fd924b'");    
+
+        bytes memory expected843 = hex"fd98bfbce5ffe5a140";
+        uint64 value843 = 4630711960513531005;
+
+        Buffer.buffer memory result843 = Leb128.encodeUnsignedLeb128FromUInt64(value843);
+
+        require(keccak256(result843.buf) == keccak256(expected843), "'4630711960513531005' is not returning 'fd98bfbce5ffe5a140'");    
+
+        bytes memory expected844 = hex"deaccbbbcc91d7a137";
+        uint64 value844 = 3982128255237019230;
+
+        Buffer.buffer memory result844 = Leb128.encodeUnsignedLeb128FromUInt64(value844);
+
+        require(keccak256(result844.buf) == keccak256(expected844), "'3982128255237019230' is not returning 'deaccbbbcc91d7a137'");    
+
+        bytes memory expected845 = hex"bd80b6cd9198edea5b";
+        uint64 value845 = 6617393968943300669;
+
+        Buffer.buffer memory result845 = Leb128.encodeUnsignedLeb128FromUInt64(value845);
+
+        require(keccak256(result845.buf) == keccak256(expected845), "'6617393968943300669' is not returning 'bd80b6cd9198edea5b'");    
+
+        bytes memory expected846 = hex"e4d3f497d688c9f613";
+        uint64 value846 = 1435843736633158116;
+
+        Buffer.buffer memory result846 = Leb128.encodeUnsignedLeb128FromUInt64(value846);
+
+        require(keccak256(result846.buf) == keccak256(expected846), "'1435843736633158116' is not returning 'e4d3f497d688c9f613'");    
+
+        bytes memory expected847 = hex"ccb9dfd9b8c2e9f1c401";
+        uint64 value847 = 14187365854017477836;
+
+        Buffer.buffer memory result847 = Leb128.encodeUnsignedLeb128FromUInt64(value847);
+
+        require(keccak256(result847.buf) == keccak256(expected847), "'14187365854017477836' is not returning 'ccb9dfd9b8c2e9f1c401'");    
+
+        bytes memory expected848 = hex"e9c296e2cee2f59c79";
+        uint64 value848 = 8735249437125091689;
+
+        Buffer.buffer memory result848 = Leb128.encodeUnsignedLeb128FromUInt64(value848);
+
+        require(keccak256(result848.buf) == keccak256(expected848), "'8735249437125091689' is not returning 'e9c296e2cee2f59c79'");    
+
+        bytes memory expected849 = hex"ebbbddcabd82c7be58";
+        uint64 value849 = 6376283519002828267;
+
+        Buffer.buffer memory result849 = Leb128.encodeUnsignedLeb128FromUInt64(value849);
+
+        require(keccak256(result849.buf) == keccak256(expected849), "'6376283519002828267' is not returning 'ebbbddcabd82c7be58'");    
+
+        bytes memory expected850 = hex"9fdbacdcacc891e132";
+        uint64 value850 = 3657563100074945951;
+
+        Buffer.buffer memory result850 = Leb128.encodeUnsignedLeb128FromUInt64(value850);
+
+        require(keccak256(result850.buf) == keccak256(expected850), "'3657563100074945951' is not returning '9fdbacdcacc891e132'");    
+
+        bytes memory expected851 = hex"a9d4edc2a3a9e7ca3d";
+        uint64 value851 = 4437625949942147625;
+
+        Buffer.buffer memory result851 = Leb128.encodeUnsignedLeb128FromUInt64(value851);
+
+        require(keccak256(result851.buf) == keccak256(expected851), "'4437625949942147625' is not returning 'a9d4edc2a3a9e7ca3d'");    
+
+        bytes memory expected852 = hex"a8d6d8e1979c9a961a";
+        uint64 value852 = 1885997661622250280;
+
+        Buffer.buffer memory result852 = Leb128.encodeUnsignedLeb128FromUInt64(value852);
+
+        require(keccak256(result852.buf) == keccak256(expected852), "'1885997661622250280' is not returning 'a8d6d8e1979c9a961a'");    
+
+        bytes memory expected853 = hex"9cb09fd294a2b19ae801";
+        uint64 value853 = 16732215193639573532;
+
+        Buffer.buffer memory result853 = Leb128.encodeUnsignedLeb128FromUInt64(value853);
+
+        require(keccak256(result853.buf) == keccak256(expected853), "'16732215193639573532' is not returning '9cb09fd294a2b19ae801'");    
+
+        bytes memory expected854 = hex"bdf3f6b79a83ead24e";
+        uint64 value854 = 5667120534244932029;
+
+        Buffer.buffer memory result854 = Leb128.encodeUnsignedLeb128FromUInt64(value854);
+
+        require(keccak256(result854.buf) == keccak256(expected854), "'5667120534244932029' is not returning 'bdf3f6b79a83ead24e'");    
+
+        bytes memory expected855 = hex"d4f5fb82de88d58ea401";
+        uint64 value855 = 11825700855638588116;
+
+        Buffer.buffer memory result855 = Leb128.encodeUnsignedLeb128FromUInt64(value855);
+
+        require(keccak256(result855.buf) == keccak256(expected855), "'11825700855638588116' is not returning 'd4f5fb82de88d58ea401'");    
+
+        bytes memory expected856 = hex"95fcc4dbe7d1cbea3e";
+        uint64 value856 = 4527576189882154517;
+
+        Buffer.buffer memory result856 = Leb128.encodeUnsignedLeb128FromUInt64(value856);
+
+        require(keccak256(result856.buf) == keccak256(expected856), "'4527576189882154517' is not returning '95fcc4dbe7d1cbea3e'");    
+
+        bytes memory expected857 = hex"c79381dfe8c3f9e211";
+        uint64 value857 = 1280682687926913479;
+
+        Buffer.buffer memory result857 = Leb128.encodeUnsignedLeb128FromUInt64(value857);
+
+        require(keccak256(result857.buf) == keccak256(expected857), "'1280682687926913479' is not returning 'c79381dfe8c3f9e211'");    
+
+        bytes memory expected858 = hex"b4b88ba3d3cde4958701";
+        uint64 value858 = 9740039616846814260;
+
+        Buffer.buffer memory result858 = Leb128.encodeUnsignedLeb128FromUInt64(value858);
+
+        require(keccak256(result858.buf) == keccak256(expected858), "'9740039616846814260' is not returning 'b4b88ba3d3cde4958701'");    
+
     }
 }

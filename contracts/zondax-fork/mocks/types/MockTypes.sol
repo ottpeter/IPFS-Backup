@@ -14,12 +14,10 @@
  *  limitations under the License.
  ********************************************************************************/
 //
-// THIS CODE WAS SECURITY REVIEWED BY KUDELSKI SECURITY, BUT NOT FORMALLY AUDITED
+// DRAFT!! THIS CODE HAS NOT BEEN AUDITED - USE ONLY FOR PROTOTYPING
 
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.17;
-
-import "../../types/CommonTypes.sol";
 
 /// @title Filecoin market actor types for Solidity.
 /// @author Zondax AG
@@ -32,12 +30,12 @@ library MockTypes {
         uint64 client;
         uint64 provider;
         string label;
-        CommonTypes.ChainEpoch start;
-        CommonTypes.ChainEpoch end;
+        int64 start;
+        int64 end;
         uint256 price_per_epoch;
         uint256 provider_collateral;
         uint256 client_collateral;
-        CommonTypes.ChainEpoch activated;
-        CommonTypes.ChainEpoch terminated;
+        int64 activated;
+        int64 terminated;
     }
 }

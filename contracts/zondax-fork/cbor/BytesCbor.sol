@@ -14,18 +14,15 @@
  *  limitations under the License.
  ********************************************************************************/
 //
-// THIS CODE WAS SECURITY REVIEWED BY KUDELSKI SECURITY, BUT NOT FORMALLY AUDITED
+// DRAFT!! THIS CODE HAS NOT BEEN AUDITED - USE ONLY FOR PROTOTYPING
 
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.17;
 
-import "solidity-cborutils/contracts/CBOR.sol";
+import "../external/CBOR.sol";
 
 import "../utils/CborDecode.sol";
-import "../utils/Misc.sol";
-
 import "../types/CommonTypes.sol";
-
 import "./BigIntCbor.sol";
 
 /// @title This library is a set of functions meant to handle CBOR serialization and deserialization for bytes
@@ -39,9 +36,7 @@ library BytesCBOR {
     /// @param data raw data in bytes
     /// @return encoded cbor bytes
     function serializeBytes(bytes memory data) internal pure returns (bytes memory) {
-        uint256 capacity = Misc.getBytesSize(data);
-
-        CBOR.CBORBuffer memory buf = CBOR.create(capacity);
+        CBOR.CBORBuffer memory buf = CBOR.create(64);
 
         buf.writeBytes(data);
 
@@ -52,13 +47,17 @@ library BytesCBOR {
     /// @param addr raw address in bytes
     /// @return encoded address as cbor bytes
     function serializeAddress(bytes memory addr) internal pure returns (bytes memory) {
-        return serializeBytes(addr);
+        CBOR.CBORBuffer memory buf = CBOR.create(64);
+
+        buf.writeBytes(addr);
+
+        return buf.data();
     }
 
     /// @notice encoded null value as cbor
     /// @return cbor encoded null
     function serializeNull() internal pure returns (bytes memory) {
-        CBOR.CBORBuffer memory buf = CBOR.create(1);
+        CBOR.CBORBuffer memory buf = CBOR.create(64);
 
         buf.writeNull();
 

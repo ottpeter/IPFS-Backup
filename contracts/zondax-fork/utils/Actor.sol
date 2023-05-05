@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  ********************************************************************************/
-// THIS CODE WAS SECURITY REVIEWED BY KUDELSKI SECURITY, BUT NOT FORMALLY AUDITED
+// DRAFT!! THIS CODE HAS NOT BEEN AUDITED - USE ONLY FOR PROTOTYPING
 
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.17;
@@ -33,7 +33,7 @@ library Actor {
     /// @notice flag used to indicate that the call_actor or call_actor_id should perform a static_call to the desired actor
     uint64 constant READ_ONLY_FLAG = 0x00000001;
 
-    /// @notice flag used to indicate that the call_actor or call_actor_id should perform a call to the desired actor
+    /// @notice flag used to indicate that the call_actor or call_actor_id should perform a delegate_call to the desired actor
     uint64 constant DEFAULT_FLAG = 0x00000000;
 
     /// @notice the provided address is not valid
@@ -57,9 +57,6 @@ library Actor {
     /// @notice the called actor returned an error as part of its expected behaviour
     error ActorError(int256 errorCode);
 
-    /// @notice the actor is not found
-    error ActorNotFound();
-
     /// @notice allows to interact with an specific actor by its address (bytes format)
     /// @param actor_address actor address (bytes format) to interact with
     /// @param method_num id of the method from the actor to call
@@ -80,7 +77,10 @@ library Actor {
             revert InvalidAddress(actor_address);
         }
 
-        validatePrecompileCall(CALL_ACTOR_ADDRESS, value);
+        uint balance = address(this).balance;
+        if (balance < value) {
+            revert NotEnoughBalance(balance, value);
+        }
 
         // We have to delegate-call the call-actor precompile because the call-actor precompile will
         // call the target actor on our behalf. This will _not_ delegate to the target `actor_address`.
@@ -115,7 +115,10 @@ library Actor {
         uint256 value,
         bool static_call
     ) internal returns (bytes memory) {
-        validatePrecompileCall(CALL_ACTOR_ID, value);
+        uint balance = address(this).balance;
+        if (balance < value) {
+            revert NotEnoughBalance(balance, value);
+        }
 
         (bool success, bytes memory data) = address(CALL_ACTOR_ID).delegatecall(
             abi.encode(uint64(method_num), value, static_call ? READ_ONLY_FLAG : DEFAULT_FLAG, codec, raw_request, target)
@@ -125,21 +128,6 @@ library Actor {
         }
 
         return readRespData(data);
-    }
-
-    /// @notice allows to run some generic validations before calling the precompile actor
-    /// @param addr precompile actor address to run check to
-    /// @param value tokens to be transferred to the called actor
-    function validatePrecompileCall(address addr, uint256 value) internal view {
-        uint balance = address(this).balance;
-        if (balance < value) {
-            revert NotEnoughBalance(balance, value);
-        }
-
-        bool actorExists = Misc.addressExists(addr);
-        if (!actorExists) {
-            revert ActorNotFound();
-        }
     }
 
     /// @notice allows to interact with an non-singleton actors by its id (uint64)
