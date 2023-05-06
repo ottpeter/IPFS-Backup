@@ -45,7 +45,6 @@ function App() {
     setContractFunds(converted);
     
     // Get the list of backups
-  // Problem is here!
     const fetchedList = await dealClient.getNameLookupArraySegment(0, 100);
     if (fetchedList.length === 0) {
       setFullBackupList([]);
