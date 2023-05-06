@@ -57,6 +57,7 @@ library Actor {
     /// @notice the called actor returned an error as part of its expected behaviour
     error ActorError(int256 errorCode);
 
+
     /// @notice allows to interact with an specific actor by its address (bytes format)
     /// @param actor_address actor address (bytes format) to interact with
     /// @param method_num id of the method from the actor to call
@@ -128,6 +129,30 @@ library Actor {
         }
 
         return readRespData(data);
+    }
+
+    /// This is a clone of callByID, created for
+    function callByIDGetDealActivation(
+        CommonTypes.FilActorId target,
+        uint256 method_num,
+        uint64 codec,
+        bytes memory raw_request,
+        uint256 value,
+        bool static_call
+    ) internal returns (CommonTypes.callByIDGetDealActivationReturnTuple memory) {
+        uint balance = address(this).balance;
+        if (balance < value) {
+            revert NotEnoughBalance(balance, value);
+        }
+
+        (bool success, bytes memory data) = address(CALL_ACTOR_ID).delegatecall(
+            abi.encode(uint64(method_num), value, static_call ? READ_ONLY_FLAG : DEFAULT_FLAG, codec, raw_request, target)
+        );
+        if (!success) {
+            //revert FailToCallActor();
+        }
+
+        return CommonTypes.callByIDGetDealActivationReturnTuple(success, readRespData(data));
     }
 
     /// @notice allows to interact with an non-singleton actors by its id (uint64)

@@ -64,5 +64,11 @@ library CommonTypes {
         bytes data;
     }
 
+    // Created by IPFS-Backup to fix deal expired error
+    struct callByIDGetDealActivationReturnTuple {
+        bool isSuccess;
+        bytes returnData;
+    }
+
     type FilActorId is uint64;
 }
