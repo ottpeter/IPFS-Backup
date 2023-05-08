@@ -57,6 +57,8 @@ library Actor {
     /// @notice the called actor returned an error as part of its expected behaviour
     error ActorError(int256 errorCode);
 
+    event ActorErrorEvent(string message, int256 exit);
+
 
     /// @notice allows to interact with an specific actor by its address (bytes format)
     /// @param actor_address actor address (bytes format) to interact with
@@ -149,6 +151,7 @@ library Actor {
             abi.encode(uint64(method_num), value, static_call ? READ_ONLY_FLAG : DEFAULT_FLAG, codec, raw_request, target)
         );
         if (!success) {
+            emit ActorErrorEvent("FailToCallActor(), will not do revert here.", 0);
             //revert FailToCallActor();
         }
 
@@ -182,7 +185,7 @@ library Actor {
     /// @notice it will validate the return code (success) and the codec (valid one)
     /// @param raw_response raw data (bytes) the actor returned
     /// @return the actual raw data (payload, in bytes) to be parsed according to the actor and method called
-    function readRespData(bytes memory raw_response) internal pure returns (bytes memory) {
+    function readRespData(bytes memory raw_response) internal returns (bytes memory) {
         (int256 exit, uint64 return_codec, bytes memory return_value) = abi.decode(raw_response, (int256, uint64, bytes));
 
         if (return_codec == Misc.NONE_CODEC) {
@@ -198,7 +201,8 @@ library Actor {
         }
 
         if (exit != 0) {
-            revert ActorError(exit);
+            //revert ActorError(exit);
+            emit ActorErrorEvent("Exit code inside readRespData is not null, will not do revert here", exit);
         }
 
         return return_value;
