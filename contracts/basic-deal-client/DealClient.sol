@@ -2,18 +2,18 @@
 pragma solidity ^0.8.17;
 
 
-import { MarketAPI } from "@zondax/filecoin-solidity/contracts/v0.8/MarketAPI.sol";
-import { CommonTypes } from "@zondax/filecoin-solidity/contracts/v0.8/types/CommonTypes.sol";
-import { MarketTypes } from "@zondax/filecoin-solidity/contracts/v0.8/types/MarketTypes.sol";
-import { AccountTypes } from "@zondax/filecoin-solidity/contracts/v0.8/types/AccountTypes.sol";
-import { CommonTypes } from "@zondax/filecoin-solidity/contracts/v0.8/types/CommonTypes.sol";
-import { AccountCBOR } from "@zondax/filecoin-solidity/contracts/v0.8/cbor/AccountCbor.sol";
-import { MarketCBOR } from "@zondax/filecoin-solidity/contracts/v0.8/cbor/MarketCbor.sol";
-import { BytesCBOR } from "@zondax/filecoin-solidity/contracts/v0.8/cbor/BytesCbor.sol";
-import { BigNumbers } from "@zondax/filecoin-solidity/contracts/v0.8/external/BigNumbers.sol";
-import { CBOR } from "@zondax/filecoin-solidity/contracts/v0.8/external/CBOR.sol";
-import { Misc } from "@zondax/filecoin-solidity/contracts/v0.8/utils/Misc.sol";
-import { FilAddresses } from "@zondax/filecoin-solidity/contracts/v0.8/utils/FilAddresses.sol";
+import { MarketAPI } from "../zondax-fork/MarketAPI.sol";
+import { CommonTypes } from "../zondax-fork/types/CommonTypes.sol";
+import { MarketTypes } from "../zondax-fork/types/MarketTypes.sol";
+import { AccountTypes } from "../zondax-fork/types/AccountTypes.sol";
+import { CommonTypes } from "../zondax-fork/types/CommonTypes.sol";
+import { AccountCBOR } from "../zondax-fork/cbor/AccountCbor.sol";
+import { MarketCBOR } from "../zondax-fork/cbor/MarketCbor.sol";
+import { BytesCBOR } from "../zondax-fork/cbor/BytesCbor.sol";
+import { BigNumbers } from "../zondax-fork/external/BigNumbers.sol";
+import { CBOR } from "../zondax-fork/external/CBOR.sol";
+import { Misc } from "../zondax-fork/utils/Misc.sol";
+import { FilAddresses } from "../zondax-fork/utils/FilAddresses.sol";
 import { MarketDealNotifyParams, deserializeMarketDealNotifyParams, serializeDealProposal, deserializeDealProposal } from "./Types.sol";
 
 import "hardhat/console.sol";
@@ -197,14 +197,14 @@ contract DealClient {
 
         for (uint16 i = 0; i < dealArrays[dealArrayIndex].length; i++) {
             uint64 dealId = dealArrays[dealArrayIndex][i].dealId;
-            try MarketAPI.getDealActivation(dealId) returns (MarketTypes.GetDealActivationReturn memory result) {
+            /*try MarketAPI.getDealActivation(dealId) returns (MarketTypes.GetDealActivationReturn memory result) {
                 dealArrays[dealArrayIndex][i].status = result;
             } catch {
                 // deal expired. If other error and deal is actually active, that would be a problem.
                 bool success = removeDeal(dealArrayIndex, i);
                 require(success, "There was an error while removing expired deal from the array");
                 continue;
-            }
+            }   */
             // Will run into errors, smart contract will revert if EX_DEAL_EXPIRED. But it will compile.
             dealArrays[dealArrayIndex][i].status = MarketAPI.getDealActivation(dealId);
 

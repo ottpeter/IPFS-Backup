@@ -43,7 +43,7 @@ function App() {
     const balanceOfContract = await provider.getBalance(CONTRACT_ADDRESS);
     const converted = Number.parseInt(balanceOfContract.toString());
     setContractFunds(converted);
-
+    
     // Get the list of backups
     const fetchedList = await dealClient.getNameLookupArraySegment(0, 100);
     if (fetchedList.length === 0) {
