@@ -162,7 +162,7 @@ library MarketAPI {
     function getDealActivation(uint64 dealID) internal returns (MarketTypes.GetDealActivationReturn memory) {
         bytes memory raw_request = dealID.serializeDealID();
 
-        bytes memory result = Actor.callByID(MarketTypes.ActorID, MarketTypes.GetDealActivationMethodNum, Misc.CBOR_CODEC, raw_request, 0, true);
+        bytes memory result = Actor.callByIDGetDealActivation(MarketTypes.ActorID, MarketTypes.GetDealActivationMethodNum, Misc.CBOR_CODEC, raw_request, 0, true);
         //bool success = returnValue.isSuccess;
          //= returnValue.returnData;
 

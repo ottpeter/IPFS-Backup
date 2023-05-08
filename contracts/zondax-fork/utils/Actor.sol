@@ -141,7 +141,7 @@ library Actor {
         bytes memory raw_request,
         uint256 value,
         bool static_call
-    ) internal returns (CommonTypes.callByIDGetDealActivationReturnTuple memory) {
+    ) internal returns (bytes memory) {
         uint balance = address(this).balance;
         if (balance < value) {
             revert NotEnoughBalance(balance, value);
@@ -155,7 +155,7 @@ library Actor {
             //revert FailToCallActor();
         }
 
-        return CommonTypes.callByIDGetDealActivationReturnTuple(success, readRespData(data));
+        return readRespData(data);
     }
 
     /// @notice allows to interact with an non-singleton actors by its id (uint64)
