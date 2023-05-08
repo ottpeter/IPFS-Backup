@@ -132,7 +132,7 @@ library Actor {
 
         return readRespData(data);
     }
-
+/*
     /// This is a clone of callByID, created for
     function callByIDGetDealActivation(
         CommonTypes.FilActorId target,
@@ -156,7 +156,7 @@ library Actor {
         }
 
         return CommonTypes.callByIDGetDealActivationReturnTuple(success, readRespData(data));
-    }
+    }*/
 
     /// @notice allows to interact with an non-singleton actors by its id (uint64)
     /// @param target actor id (uint64) to interact with
