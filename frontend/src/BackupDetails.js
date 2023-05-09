@@ -42,8 +42,8 @@ export default function BackupDetails() {
     const dealClient = new ethers.Contract(CONTRACT_ADDRESS, contractObj.abi, provider);              // Contract Instance
     const backupItem = await dealClient.getBackupItem(commPasBytes);                                  // Smart contract call (view)
     
+    console.log(backupItem)
     const name = backupItem[0].toString();                                                            // Backup name (e.g. backup1680889209258)
-    window.alert(name)
     
     let match = backupRegEx.exec(name);
     console.log(match);
