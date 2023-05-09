@@ -17,7 +17,7 @@ module.exports = {
             }
           }
     },
-    defaultNetwork: "hyperspace",
+    defaultNetwork: "mainnet",
     networks: {
         hyperspace: {
             chainId: 3141,
