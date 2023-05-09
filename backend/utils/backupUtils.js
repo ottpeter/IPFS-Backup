@@ -184,7 +184,7 @@ async function addToFilecoin(backupName, folderName) {
     label: inProgressBackups[backupName].payloadCID,
     dealDuration: 600000,
     maxPricePerEpoch: 0,                                                      // Max price per epoch
-    originalLocation: `${process.env.SERVER}:3000/fetch?fileName=${backupName}.car`,
+    originalLocation: `${process.env.SERVER}:${process.env.HTTP_PORT}/fetch?fileName=${backupName}.car`,
     carSize: inProgressBackups[backupName].payloadSize,
   }
 
