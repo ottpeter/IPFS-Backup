@@ -19,7 +19,7 @@ module.exports = {
     },
     defaultNetwork: "hyperspace",
     networks: {
-        hyperspace: {
+        mainnet: {
             chainId: 3141,
             url: "https://api.node.glif.io/rpc/v0",
             accounts: [PRIVATE_KEY],
