@@ -122,7 +122,7 @@ async function calculateCommP(folderName, backupName, payloadCID) {
 
   ps.stdout.on('data', (data) => {
     console.log(`Most likely this will never happen stdout: ${data}`);
-  });
+  }); 
   
 
   ps.stderr.on('data', (data) => {
