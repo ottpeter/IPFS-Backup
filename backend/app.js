@@ -39,7 +39,7 @@ https.createServer({
 }, app).listen(httpsPort);
 
 
-http.createServer(app).listen()
+http.createServer(app).listen(httpPort);
 /*app.listen(port, () => {
   console.log(`IPFS-Backup API server listening on port ${port}`);
 });
