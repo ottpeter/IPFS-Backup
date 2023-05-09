@@ -122,7 +122,7 @@ async function calculateCommP(folderName, backupName, payloadCID) {
 
   ps.stdout.on('data', (data) => {
     console.log(`Most likely this will never happen stdout: ${data}`);
-  }); 
+  });
   
 
   ps.stderr.on('data', (data) => {
@@ -184,7 +184,7 @@ async function addToFilecoin(backupName, folderName) {
     label: inProgressBackups[backupName].payloadCID,
     dealDuration: 600000,
     maxPricePerEpoch: 0,                                                      // Max price per epoch
-    originalLocation: `http://${process.env.SERVER}:3000/fetch?fileName=${backupName}.car`,
+    originalLocation: `${process.env.SERVER}:3000/fetch?fileName=${backupName}.car`,
     carSize: inProgressBackups[backupName].payloadSize,
   }
 
