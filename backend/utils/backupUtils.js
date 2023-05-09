@@ -177,6 +177,8 @@ async function addToFilecoin(backupName, folderName) {
   const cidHex = "0x" + cidHexRaw;
   const contractAddr = process.env.DEAL_CONTRACT;
   
+  const httpServerName = process.env.SERVER.replace('https://', 'http://') 
+
   const BackupRequestStruct = {
     name: backupName,
     pieceCID: cidHex,
@@ -184,7 +186,7 @@ async function addToFilecoin(backupName, folderName) {
     label: inProgressBackups[backupName].payloadCID,
     dealDuration: 600000,
     maxPricePerEpoch: 0,                                                      // Max price per epoch
-    originalLocation: `${process.env.SERVER}:${process.env.HTTP_PORT}/fetch?fileName=${backupName}.car`,
+    originalLocation: `${httpServerName}:${process.env.HTTP_PORT}/fetch?fileName=${backupName}.car`,
     carSize: inProgressBackups[backupName].payloadSize,
   }
 
