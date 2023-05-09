@@ -6,6 +6,10 @@ const network = {
           chainId: 3141,
           url: "https://api.hyperspace.node.glif.io/rpc/v1",
       },
+      mainnet: {
+          chainId: 314,
+          url: "https://api.node.glif.io/rpc/v0",
+      }
   },
   paths: {
       sources: "./contracts",
