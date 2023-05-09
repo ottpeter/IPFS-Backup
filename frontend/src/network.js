@@ -14,7 +14,7 @@ const network = {
       artifacts: "./artifacts",
   },
   contract: "0xd116850E25FE5134Bfa31186ca1028090B3E6DF9",
-  server: "5.180.183.88"
+  server: "https://test1.ipfs-backup.com"
 }
 
 module.exports = { network };
