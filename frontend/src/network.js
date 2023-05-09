@@ -1,6 +1,6 @@
 const network = {
   solidity: "0.8.17",
-  defaultNetwork: "hyperspace",
+  defaultNetwork: "mainnet",
   networks: {
       hyperspace: {
           chainId: 3141,
