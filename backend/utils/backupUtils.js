@@ -195,10 +195,10 @@ async function addToFilecoin(backupName, folderName) {
   const DealClient = await ethers.getContractFactory("DealClient", wallet);                         // Contract Factory
   const dealClient = await DealClient.attach(contractAddr);                                         // Contract instance
   
-  transaction = await dealClient.startBackup(BackupRequestStruct)                                // Transaction
-  transactionReceipt = await transaction.wait()
+  transaction = await dealClient.startBackup(BackupRequestStruct);                                  // Transaction
+  transactionReceipt = await transaction.wait();
 
-  const event = transactionReceipt.events[0].topics[1];                                             // Listen for DealProposalCreate event
+  const event = transactionReceipt.events[0].topics[0];                                             // Listen for DealProposalCreate event
 
   inProgressBackups[backupName].dealRequestMade = true;
   console.log("Complete! Event Emitted. ProposalId is:", event);

@@ -8,7 +8,8 @@ const fetchRoutes = require('./routes/fetch');
 const metadataRoutes = require('./routes/metadata');
 const ipfsRoutes = require('./routes/ipfsRoutes');
 const app = express();
-const port = process.env.PORT;
+const httpsPort = process.env.HTTPS_PORT;
+const httpPort = process.env.HTTP_PORT;
 
 let privateKey = fs.readFileSync( process.env.SSL_PRIVATE_KEY );
 let certificate = fs.readFileSync( process.env.SSL_CERT );
@@ -35,8 +36,10 @@ app.use('/ipfs', ipfsRoutes);
 https.createServer({
     key: privateKey,
     cert: certificate
-}, app).listen(port);
+}, app).listen(httpsPort);
 
+
+http.createServer(app).listen()
 /*app.listen(port, () => {
   console.log(`IPFS-Backup API server listening on port ${port}`);
 });
