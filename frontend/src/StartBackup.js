@@ -5,10 +5,11 @@ import { Link } from 'react-router-dom';
 import Tree from './Components/Tree';
 
 const BASE_URL = network.server;
-const START_URL = `${BASE_URL}:3000/backup/start`;
-const FOLDER_START_BASE_URL = `${BASE_URL}:3000/backup/folder?name=`;
-const UPDATE_URL = `${BASE_URL}:3000/backup/show-inprogress`;
-const MFS_TREE_URL = `${BASE_URL}:3000/ipfs/mfs-tree`;
+const HTTPS_PORT = network.httpsPort
+const START_URL = `${BASE_URL}:${HTTPS_PORT}/backup/start`;
+const FOLDER_START_BASE_URL = `${BASE_URL}:${HTTPS_PORT}/backup/folder?name=`;
+const UPDATE_URL = `${BASE_URL}:${HTTPS_PORT}/backup/show-inprogress`;
+const MFS_TREE_URL = `${BASE_URL}:${HTTPS_PORT}/ipfs/mfs-tree`;
 const FIRST_UPDATE_INTERVAL = 1500;         // ms
 const SECOND_UPDATE_INTERVAL = 20000;       // ms
 const BACKUP_FOLDER = "IPFS_BACKUPS";     // will be excluded (BASE_FOLDER in Express)
