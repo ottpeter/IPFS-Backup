@@ -152,6 +152,8 @@ library Actor {
         );
         if (!success) {
             emit ActorErrorEvent("FailToCallActor(), will not do revert here.", 0);
+            bytes memory result = hex"20";
+            return result;
             //revert FailToCallActor();
         }
 

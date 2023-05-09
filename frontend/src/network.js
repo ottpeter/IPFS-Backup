@@ -13,7 +13,7 @@ const network = {
       cache: "./cache",
       artifacts: "./artifacts",
   },
-  contract: "0xd116850E25FE5134Bfa31186ca1028090B3E6DF9",
+  contract: "0xABb431C6d4A6138BC5A2a6026C8Ad2648DC82982",
   server: "https://test1.ipfs-backup.com"
 }
 
